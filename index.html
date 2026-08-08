@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seta Soluções | Elétricas e Telemáticas</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI', system-ui, -apple-system, sans-serif;}
+  body{background:#061727;color:#E6EDF3;line-height:1.4;font-size:14px;}
+  .container{max-width:1100px;margin:0 auto;padding:0 15px;}
+
+  /* TOPO SLIM / CABEÇALHO COMPACTO */
+  header{background:#030D17;border-bottom:1px solid rgba(255,255,255,0.08);padding:8px 0;position:sticky;top:0;z-index:100;}
+  .top-bar{display:flex;justify-content:space-between;align-items:center;gap:15px;}
+  
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+  .brand-logo{height:36px;width:auto;object-fit:contain;}
+  .brand-title{font-size:1.05em;font-weight:700;color:#FFFFFF;letter-spacing:0.5px;line-height:1.1;}
+  .brand-sub{font-size:0.7em;color:#FF6600;font-weight:600;display:block;}
+
+  .header-info{text-align:right;}
+  .clock{font-size:0.8em;font-weight:600;color:#8B9EB0;}
+  .slogan{font-size:0.7em;color:#FF6600;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;}
+
+  /* HERO COMPACTO */
+  .hero{padding:25px 0 15px 0;text-align:center;}
+  .hero h1{font-size:1.4em;color:#FFFFFF;font-weight:700;max-width:800px;margin:0 auto 6px auto;}
+  .hero p{font-size:0.88em;color:#8B9EB0;max-width:650px;margin:0 auto;}
+
+  /* SERVIÇOS / GRID OTIMIZADO */
+  .servicos{padding:15px 0 30px 0;}
+  .section-title{text-align:center;font-size:1em;color:#FF6600;margin-bottom:15px;letter-spacing:1px;font-weight:700;text-transform:uppercase;}
+  
+  .grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:12px;}
+  
+  .card{
+    background:#0B2238;
+    border:1px solid rgba(255,255,255,0.05);
+    border-left:3px solid #FF6600;
+    border-radius:5px;
+    padding:14px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    transition:transform 0.15s ease, background 0.15s ease;
+  }
+  .card:hover{background:#0F2B47;transform:translateY(-2px);}
+  
+  .card-header{margin-bottom:8px;}
+  .card-title{color:#FF6600;font-size:0.92em;font-weight:700;display:flex;align-items:center;gap:6px;}
+  .card-desc{font-size:0.82em;color:#B3C5D6;margin-top:6px;line-height:1.35;}
+  .card-diff{font-size:0.78em;color:#FF6600;margin-top:5px;font-weight:600;}
+  
+  .card-meta{margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);font-size:0.75em;color:#708599;}
+  .card-meta b{color:#C2D1E0;}
+  
+  .card-action{margin-top:10px;text-align:right;}
+  .btn-card{
+    display:inline-block;
+    padding:4px 10px;
+    background:transparent;
+    border:1px solid #FF6600;
+    color:#FF6600;
+    text-decoration:none;
+    font-size:0.75em;
+    font-weight:600;
+    border-radius:3px;
+    transition:0.2s;
+  }
+  .btn-card:hover{background:#FF6600;color:#FFF;}
+
+  /* CTA PRINCIPAL */
+  .cta-block{text-align:center;padding:15px 0 35px 0;}
+  .btn-main{
+    background:#FF6600;
+    color:#FFFFFF;
+    padding:10px 24px;
+    border-radius:5px;
+    font-size:0.9em;
+    font-weight:700;
+    text-decoration:none;
+    display:inline-block;
+    transition:background 0.2s, transform 0.2s;
+    box-shadow:0 3px 12px rgba(255,102,0,0.2);
+  }
+  .btn-main:hover{background:#E65C00;transform:scale(1.01);}
+
+  /* RODAPÉ ENXUTO */
+  footer{background:#030D17;border-top:1px solid rgba(255,255,255,0.08);padding:15px 0;font-size:0.78em;color:#708599;}
+  .footer-content{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+  .footer-links a{color:#C2D1E0;text-decoration:none;margin-left:15px;transition:color 0.2s;}
+  .footer-links a:hover{color:#FF6600;}
+
+  @media(max-width:650px){
+    .top-bar{flex-direction:column;align-items:flex-start;gap:4px;}
+    .header-info{text-align:left;}
+    .hero h1{font-size:1.2em;}
+    .grid{grid-template-columns:1fr;}
+    .footer-content{flex-direction:column;align-items:flex-start;}
+    .footer-links a{margin-left:0;margin-right:12px;display:inline-block;margin-top:4px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container top-bar">
+    <a href="#" class="brand">
+      <img src="img/logo.png" alt="Seta Soluções" class="brand-logo">
+      <div>
+        <span class="brand-title">SETA SOLUÇÕES</span>
+        <span class="brand-sub">ELÉTRICAS E TELEMÁTICAS</span>
+      </div>
+    </a>
+    <div class="header-info">
+      <div class="clock" id="data-hora"></div>
+      <div class="slogan">Sua Empresa Não Pode Parar</div>
+    </div>
+  </div>
+</header>
+
+<section class="hero container">
+  <h1>Engenharia Elétrica, Redes & Automação</h1>
+  <p>Infraestrutura de alta precisão, execução técnica rigorosa e entrega orientada ao cliente.</p>
+</section>
+
+<section class="container servicos">
+  <div class="section-title">Especialidades & Infraestrutura</div>
+
+  <div class="grid">
+    <!-- CARD 1 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">⚡ ELÉTRICA COMERCIAL & INFRAESTRUTURA</div>
+        <p class="card-desc">Manutenção preventiva, corretiva e atendimento emergencial. Execução integral de infraestrutura para novas instalações: lançamento de condutores, montagem e comissionamento de painéis elétricos.</p>
+        <p class="card-diff"><b>Diferencial:</b> Mapeamento de circuitos e entrega de projeto As-Built no encerramento da obra.</p>
+      </div>
+      <div>
+        <div class="card-meta"><b>Clientes atendidos:</b> BH Shopping, Super Nosso, redes comerciais.</div>
+        <div class="card-action">
+          <a href="https://wa.me/5531984821901?text=Olá,%20preciso%20de%20atendimento%20para%20Elétrica%20Comercial" target="_blank" class="btn-card">Solicitar Orçamento →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 2 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📐 PROJETOS DE ENGENHARIA & AUTOMAÇÃO</div>
+        <p class="card-desc">Elaboração e especificação de projetos elétricos, cabeamento, segurança e automação para obras novas e reformas. Desenvolvimento de acervo técnico para processos licitatórios e acompanhamento de obras.</p>
+        <p class="card-diff"><b>Diferencial:</b> Atualização contínua da documentação técnica e orientação de uso ao cliente.</p>
+      </div>
+      <div>
+        <div class="card-meta"><b>Clientes atendidos:</b> Irmãos Rivelle, CRM-MG, órgãos públicos.</div>
+        <div class="card-action">
+          <a href="https://wa.me/5531984821901?text=Olá,%20preciso%20de%20atendimento%20para%20Projetos%20e%20Automação" target="_blank" class="btn-card">Solicitar Orçamento →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 3 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">🌐 CABEAMENTO ESTRUTURADO & REDES ÓPTICAS</div>
+        <p class="card-desc">Construção de infraestrutura, lançamento de cabos de rede, montagem e organização de racks, consolidação de área de trabalho e soluções ópticas completas (lançamento, fusão e conexão).</p>
+        <p class="card-diff"><b>Diferencial:</b> Identificação técnica de pontos e certificação da rede.</p>
+      </div>
+      <div>
+        <div class="card-meta"><b>Clientes atendidos:</b> Palácio da Aviação, Forno de Minas.</div>
+        <div class="card-action">
+          <a href="https://wa.me/5531984821901?text=Olá,%20preciso%20de%20atendimento%20para%20Cabeamento%20e%20Fibra" target="_blank" class="btn-card">Solicitar Orçamento →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 4 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📹 SEGURANÇA ELETRÔNICA, CFTV & ALARMES</div>
+        <p class="card-desc">Levantamento detalhado de demanda, especificação de soluções, execução completa e entrega da obra 100% acabada e funcional para sistemas de CFTV IP, alarmes e automação.</p>
+        <p class="card-diff"><b>Diferencial:</b> Treinamento prático e instrução de uso das plataformas entregues.</p>
+      </div>
+      <div>
+        <div class="card-meta"><b>Clientes atendidos:</b> Postos Ipiranga, Apoio Mineiro, comércios.</div>
+        <div class="card-action">
+          <a href="https://wa.me/5531984821901?text=Olá,%20preciso%20de%20atendimento%20para%20CFTV%20e%20Segurança" target="_blank" class="btn-card">Solicitar Orçamento →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 5 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">🤖 SOLUÇÕES DIGITAIS, SISTEMAS & IA</div>
+        <p class="card-desc">Estudo de caso, desenvolvimento de sistemas inteligentes e programas para gestão de negócios. Engenharia e geradores de prompts avançados para Inteligência Artificial aplicada.</p>
+        <p class="card-diff"><b>Diferencial:</b> Mapeamento de fluxo de trabalho e acompanhamento de integração.</p>
+      </div>
+      <div>
+        <div class="card-meta"><b>Clientes atendidos:</b> CEDAF, CEFET, estudantes e empresários.</div>
+        <div class="card-action">
+          <a href="https://wa.me/5531984821901?text=Olá,%20preciso%20de%20atendimento%20para%20Soluções%20Digitais%20e%20IA" target="_blank" class="btn-card">Solicitar Orçamento →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-block container">
+  <a href="https://wa.me/5531984821901?text=Olá,%20gostaria%20de%20falar%20com%20um%20especialista" target="_blank" class="btn-main">FALAR COM UM ESPECIALISTA</a>
+</section>
+
+<footer>
+  <div class="container footer-content">
+    <div>
+      © Seta Soluções — Elétricas e Telemáticas. Todos os direitos reservados.
+    </div>
+    <div class="footer-links">
+      <a href="tel:31984821901">📞 (31) 98482-1901</a>
+      <a href="mailto:setamarcos@gmail.com">📧 setamarcos@gmail.com</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+function atualizarData(){
+  const agora = new Date();
+  const data = agora.toLocaleDateString('pt-BR', {weekday:'short', day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'});
+  document.getElementById('data-hora').innerText = data.charAt(0).toUpperCase() + data.slice(1);
+}
+atualizarData();
+setInterval(atualizarData, 60000);
+</script>
+
+</body>
+</html>

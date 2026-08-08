@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verônica Castro | Atendimento Domiciliar</title>
+<style>
+:root {
+  --azul-suave: #1b4d8e;
+  --rosa-suave: #FADADD;
+  --rosa-fundo: rgba(250, 218, 221, 0.25);
+  --fundo-pagina: #fdfdfd;
+  --texto-principal: #2c3e50;
+  --texto-suave: #7f8c8d;
+  --branco: #ffffff;
+  --borda: #d1d5db;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--fundo-pagina);
+  color: var(--texto-principal);
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+/* --- TELA DE ABERTURA --- */
+#tela-abertura {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-color: var(--rosa-suave);
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  z-index: 9999; padding: 20px;
+  transition: opacity 1.5s ease, visibility 1.5s;
+}
+
+.texto-abertura {
+  font-size: 22px; color: var(--azul-suave);
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 1s ease, transform 1s ease;
+  margin: 10px 0; text-align: center;
+}
+
+/* --- CONTEÚDO PRINCIPAL (Vitrine) --- */
+#conteudo-principal {
+  width: 100%; max-width: 480px; margin: auto;
+  background: var(--branco); min-height: 100vh;
+  box-shadow: 0 0 20px rgba(0,0,0,0.03);
+  opacity: 0; visibility: hidden;
+  transition: opacity 1.5s ease;
+  display: flex; flex-direction: column; padding-bottom: 40px;
+}
+
+/* --- PAINEL PRIVADO --- */
+#painel-privado {
+  display: none; width: 100%; max-width: 480px; margin: auto;
+  background: var(--branco); min-height: 100vh;
+  box-shadow: 0 0 40px rgba(0,0,0,0.02);
+  padding: 12px; flex-direction: column;
+}
+
+.painel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--borda); }
+.painel-titulo-box { text-align: center; flex-grow: 1; margin: 0 8px; }
+.painel-titulo { font-size: 16px; font-weight: 600; color: var(--azul-suave); }
+.btn-sair { background: #e74c3c; border: none; padding: 4px 14px; border-radius: 20px; font-size: 11px; cursor: pointer; color: #fff; font-weight: 700; }
+
+.painel-card { background: #fafafa; border: 1px solid var(--borda); border-radius: 8px; padding: 10px; margin-bottom: 8px; }
+.painel-card-title { font-size: 10.5px; font-weight: 600; color: var(--azul-suave); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.8px; }
+
+.form-grid { display: flex; gap: 6px; margin-bottom: 6px; }
+.form-group { margin-bottom: 6px; flex: 1; }
+.form-label { display: block; font-size: 10px; color: var(--texto-suave); margin-bottom: 2px; font-weight: 500; }
+.form-input { width: 100%; padding: 6px 8px; border: 1px solid var(--borda); border-radius: 6px; font-size: 11.5px; outline: none; background: #fff; font-family: inherit; }
+.btn-gravar { background: var(--azul-suave); color: #fff; border: none; padding: 8px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 2px; }
+
+.tabela-container { width: 100%; max-height: 220px; overflow-y: auto; overflow-x: auto; border: 1px solid var(--borda); border-radius: 6px; background: #fff; }
+table { width: 100%; border-collapse: collapse; font-size: 10.5px; text-align: left; white-space: nowrap; }
+th { background-color: #f39c12; color: #fff; padding: 5px 4px; font-weight: 600; font-size: 10px; text-align: center; border: 1px solid #e0a800; position: sticky; top: 0; z-index: 2; }
+td { padding: 5px 4px; border: 1px solid #e5e7eb; color: var(--texto-principal); text-align: center; }
+tr:nth-child(even) { background-color: #f9fafb; }
+.btn-acao { padding: 2px 5px; font-size: 9px; border: none; border-radius: 4px; cursor: pointer; color: #fff; }
+.btn-excluir { background: #e74c3c; }
+
+/* Cabeçalho Perfil Vitrine */
+.header-perfil { text-align: center; padding: 30px 24px 12px; }
+.foto-container { width: 110px; height: 110px; margin: 0 auto 10px; position: relative; }
+.foto-perfil { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: center 15%; border: 4px solid var(--rosa-suave); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+.nome { font-size: 24px; color: var(--azul-suave); font-weight: 600; margin-bottom: 2px; cursor: pointer; display: inline-block; }
+.subtitulo { font-size: 12px; color: var(--texto-suave); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 500; margin-bottom: 10px; }
+.selo-domiciliar { display: inline-block; background: var(--rosa-fundo); padding: 6px 14px; border-radius: 20px; font-size: 12px; color: var(--texto-principal); border: 1px solid rgba(250, 218, 221, 0.5); margin-bottom: 12px; }
+.selo-domiciliar.cidades { display: block; font-size: 10.5px; color: var(--texto-suave); margin-top: 2px; }
+
+.momento-container { margin: 0 20px 16px; background: var(--rosa-suave); border-radius: 16px; padding: 16px; text-align: center; }
+.momento-tag { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--azul-suave); margin-bottom: 2px; font-weight: 600; }
+.momento-data { font-size: 10.5px; color: var(--texto-suave); margin-bottom: 4px; font-weight: 500; text-transform: capitalize; }
+.momento-texto { font-size: 13.5px; line-height: 1.4; color: var(--azul-suave); font-weight: 500; margin-bottom: 2px; }
+.momento-autor { font-size: 10.5px; color: var(--texto-suave); }
+
+.area-acao { text-align: center; margin: 20px 0; }
+.btn-whatsapp { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background-color: var(--azul-suave); color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 30px; font-size: 15px; font-weight: 600; box-shadow: 0 4px 15px rgba(27, 77, 142, 0.2); }
+.btn-whatsapp svg { width: 16px; height: 16px; fill: currentColor; }
+
+/* Seção Serviço Único & Agenda Simples */
+.secao-servicos { padding: 0 24px; margin-bottom: 20px; }
+.titulo-secao { font-size: 18px; color: var(--azul-suave); margin: 0 0 15px; border-bottom: 2px solid var(--rosa-suave); padding-bottom: 5px; display: inline-block; font-weight: 600; }
+.servico-unico { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: var(--branco); border: 1px solid var(--borda); border-radius: 12px; margin-bottom: 16px; }
+.servico-info { display: flex; align-items: center; gap: 12px; }
+.servico-emoji { font-size: 22px; }
+.servico-nome { font-size: 15px; font-weight: 600; color: var(--azul-suave); }
+.servico-desc { font-size: 12px; color: var(--texto-suave); }
+.servico-preco { font-size: 14px; font-weight: 700; color: #27ae60; text-align: right; }
+.servico-preco span { display: block; font-size: 9.5px; color: var(--texto-suave); font-weight: 400; }
+
+/* Bloco Agenda Simples (Ideal para 3ª idade) */
+.bloco-agenda { background: #fafafa; border: 1px solid var(--borda); border-radius: 12px; padding: 16px; margin-top: 10px; }
+.agenda-label { font-size: 13px; font-weight: 600; color: var(--azul-suave); margin-bottom: 6px; display: block; }
+.agenda-select { width: 100%; padding: 10px; border: 1px solid var(--borda); border-radius: 8px; font-size: 14px; margin-bottom: 12px; background: #fff; outline: none; }
+.btn-agendar-site { background: #27ae60; color: #fff; border: none; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 600; width: 100%; cursor: pointer; text-align: center; }
+
+.rodape { margin-top: auto; text-align: center; padding: 25px 20px; background-color: #fafbfc; font-size: 12px; color: var(--texto-suave); line-height: 1.5; }
+.rodape-flor { display: block; font-size: 14px; margin: 4px 0; }
+.rodape-assina { font-weight: 600; color: var(--azul-suave); }
+.rodape-ref { font-size: 10.5px; color: #95a5a6; margin-top: 4px; display: block; }
+
+#modal-senha { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(44, 62, 80, 0.4); display: none; justify-content: center; align-items: center; z-index: 10000; padding: 20px; }
+.modal-box { background: var(--branco); padding: 24px; border-radius: 16px; width: 100%; max-width: 300px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+.modal-input { width: 100%; padding: 10px; margin: 14px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; text-align: center; outline: none; }
+.modal-btn { background: var(--azul-suave); color: #fff; border: none; padding: 10px; border-radius: 16px; font-size: 13px; cursor: pointer; font-weight: 500; width: 100%; }
+</style>
+</head>
+<body>
+
+<!-- Tela de Abertura -->
+<div id="tela-abertura">
+<div class="texto-abertura" id="txt1">🌸</div>
+<div class="texto-abertura" id="txt2">Olá!</div>
+<div class="texto-abertura" id="txt3">Sou Verônica.</div>
+<div class="texto-abertura" id="txt4">Seja muito bem-vinda ao meu espaço.</div>
+</div>
+
+<!-- Conteúdo Principal / Vitrine -->
+<div id="conteudo-principal">
+<header class="header-perfil">
+<div class="foto-container"><img src="veronica.jpg" alt="Verônica Castro" class="foto-perfil"></div>
+<h1 class="nome" onclick="solicitarSenha()">Verônica Castro</h1>
+<p class="subtitulo">Cuidado & Bem-Estar Domiciliar</p>
+<div class="selo-domiciliar"><span>🏡</span> Atendimento no conforto da sua casa<span class="cidades">Contagem • Betim • Esmeraldas</span></div>
+</header>
+
+<div class="momento-container">
+<div class="momento-tag">Momento do Dia 🌸</div>
+<div class="momento-data" id="txt-data"></div>
+<div class="momento-texto" id="txt-momento">Carregando momento...</div>
+<div class="momento-autor" id="autor-momento"></div>
+</div>
+
+<section class="secao-servicos">
+<h2 class="titulo-secao">Atendimento</h2>
+<div class="servico-unico">
+<div class="servico-info">
+<span class="servico-emoji">🌷</span>
+<div>
+<div class="servico-nome">Manicure Pé e Mão</div>
+<div class="servico-desc">Atendimento completo e dedicado.</div>
+</div>
+</div>
+<div class="servico-preco">
+  A partir de R$ 50,00
+  <span>*valor sob consulta</span>
+</div>
+</div>
+
+<!-- Bloco Agenda Simples (Segunda a Sexta, 3 horários fixos) -->
+<div class="bloco-agenda">
+<label class="agenda-label" for="select-dia">1. Escolha o dia (Segunda a Sexta):</label>
+<select id="select-dia" class="agenda-select">
+  <!-- Preenchido via JavaScript -->
+</select>
+
+<label class="agenda-label" for="select-horario">2. Escolha o horário:</label>
+<select id="select-horario" class="agenda-select">
+  <option value="17:20">17:20</option>
+  <option value="18:30">18:30</option>
+  <option value="19:40">19:40</option>
+</select>
+
+<label class="agenda-label" for="input-nome-cliente">3. Seu Nome:</label>
+<input type="text" id="input-nome-cliente" class="agenda-select" placeholder="Digite seu nome completo" style="background:#fff;">
+
+<button class="btn-agendar-site" onclick="enviarAgendamentoSite()">Agendar Horário</button>
+</div>
+</section>
+
+<!-- Botão WhatsApp posicionado estrategicamente após a agenda para conversas e dúvidas -->
+<div class="area-acao">
+<a href="https://wa.me/5531991946163?text=Olá%20Verônica!%20Gostaria%20de%20conversar%20sobre%20os%20atendimentos." class="btn-whatsapp" target="_blank">
+<svg viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
+Falar com Verônica no WhatsApp
+</a>
+</div>
+
+<footer class="rodape">
+Com carinho,<br>
+<span class="rodape-flor">🌷</span><span class="rodape-assina">Verônica Castro</span>
+<span class="rodape-ref">Verônica diz</span>
+</footer>
+</div>
+
+<!-- Painel Privado -->
+<div id="painel-privado">
+<div class="painel-header">
+  <div style="width: 50px;"></div>
+  <div class="painel-titulo-box" style="line-height: 1.3;">
+    <div class="painel-titulo">Meu Espaço 🌸</div>
+    <div id="espaco-data" style="font-size:10px; font-weight:600; color:var(--azul-suave); text-transform:capitalize;"></div>
+    <div id="espaco-comemora" style="font-size:10.5px; color:var(--texto-principal);"></div>
+  </div>
+  <button class="btn-sair" onclick="sairPainel()">Sair</button>
+</div>
+
+<div class="painel-card">
+  <div class="painel-card-title">📝 NOVO ATENDIMENTO</div>
+  <div class="form-grid">
+    <div class="form-group" style="flex: 2;"><label class="form-label">Cliente *</label><input type="text" id="input-cliente" class="form-input"></div>
+    <div class="form-group"><label class="form-label">Data Atendimento</label><input type="date" id="input-data" class="form-input" onchange="atualizarRetornoAutomatico()"></div>
+    <div class="form-group"><label class="form-label">Próximo Retorno</label><input type="date" id="input-retorno" class="form-input"></div>
+  </div>
+  <div class="form-grid">
+    <div class="form-group"><label class="form-label">Valor (R$)</label><input type="text" id="input-valor" class="form-input" placeholder="50,00" value="50,00"></div>
+    <div class="form-group" style="flex: 2;"><label class="form-label">Forma Pgto</label><div style="display:flex; gap:8px; align-items:center; height:26px; font-size:11px;"><label><input type="checkbox" class="pgto" value="PIX"> PIX</label><label><input type="checkbox" class="pgto" value="Din"> Din</label><label><input type="checkbox" class="pgto" value="Prz"> Prz</label></div></div>
+    <div class="form-group"><label class="form-label">Tempo</label><input type="text" id="input-tempo" class="form-input" placeholder="70 ou 1h10"></div>
+  </div>
+  <div class="form-group"><label class="form-label">Observação</label><input type="text" id="input-obs" class="form-input"></div>
+  <div class="form-grid">
+    <div class="form-group"><label class="form-label">Aniversário</label><input type="date" id="input-niver" class="form-input"></div>
+    <div class="form-group" style="flex: 2;"><label class="form-label">Endereço</label><input type="text" id="input-endereco" class="form-input"></div>
+  </div>
+  <button class="btn-gravar" onclick="salvarAtendimento()">Salvar Cliente / Atendimento</button>
+</div>
+
+<!-- Resumos Financeiros -->
+<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:8px;">
+  <div class="painel-card" style="padding:6px; text-align:center;"><div style="font-size:9px; color:var(--texto-suave);">Atend. Mês</div><div id="tot-atend-mes" style="font-weight:700; color:var(--azul-suave); font-size:12px;">0</div></div>
+  <div class="painel-card" style="padding:6px; text-align:center;"><div style="font-size:9px; color:var(--texto-suave);">Total R$ Mês</div><div id="tot-valor-mes" style="font-weight:700; color:var(--azul-suave); font-size:12px;">R$ 0,00</div></div>
+  <div class="painel-card" style="padding:6px; text-align:center;"><div style="font-size:9px; color:var(--texto-suave);">Total Ano</div><div id="tot-valor-ano" style="font-weight:700; color:var(--azul-suave); font-size:12px;">R$ 0,00</div></div>
+  <div class="painel-card" style="padding:6px; text-align:center;"><div style="font-size:9px; color:var(--texto-suave);">Melhor Mês</div><div id="tot-melhor-mes" style="font-weight:700; color:var(--azul-suave); font-size:12px;">-</div></div>
+  <div class="painel-card" style="padding:6px; text-align:center;"><div style="font-size:9px; color:var(--texto-suave);">Pior Mês</div><div id="tot-pior-mes" style="font-weight:700; color:var(--azul-suave); font-size:12px;">-</div></div>
+  <div class="painel-card" style="padding:6px; text-align:center;"><div style="font-size:9px; color:var(--texto-suave);">Média Mensal</div><div id="tot-media-mes" style="font-weight:700; color:var(--azul-suave); font-size:12px;">R$ 0,00</div></div>
+</div>
+
+<div class="painel-card" style="background:#fdf8e2; border-color:#f39c12; text-align:center; padding:6px;"><div id="relex-txt" style="font-size:11px; font-style:italic;">Carregando...</div></div>
+
+<!-- TABELA AGENDA (AGENDAMENTOS DO SITE) -->
+<div class="painel-card" style="padding: 6px;">
+  <div class="painel-card-title" style="padding: 2px;">📅 AGENDAMENTOS DO SITE (AGENDA)</div>
+  <div class="tabela-container" style="max-height: 160px;">
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Cliente</th>
+          <th>Data Agendada</th>
+          <th>Horário</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="tabela-agenda-corpo"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- REGISTRO DO MÊS (POR ÚLTIMO) -->
+<div class="painel-card" style="padding: 6px;">
+  <div class="painel-card-title" style="padding: 2px;">📊 REGISTRO DO MÊS (CRESCE AUTOMATICAMENTE)</div>
+  <div class="tabela-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Cliente</th>
+          <th>Data</th>
+          <th>Retorno</th>
+          <th>Valor</th>
+          <th>Tempo</th>
+          <th>Obs</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="tabela-corpo"></tbody>
+    </table>
+  </div>
+</div>
+
+</div>
+
+<!-- Modal de Senha -->
+<div id="modal-senha">
+  <div class="modal-box">
+    <div style="font-size: 24px; margin-bottom: 6px;">🌷</div>
+    <div style="font-size: 14px; font-weight: 500; color: var(--azul-suave); margin-bottom: 2px;">Olá, Verônica.</div>
+    <div style="font-size: 11.5px; color: var(--texto-suave); margin-bottom: 10px;">Digite sua senha para acessar.</div>
+    <input type="password" id="input-senha-veronica" class="modal-input" placeholder="Senha">
+    <button class="modal-btn" onclick="validarSenha()">Entrar</button>
+    <div style="margin-top: 8px;"><a href="#" onclick="fecharModal(event)" style="font-size: 11px; color: var(--texto-suave); text-decoration: none;">Cancelar</a></div>
+  </div>
+</div>
+
+<script>
+var momentosDoAno = [
+  { frase: "Recria tua vida, sempre.", autor: "Cora Coralina" },
+  { frase: "Delicadeza das pequenas coisas.", autor: "Cecília Meireles" },
+  { frase: "Renda-se ao que não conhece.", autor: "Clarice Lispector" },
+  { frase: "O que a memória ama, fica eterno.", autor: "Adélia Prado" },
+  { frase: "Tempo pra si é acalmar a alma.", autor: "Lya Luft" },
+  { frase: "Agradeço o que tenho e luto pelo que sou; o que me falta não me define, o que me move me faz gigante.", autor: "Clarice Lispector" },
+  { frase: "Ter o que é possível hoje já é vencer a partida de um futuro melhor.", autor: "Cora Coralina" },
+  { frase: "Não sofra pelo que ainda não alcançou; olhe a grandeza do passo que você já deu.", autor: "Adélia Prado" },
+  { frase: "A beleza está em olhar para a própria história e ver que estamos bem melhor do que imaginávamos.", autor: "Cecília Meireles" },
+  { frase: "Valorize cada pequena conquista diária. A vida recompensa quem sabe enxergar a própria força.", autor: "Lya Luft" }
+];
+
+function obterDiaDoAno(data) {
+  var inicio = new Date(data.getFullYear(), 0, 0);
+  var diff = (data - inicio) + ((inicio.getTimezoneOffset() - data.getTimezoneOffset()) * 60 * 1000);
+  var umDia = 1000 * 60 * 60 * 24;
+  return Math.floor(diff / umDia);
+}
+
+function preencherDiasUteis() {
+  var selectDia = document.getElementById('select-dia');
+  selectDia.innerHTML = "";
+  var hoje = new Date();
+  
+  var contador = 0;
+  var d = new Date(hoje);
+  while (contador < 10) {
+    d.setDate(d.getDate() + 1);
+    var diaSemana = d.getDay();
+    if (diaSemana !== 0 && diaSemana !== 6) { 
+      var iso = d.toISOString().split('T')[0];
+      var textoFormatado = d.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+      var opt = document.createElement('option');
+      opt.value = iso;
+      opt.text = textoFormatado.charAt(0).toUpperCase() + textoFormatado.slice(1);
+      selectDia.appendChild(opt);
+      contador++;
+    }
+  }
+}
+
+function enviarAgendamentoSite() {
+  var nomeCliente = document.getElementById('input-nome-cliente').value.trim();
+  var diaSelecionado = document.getElementById('select-dia').value;
+  var horarioSelecionado = document.getElementById('select-horario').value;
+
+  if (!nomeCliente) {
+    alert("Por favor, digite seu nome antes de agendar.");
+    document.getElementById('input-nome-cliente').focus();
+    return;
+  }
+
+  // Grava localmente no INÍCIO da lista (unshift) para figurar no TOPO da tabela
+  let listaAgendamentos = JSON.parse(localStorage.getItem('veronica_agendamentos') || '[]');
+  listaAgendamentos.unshift({
+    nome: nomeCliente,
+    dia: diaSelecionado,
+    horario: horarioSelecionado
+  });
+  localStorage.setItem('veronica_agendamentos', JSON.stringify(listaAgendamentos));
+
+  var partesData = diaSelecionado.split('-');
+  var dataFormatadaBr = partesData.reverse().join('/');
+
+  var textoZap = `Olá Verônica! Gostaria de agendar Manicure Pé e Mão para o dia ${dataFormatadaBr} às ${horarioSelecionado}. Meu nome é ${nomeCliente}. WhatsApp confirmamos aqui.`;
+  var urlZap = `https://wa.me/5531991946163?text=` + encodeURIComponent(textoZap);
+
+  alert("Olá, " + nomeCliente + "! Muito obrigada por agendar. Recebi sua solicitação e, assim que possível confirmo via Whats.");
+  
+  document.getElementById('input-nome-cliente').value = '';
+  window.open(urlZap, '_blank');
+}
+
+function carregarAgenda() {
+  let listaAgendamentos = JSON.parse(localStorage.getItem('veronica_agendamentos') || '[]');
+  var tbody = document.getElementById('tabela-agenda-corpo');
+  tbody.innerHTML = '';
+
+  if (listaAgendamentos.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5">Nenhum agendamento pendente no site.</td></tr>`;
+    return;
+  }
+
+  listaAgendamentos.forEach((ag, i) => {
+    var tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${i + 1}</td>
+      <td style="text-align:left">${ag.nome || ''}</td>
+      <td>${ag.dia ? ag.dia.split('-').reverse().join('/') : ''}</td>
+      <td>${ag.horario || ''}</td>
+      <td><button class="btn-acao btn-excluir" onclick="excluirAgenda(${i})">X</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function excluirAgenda(index) {
+  if (confirm("Excluir este agendamento da lista?")) {
+    let listaAgendamentos = JSON.parse(localStorage.getItem('veronica_agendamentos') || '[]');
+    listaAgendamentos.splice(index, 1);
+    localStorage.setItem('veronica_agendamentos', JSON.stringify(listaAgendamentos));
+    carregarAgenda();
+  }
+}
+
+function definirMomentoDoDia() {
+  var hoje = new Date();
+  var opcoesData = { weekday: 'long', day: 'numeric', month: 'long' };
+  document.getElementById('txt-data').innerText = hoje.toLocaleDateString('pt-BR', opcoesData);
+  
+  var diaAno = obterDiaDoAno(hoje);
+  var indice = diaAno % momentosDoAno.length;
+  var selecionado = momentosDoAno[indice];
+  
+  document.getElementById('txt-momento').innerText = '"' + selecionado.frase + '"';
+  document.getElementById('autor-momento').innerText = '— ' + selecionado.autor;
+  
+  var dataIso = hoje.toISOString().split('T')[0];
+  var inputDataEl = document.getElementById('input-data');
+  if(inputDataEl) {
+    inputDataEl.value = dataIso;
+    atualizarRetornoAutomatico();
+  }
+}
+
+function atualizarRetornoAutomatico() {
+  var dataVal = document.getElementById('input-data').value;
+  if (!dataVal) return;
+  var d = new Date(dataVal + 'T00:00:00');
+  d.setDate(d.getDate() + 14);
+  var retornoIso = d.toISOString().split('T')[0];
+  document.getElementById('input-retorno').value = retornoIso;
+}
+
+function solicitarSenha() {
+  document.getElementById('modal-senha').style.display = 'flex';
+  document.getElementById('input-senha-veronica').focus();
+}
+
+function fecharModal(e) {
+  if(e) e.preventDefault();
+  document.getElementById('modal-senha').style.display = 'none';
+  document.getElementById('input-senha-veronica').value = "";
+}
+
+function validarSenha() {
+  if (document.getElementById('input-senha-veronica').value === "1401") {
+    fecharModal();
+    document.getElementById('conteudo-principal').style.display = 'none';
+    document.getElementById('painel-privado').style.display = 'flex';
+    setarCabecalhoEspaco();
+    carregarAgenda();
+    carregarPlanilha();
+  } else {
+    alert("Senha incorreta.");
+    document.getElementById('input-senha-veronica').value = "";
+  }
+}
+
+function sairPainel() {
+  document.getElementById('painel-privado').style.display = 'none';
+  document.getElementById('conteudo-principal').style.display = 'flex';
+}
+
+function setarCabecalhoEspaco(){
+  const hoje = new Date();
+  const opcoesData = { weekday: 'long', day: 'numeric', month: 'long' };
+  const dataFormatada = hoje.toLocaleDateString('pt-BR', opcoesData);
+  
+  const espacoDataEl = document.getElementById('espaco-data');
+  if(espacoDataEl) espacoDataEl.innerText = dataFormatada;
+  
+  const comem = ["Dia da renovação","Dia do autocuidado","Dia da beleza","Dia da gratidão","Dia da leveza", "Dia de cuidar de si", "Dia de pausas suaves"];
+  const espacoComemoraEl = document.getElementById('espaco-comemora');
+  if(espacoComemoraEl) espacoComemoraEl.innerText = "Hoje comemoramos: " + comem[obterDiaDoAno(hoje) % comem.length];
+  
+  const relexTxtEl = document.getElementById('relex-txt');
+  if(relexTxtEl) relexTxtEl.innerText = '"' + momentosDoAno[obterDiaDoAno(hoje) % momentosDoAno.length].frase + '" — ' + momentosDoAno[obterDiaDoAno(hoje) % momentosDoAno.length].autor;
+}
+
+function salvarAtendimento() {
+  const dados = {
+    nome: document.getElementById('input-cliente').value, 
+    data: document.getElementById('input-data').value, 
+    retorno: document.getElementById('input-retorno').value,
+    valor: document.getElementById('input-valor').value, 
+    tempo: document.getElementById('input-tempo').value, 
+    niver: document.getElementById('input-niver').value,
+    endereco: document.getElementById('input-endereco').value, 
+    obs: document.getElementById('input-obs').value,
+    pgto: Array.from(document.querySelectorAll('.pgto:checked')).map(cb=>cb.value).join(', ')
+  };
+  if(!dados.nome || !dados.valor || !dados.data){ alert("Preencha Cliente, Data e Valor."); return; }
+  
+  // Salva no INÍCIO da lista local (unshift) para ficar na Linha 1 da Tabela
+  let listaAtendimentos = JSON.parse(localStorage.getItem('veronica_atendimentos') || '[]');
+  listaAtendimentos.unshift(dados);
+  localStorage.setItem('veronica_atendimentos', JSON.stringify(listaAtendimentos));
+  
+  const urlScript = "https://script.google.com/macros/s/AKfycbyWTN1XC2JWhqWFPiVvxKSM8EUGUW8BvxSw59j5kQx8BD580ctuiqjiFW2uPPwjF3a9/exec";
+  
+  fetch(urlScript, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(dados)
+  }).then(() => {
+    alert(dados.nome + ' salvo e exportado para a planilha com sucesso!');
+    limparForm();
+    carregarPlanilha();
+  }).catch(err => {
+    console.error("Erro ao exportar:", err);
+    alert(dados.nome + ' salvo localmente, mas houve um erro ao enviar para a planilha.');
+    limparForm();
+    carregarPlanilha();
+  });
+}
+
+function limparForm(){
+  document.getElementById('input-cliente').value='';
+  document.getElementById('input-valor').value='50,00';
+  document.getElementById('input-tempo').value='';
+  document.getElementById('input-niver').value='';
+  document.getElementById('input-endereco').value='';
+  document.getElementById('input-obs').value='';
+  document.querySelectorAll('.pgto').forEach(cb=>cb.checked=false);
+  definirMomentoDoDia();
+}
+
+function carregarPlanilha() {
+  let listaAtendimentos = JSON.parse(localStorage.getItem('veronica_atendimentos') || '[]');
+  var tbody = document.getElementById('tabela-corpo'); 
+  tbody.innerHTML=''; 
+  
+  if(listaAtendimentos.length === 0){
+    tbody.innerHTML=`<tr><td colspan="8">Nenhum atendimento ainda.</td></tr>`;
+    document.getElementById('tot-atend-mes').innerText = '0';
+    document.getElementById('tot-valor-mes').innerText = 'R$ 0,00';
+    document.getElementById('tot-valor-ano').innerText = 'R$ 0,00';
+    document.getElementById('tot-melhor-mes').innerText = '-';
+    document.getElementById('tot-pior-mes').innerText = '-';
+    document.getElementById('tot-media-mes').innerText = 'R$ 0,00';
+    return;
+  }
+  
+  var totalMesValorCalc = 0;
+  var totalAnoValorCalc = 0;
+  var qtdeMes = 0;
+  var agora = new Date();
+  var mesAtual = agora.getMonth();
+  var anoAtual = agora.getFullYear();
+  
+  var mesesTotais = {};
+
+  listaAtendimentos.forEach((r, i) => {
+    var valNum = parseFloat(String(r.valor).replace(',', '.')) || 0;
+    var dataParts = r.data ? r.data.split('-') : [];
+    var anoAtend = dataParts.length === 3 ? parseInt(dataParts[0]) : anoAtual;
+    var mesAtend = dataParts.length === 3 ? parseInt(dataParts[1]) - 1 : mesAtual;
+
+    if (anoAtend === anoAtual) {
+      totalAnoValorCalc += valNum;
+      if (mesAtend === mesAtual) {
+        qtdeMes++;
+        totalMesValorCalc += valNum;
+      }
+    }
+
+    var chaveMes = `${anoAtend}-${String(mesAtend+1).padStart(2, '0')}`;
+    mesesTotais[chaveMes] = (mesesTotais[chaveMes] || 0) + valNum;
+
+    var tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${i+1}</td>
+      <td style="text-align:left">${r.nome || ''}</td>
+      <td>${r.data ? r.data.split('-').reverse().join('/') : ''}</td>
+      <td>${r.retorno ? r.retorno.split('-').reverse().join('/') : ''}</td>
+      <td>R$ ${valNum.toFixed(2).replace('.', ',')}</td>
+      <td>${r.tempo || ''}</td>
+      <td style="text-align:left">${r.obs || ''}</td>
+      <td><button class="btn-acao btn-excluir" onclick="excluir(${i})">X</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  var valoresMesesArr = Object.values(mesesTotais);
+  var melhorMesVal = valoresMesesArr.length > 0 ? Math.max(...valoresMesesArr) : 0;
+  var piorMesVal = valoresMesesArr.length > 0 ? Math.min(...valoresMesesArr) : 0;
+  var mediaMesVal = valoresMesesArr.length > 0 ? (valoresMesesArr.reduce((a, b) => a + b, 0) / valoresMesesArr.length) : 0;
+
+  document.getElementById('tot-atend-mes').innerText = qtdeMes;
+  document.getElementById('tot-valor-mes').innerText = 'R$ ' + totalMesValorCalc.toFixed(2).replace('.', ',');
+  document.getElementById('tot-valor-ano').innerText = 'R$ ' + totalAnoValorCalc.toFixed(2).replace('.', ',');
+  document.getElementById('tot-melhor-mes').innerText = melhorMesVal > 0 ? 'R$ ' + melhorMesVal.toFixed(2).replace('.', ',') : '-';
+  document.getElementById('tot-pior-mes').innerText = piorMesVal > 0 ? 'R$ ' + piorMesVal.toFixed(2).replace('.', ',') : '-';
+  document.getElementById('tot-media-mes').innerText = 'R$ ' + mediaMesVal.toFixed(2).replace('.', ',');
+}
+
+function excluir(index){ 
+  if(confirm("Excluir este registro?")){ 
+    let listaAtendimentos = JSON.parse(localStorage.getItem('veronica_atendimentos') || '[]');
+    listaAtendimentos.splice(index, 1);
+    localStorage.setItem('veronica_atendimentos', JSON.stringify(listaAtendimentos));
+    carregarPlanilha();
+  } 
+}
+
+window.onload = function() {
+  definirMomentoDoDia();
+  setarCabecalhoEspaco();
+  preencherDiasUteis();
+
+  if (!sessionStorage.getItem('veronica_ja_abriu')) {
+    sessionStorage.setItem('veronica_ja_abriu', 'true');
+    
+    const txts = [
+      document.getElementById('txt1'),
+      document.getElementById('txt2'),
+      document.getElementById('txt3'),
+      document.getElementById('txt4')
+    ];
+    
+    txts.forEach((txt, index) => {
+      setTimeout(() => {
+        txt.style.opacity = '1';
+        txt.style.transform = 'translateY(0)';
+      }, (index + 1) * 800);
+    });
+
+    setTimeout(() => {
+      const telaAbertura = document.getElementById('tela-abertura');
+      telaAbertura.style.opacity = '0';
+      setTimeout(() => {
+        telaAbertura.style.display = 'none';
+        const conteudo = document.getElementById('conteudo-principal');
+        conteudo.style.visibility = 'visible';
+        conteudo.style.opacity = '1';
+      }, 1500);
+    }, 4500);
+  } else {
+    document.getElementById('tela-abertura').style.display = 'none';
+    const conteudo = document.getElementById('conteudo-principal');
+    conteudo.style.visibility = 'visible';
+    conteudo.style.opacity = '1';
+  }
+};
+</script>
+</body>
+</html>
