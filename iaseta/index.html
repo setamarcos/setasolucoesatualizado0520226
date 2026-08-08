@@ -17,7 +17,7 @@
     h1 { text-align:center; color:#003366; font-size:22px; margin-bottom:5px; }
     .subtitle { text-align:center; color:#ff6600; font-size:13px; font-weight:bold; margin-bottom:15px; }
 
-    /* Sem barra de título em branco, sem linha azul ou sombra entre login e solicitação */
+    /* Login limpo sem barras extras */
     #login { margin-bottom: 15px; padding: 12px; background: #f1f5f9; border-radius: 8px; border: none; box-shadow: none; }
     #login input { width: 68%; display: inline-block; margin-right: 8px; }
     #login button { width: 28%; display: inline-block; background:#16a34a; color:#fff; border:none; padding:10px; border-radius:6px; font-weight:bold; cursor:pointer; }
@@ -25,16 +25,19 @@
     #exercise { margin-bottom: 15px; }
     #progressChart { max-width: 600px; margin: 15px auto; background:#1c3b57; padding:15px; border-radius:10px; }
 
-    label { display: block; font-size:14px; font-weight:bold; margin-top: 15px; color: #003366; }
+    /* Linha do título com o botão de áudio na lateral direita */
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-top: 15px; margin-bottom: 5px; gap: 10px; }
+    label { font-size: 14px; font-weight: bold; color: #003366; margin: 0; }
+    
+    .btn-audio-inline { background: #002244; color: #fff; border: none; padding: 6px 12px; font-size: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+    .btn-audio-inline.gravando { background: #cc0000; animation: piscar 1s infinite; }
+
     textarea, select, input { width:100%; padding:10px; font-size:14px; border-radius:6px; border:1px solid #ccc; margin-bottom:10px; box-sizing: border-box; }
     textarea { min-height: 70px; }
 
     .checkbox-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
     .checkbox-btn { background:#e2e8f0; color:#334155; padding:6px 12px; border-radius:20px; font-size:12px; font-weight:bold; cursor:pointer; user-select:none; }
     .checkbox-btn.active { background:#ff6600; color:#fff; }
-
-    .btn-audio { background:#002244; color:#fff; border:none; padding:10px; font-size:13px; border-radius:6px; cursor:pointer; width:100%; font-weight:bold; margin-bottom:10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .btn-audio.gravando { background:#cc0000; animation: piscar 1s infinite; }
 
     .button-row { display:flex; gap:6px; margin-top:15px; flex-wrap: wrap; }
     button.action-btn { flex:1; min-width: 120px; background:#ff6600; color:#fff; border:none; padding:12px; font-size:13px; border-radius:6px; cursor:pointer; font-weight:bold; }
@@ -53,7 +56,7 @@
     @media print {
       body { background: #fff; color: #000; }
       .container { box-shadow: none; margin: 0; padding: 0; max-width: 100%; }
-      .btn-audio, .button-row, input[type="file"], .feedback-buttons, .footer-btn { display: none!important; }
+      .btn-audio-inline, .button-row, input[type="file"], .feedback-buttons, .footer-btn { display: none!important; }
       textarea, select { border: none; background: transparent; padding: 0; }
       .prompt-output { display: block!important; border: 1px solid #ccc; }
     }
@@ -81,16 +84,22 @@
     <div id="exercise"></div>
     <div id="progressChart"></div>
 
-    <label for="solicitacao">1. Sua Solicitação (O que você quer que a IA faça?)</label>
-    <button id="mic-solicitacao" class="btn-audio" type="button" onclick="gerenciarAudio('solicitacao', this)">🎤 Gravar Solicitação por Áudio</button>
+    <!-- Seção 1 com Botão de Áudio Inline na Direita -->
+    <div class="section-header">
+      <label for="solicitacao">1. Sua Solicitação</label>
+      <button id="mic-solicitacao" class="btn-audio-inline" type="button" onclick="gerenciarAudio('solicitacao', this)">🎤 Gravar Áudio</button>
+    </div>
     <textarea id="solicitacao" placeholder="Ex: Escreva uma mensagem curta de incentivo para minha filha..."></textarea>
 
-    <label for="detalhe">2. O que deseja detalhar? (Contexto ou Histórico adicional)</label>
-    <button id="mic-detalhe" class="btn-audio" type="button" onclick="gerenciarAudio('detalhe', this)">🎤 Gravar Detalhes por Áudio</button>
+    <!-- Seção 2 com Botão de Áudio Inline na Direita -->
+    <div class="section-header">
+      <label for="detalhe">2. O que deseja detalhar?</label>
+      <button id="mic-detalhe" class="btn-audio-inline" type="button" onclick="gerenciarAudio('detalhe', this)">🎤 Gravar Áudio</button>
+    </div>
     <textarea id="detalhe" placeholder="Adicione fatos ou dados extras que ajudam a clarear o cenário atual..."></textarea>
 
-    <label>3. O que você quer EVITAR? (Assim você evitará respostas sem sentido)</label>
-    <div class="checkbox-group">
+    <label style="margin-top: 15px;">3. O que você quer EVITAR? (Assim você evitará respostas sem sentido)</label>
+    <div class="checkbox-group" style="margin-top: 8px;">
       <div class="checkbox-btn" onclick="toggleFiltro(this, 'Não quero texto longo ou enrolação.')">⬜ Sem enrolação</div>
       <div class="checkbox-btn" onclick="toggleFiltro(this, 'Evite teoria excessiva, foque em passos práticos.')">⬜ Foco Prático</div>
       <div class="checkbox-btn" onclick="toggleFiltro(this, 'A solução não deve depender de computador, opero apenas via celular.')">⬜ Uso no Celular</div>
@@ -129,7 +138,6 @@
   <script src="script.js"></script>
 
   <script>
-    // Relógio dinâmico atualizado a cada segundo
     function atualizarRelogioTopo() {
       const agora = new Date();
       const formatado = agora.toLocaleDateString('pt-BR') + ' - ' + agora.toLocaleTimeString('pt-BR');
@@ -152,12 +160,36 @@
       input.value = v;
     }
 
+    function pararGravacaoUI() {
+      document.querySelectorAll('.btn-audio-inline').forEach(btn => {
+        btn.classList.remove('gravando');
+        btn.innerText = "🎤 Gravar Áudio";
+      });
+      campoGravandoId = null;
+    }
+
+    const originalGerenciarAudio = window.gerenciarAudio;
+    window.gerenciarAudio = function(idCampo, botao) {
+      if (campoGravandoId === idCampo) {
+        if(window.reconhecimentoAudio) window.reconhecimentoAudio.stop();
+        pararGravacaoUI();
+      } else {
+        pararGravacaoUI();
+        campoGravandoId = idCampo;
+        botao.classList.add('gravando');
+        botao.innerText = "🛑 Gravando...";
+        if(window.reconhecimentoAudio) {
+          try { window.reconhecimentoAudio.start(); } catch(e) {}
+        }
+      }
+    };
+
     function gerarPromptEstruturado() {
       let painel = document.getElementById('prompt-final');
       painel.innerText = "";
       painel.style.display = 'none';
 
-      let prompt = `O QUE EU ENTENDI DO SEU PEDIDO:\n`;
+      let prompt = `IA TE TRARA MELHOR RESULTADO ASSIM:\n`;
       prompt += `### TAREFA PRINCIPAL ###\n`;
       prompt += `${document.getElementById('solicitacao').value}\n\n`;
       prompt += `### CONTEXTO ###\n`;
@@ -171,7 +203,6 @@
       painel.innerText = prompt;
       painel.style.display = 'block';
 
-      // Executa salvamento em segundo plano sem janela de alerta intrusiva (Silent Save)
       if(window.salvarNoGoogleSheets) {
         window.salvarNoGoogleSheets();
       }
@@ -186,7 +217,6 @@
       painel.style.display = 'block';
       window.ultimoFeedbackGerado = relatorioFeedback;
 
-      // Bloco 5 conectado diretamente para envio em segundo plano na planilha
       if(window.enviarFeedbackPlanilha) {
         window.enviarFeedbackPlanilha(status);
       }
