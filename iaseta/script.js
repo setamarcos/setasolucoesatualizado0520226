@@ -56,16 +56,15 @@ function gerenciarAudio(idCampo, botao) {
     pararGravacaoUI();
     campoGravandoId = idCampo;
     botao.classList.add('gravando');
-    botao.innerText = "🛑 Gravando áudio... Toque para parar";
+    botao.innerText = "🛑 Gravando...";
     reconhecimentoAudio.start();
   }
 }
 
 function pararGravacaoUI() {
-  document.querySelectorAll('.btn-audio').forEach(btn => {
+  document.querySelectorAll('.btn-audio-inline').forEach(btn => {
     btn.classList.remove('gravando');
-    if(btn.id === 'mic-solicitacao') btn.innerText = "🎤 Gravar Solicitação por Áudio";
-    if(btn.id === 'mic-detalhe') btn.innerText = "🎤 Gravar Detalhes por Áudio";
+    btn.innerText = "🎤 Gravar Áudio";
   });
   campoGravandoId = null;
 }
@@ -89,7 +88,7 @@ function gerarPromptEstruturado() {
   painel.innerText = "";
   painel.style.display = 'none';
 
-  let prompt = `O QUE EU ENTENDI DO SEU PEDIDO:\n`;
+  let prompt = `IA TE TRARA MELHOR RESULTADO ASSIM:\n`;
   prompt += `### TAREFA PRINCIPAL ###\n`;
   prompt += `${document.getElementById('solicitacao').value}\n\n`;
   prompt += `### CONTEXTO ###\n`;
