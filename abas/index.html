@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Seta Soluções - Painel de Abas</title>
   <style>
+    :root {
+      --primary: #002244;
+      --primary-dark: #001328;
+      --accent: #ff6600;
+      --accent-hover: #e55a00;
+      --bg-gradient: linear-gradient(135deg, #001328 0%, #002244 50%, #003366 100%);
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --card-hover: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -12,54 +24,62 @@
     }
     
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #002244 0%, #004080 100%);
-      color: #333;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-main);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      -webkit-font-smoothing: antialiased;
     }
     
     header {
-      background: #001f3f;
+      background: var(--primary-dark);
       color: #fff;
       text-align: center;
-      padding: 1.5rem 1rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      border-bottom: 3px solid #ff6600;
+      padding: 1.8rem 1rem 1.2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      border-bottom: 3px solid var(--accent);
+      position: relative;
     }
     
     header h1 {
-      font-size: 2.2rem;
-      margin-bottom: 0.2rem;
-      letter-spacing: 0.5px;
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.1rem;
+      letter-spacing: 0.8px;
+      background: linear-gradient(90deg, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
     
     header p {
-      font-size: 1rem;
-      opacity: 0.9;
-      color: #ff8533;
-      margin-bottom: 0.8rem;
+      font-size: 0.95rem;
+      color: #ff944d;
+      margin-bottom: 1rem;
+      font-weight: 500;
+      letter-spacing: 0.3px;
     }
 
     .user-info-bar {
-      display: flex;
+      display: inline-flex;
+      align-items: center;
       justify-content: center;
-      gap: 1.5rem;
-      font-size: 0.9rem;
-      background: rgba(0, 0, 0, 0.2);
-      padding: 0.5rem 1rem;
-      border-radius: 20px;
-      max-width: 500px;
-      margin: 0 auto;
-      color: #e2e8f0;
+      gap: 1.2rem;
+      font-size: 0.85rem;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      padding: 0.4rem 1.2rem;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #f1f5f9;
     }
     
     .container {
       flex: 1;
-      max-width: 1200px;
+      max-width: 1350px;
       margin: 2rem auto;
-      padding: 0 1rem;
+      padding: 0 1.5rem;
       width: 100%;
       display: flex;
       align-items: center;
@@ -67,28 +87,28 @@
     
     .abas-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.2rem;
       width: 100%;
     }
     
     .aba-btn {
-      background: #ffffff;
-      border: none;
-      border-radius: 12px;
-      padding: 1.5rem 1.2rem;
+      background: var(--card-bg);
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 14px;
+      padding: 1.2rem 1rem;
       cursor: pointer;
       text-align: center;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       text-decoration: none;
-      color: inherit;
+      color: var(--text-main);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      min-height: 180px;
+      justify-content: flex-start;
+      min-height: 145px;
       position: relative;
       overflow: hidden;
     }
@@ -99,53 +119,56 @@
       top: 0;
       left: 0;
       width: 100%;
-      height: 4px;
-      background: #003366;
-      transition: background 0.3s ease;
+      height: 3px;
+      background: var(--primary);
+      transition: background 0.25s ease;
     }
     
     .aba-btn:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 12px 25px rgba(0,0,0,0.25);
-      background: #f8fafc;
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22);
+      background: var(--card-hover);
+      border-color: rgba(255, 102, 0, 0.4);
     }
 
     .aba-btn:hover::before {
-      background: #ff6600;
+      background: var(--accent);
     }
     
     .aba-btn.ativo {
-      background: #ff6600;
+      background: var(--accent);
       color: #fff;
-      box-shadow: 0 8px 20px rgba(255, 102, 0, 0.4);
+      box-shadow: 0 8px 22px rgba(255, 102, 0, 0.35);
+      border-color: transparent;
     }
 
     .aba-btn.ativo::before {
-      background: #002244;
+      background: var(--primary-dark);
     }
     
     .aba-btn.ativo:hover {
-      background: #e55a00;
+      background: var(--accent-hover);
     }
     
     .aba-icon {
-      width: 42px;
-      height: 42px;
-      margin-bottom: 0.8rem;
+      width: 32px;
+      height: 32px;
+      margin-bottom: 0.6rem;
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
     }
 
     .aba-icon svg {
       width: 100%;
       height: 100%;
-      fill: #003366;
-      transition: fill 0.3s ease;
+      fill: var(--primary);
+      transition: fill 0.25s ease;
     }
 
     .aba-btn:hover .aba-icon svg {
-      fill: #ff6600;
+      fill: var(--accent);
     }
 
     .aba-btn.ativo .aba-icon svg {
@@ -153,54 +176,78 @@
     }
     
     .aba-titulo {
-      font-size: 1.15rem;
+      font-size: 0.98rem;
       font-weight: 700;
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.25rem;
+      letter-spacing: -0.2px;
     }
     
     .aba-desc {
-      font-size: 0.82rem;
-      opacity: 0.75;
-      line-height: 1.4;
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
     
     .aba-btn.ativo .aba-desc {
-      opacity: 0.95;
+      color: rgba(255, 255, 255, 0.9);
     }
     
     footer {
-      background: #001f3f;
-      color: #fff;
+      background: var(--primary-dark);
+      color: #94a3b8;
       text-align: center;
-      padding: 1.2rem;
+      padding: 1rem;
       margin-top: auto;
-      font-size: 0.9rem;
-      border-top: 2px solid #003366;
+      font-size: 0.85rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     footer p {
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.2rem;
+    }
+
+    footer strong {
+      color: #e2e8f0;
     }
     
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
       header h1 {
-        font-size: 1.7rem;
+        font-size: 1.6rem;
       }
       
       .user-info-bar {
         flex-direction: column;
-        gap: 0.2rem;
-        font-size: 0.85rem;
+        gap: 0.1rem;
+        padding: 0.4rem 1rem;
+        border-radius: 16px;
       }
 
       .abas-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 0.8rem;
       }
       
       .aba-btn {
-        min-height: 140px;
-        padding: 1.2rem;
+        min-height: 130px;
+        padding: 1rem 0.8rem;
+      }
+
+      .aba-icon {
+        width: 28px;
+        height: 28px;
+        margin-bottom: 0.4rem;
+      }
+
+      .aba-titulo {
+        font-size: 0.9rem;
+      }
+
+      .aba-desc {
+        font-size: 0.7rem;
       }
     }
   </style>
@@ -228,7 +275,7 @@
       
       <a href="/ia/" class="aba-btn ativo">
         <div class="aba-icon">
-          <svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A1.5 1.5 0 0 0 6 14.5a1.5 1.5 0 0 0 1.5 1.5A1.5 1.5 0 0 0 9 14.5 1.5 1.5 0 0 0 7.5 13m9 0a1.5 1.5 0 0 0-1.5 1.5a1.5 1.5 0 0 0 1.5 1.5a1.5 1.5 0 0 0 1.5-1.5a1.5 1.5 0 0 0-1.5-1.5M12 10c-2.33 0-4.31 1.35-5.22 3.3c-.11.23.03.5.28.5h.39c.2 0 .38-.11.47-.29C8.42 12.39 10.05 11.5 12 11.5s3.58.89 4.38 2.51c.09.18.27.29.47.29h.39c.25 0 .39-.27.28-.5C16.31 11.35 14.33 10 12 10z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A1.5 1.5 0 0 0 6 14.5a1.5 1.5 0 0 0 1.5 1.5A1.5 1.5 0 0 0 9 14.5A1.5 1.5 0 0 0 7.5 13m9 0a1.5 1.5 0 0 0-1.5 1.5a1.5 1.5 0 0 0 1.5 1.5a1.5 1.5 0 0 0 1.5-1.5a1.5 1.5 0 0 0-1.5-1.5M12 10c-2.33 0-4.31 1.35-5.22 3.3c-.11.23.03.5.28.5h.39c.2 0 .38-.11.47-.29C8.42 12.39 10.05 11.5 12 11.5s3.58.89 4.38 2.51c.09.18.27.29.47.29h.39c.25 0 .39-.27.28-.5C16.31 11.35 14.33 10 12 10z"/></svg>
         </div>
         <div class="aba-titulo">MP Hub IA</div>
         <div class="aba-desc">Assistente de inteligência artificial para suas demandas</div>
@@ -339,7 +386,6 @@
   </footer>
 
   <script>
-    // Script simples para atualizar a saudação e a data atual automaticamente
     const dataCorrente = new Date();
     const opcoesData = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     document.getElementById('data-atual').innerText = dataCorrente.toLocaleDateString('pt-BR', opcoesData);
