@@ -27,7 +27,7 @@ function mascaraTelefone(input) {
   input.value = v;
 }
 
-// Reconhecimento de Voz
+// Reconhecimento de Voz robusto unificado
 if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
   const SpeechGen = window.SpeechRecognition || window.webkitSpeechRecognition;
   reconhecimentoAudio = new SpeechGen();
@@ -38,7 +38,9 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     if (campoGravandoId) {
       const resultadoTexto = event.results[0][0].transcript;
       const campoTarget = document.getElementById(campoGravandoId);
-      campoTarget.value += (campoTarget.value? " " : "") + resultadoTexto;
+      if(campoTarget) {
+        campoTarget.value += (campoTarget.value ? " " : "") + resultadoTexto;
+      }
     }
   };
   reconhecimentoAudio.onend = pararGravacaoUI;
@@ -51,13 +53,14 @@ function gerenciarAudio(idCampo, botao) {
     return;
   }
   if (campoGravandoId === idCampo) {
-    reconhecimentoAudio.stop();
+    try { reconhecimentoAudio.stop(); } catch(e) {}
+    pararGravacaoUI();
   } else {
     pararGravacaoUI();
     campoGravandoId = idCampo;
     botao.classList.add('gravando');
     botao.innerText = "🛑 Gravando...";
-    reconhecimentoAudio.start();
+    try { reconhecimentoAudio.start(); } catch(e) {}
   }
 }
 
@@ -74,7 +77,7 @@ function toggleFiltro(elemento, texto) {
   elemento.classList.toggle('active');
   const campoEvitar = document.getElementById('evitar');
   if (elemento.classList.contains('active')) {
-    campoEvitar.value += (campoEvitar.value? "\n" : "") + texto;
+    campoEvitar.value += (campoEvitar.value ? "\n" : "") + texto;
     elemento.innerText = elemento.innerText.replace('⬜', '✅');
   } else {
     campoEvitar.value = campoEvitar.value.replace(texto, "").replace(/^\s*[\r\n]/gm, "").trim();
@@ -116,7 +119,7 @@ function copiarPromptGerado() {
 
 function executarFeedback(status) {
   let respostaTexto = document.getElementById('resposta_ia').value;
-  let relatorioFeedback = `ANÁLISE DE FEEDBACK E CAUSA RAIZ (NÍVEL ALTO):\nStatus da Interação: [${status.toUpperCase()}]\n\nCONTEÚDO ANALISADO DA IA:\n${respostaTexto || "Nenhum texto colado."}`;
+  let relatorioFeedback = `ANÁLISE DE FEEDBACK E CAUSA RAIZ:\nStatus da Interação: [${status.toUpperCase()}]\n\nCONTEÚDO ANALISADO DA IA:\n${respostaTexto || "Nenhum texto colado."}`;
 
   let painel = document.getElementById('prompt-final');
   painel.innerText = relatorioFeedback;
