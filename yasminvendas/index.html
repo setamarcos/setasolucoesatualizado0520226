@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#123b70">
+  <meta name="description" content="Yasmin Souza - Trufas artesanais">
+  <title>Yasmin Souza | Trufas</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="topo">
+  <div class="logo-area">
+    <img src="logo.png" alt="Yasmin Trufas" class="logo">
+  </div>
+
+  <div id="dataHora" class="data-hora"></div>
+</header>
+
+<main>
+
+  <!-- APRESENTAÇÃO -->
+  <section class="hero">
+
+    <div class="hero-texto">
+      <span class="tag">TRUFAS ARTESANAIS</span>
+
+      <h1>Um doce feito<br>para <strong>você.</strong></h1>
+
+      <p>
+        Escolha seus sabores, informe a quantidade
+        e envie seu pedido diretamente para a Yasmin.
+      </p>
+
+      <a href="#pedido" class="btn-principal">
+        Fazer pedido
+      </a>
+    </div>
+
+    <div class="perfil">
+      <img src="yasmin.png" alt="Yasmin Souza" class="foto-yasmin">
+
+      <button id="abrirControle" class="nome-yasmin">
+        Yasmin Souza
+        <span>• Espaço Controle Yasmin</span>
+      </button>
+    </div>
+
+  </section>
+
+  <!-- VÍDEO -->
+  <section class="secao-video">
+
+    <div class="titulo-secao">
+      <span>CONHEÇA</span>
+      <h2>Minhas trufas</h2>
+    </div>
+
+    <div class="video-box">
+      <video controls playsinline preload="metadata">
+        <source src="video_trufas1.mp4" type="video/mp4">
+        Seu navegador não suporta vídeo.
+      </video>
+    </div>
+
+  </section>
+
+  <!-- FOTOS -->
+  <section class="galeria">
+
+    <div class="titulo-secao">
+      <span>FEITAS COM CARINHO</span>
+      <h2>Escolha seu sabor</h2>
+    </div>
+
+    <div class="grid-fotos">
+      <img src="trufa1.png" alt="Trufa 1">
+      <img src="trufa2.png" alt="Trufa 2">
+      <img src="trufa3.png" alt="Trufa 3">
+      <img src="trufa4.png" alt="Trufa 4">
+      <img src="trufa5.png" alt="Trufa 5">
+      <img src="trufa6.png" alt="Trufa 6">
+    </div>
+
+  </section>
+
+  <!-- PEDIDO -->
+  <section id="pedido" class="pedido">
+
+    <div class="titulo-secao">
+      <span>SEU PEDIDO</span>
+      <h2>Monte suas trufas</h2>
+    </div>
+
+    <div class="sabores">
+
+      <div class="sabor">
+        <span>Amendoim</span>
+        <input type="number" min="0" value="0" data-sabor="Amendoim">
+      </div>
+
+      <div class="sabor">
+        <span>Brigadeiro</span>
+        <input type="number" min="0" value="0" data-sabor="Brigadeiro">
+      </div>
+
+      <div class="sabor">
+        <span>Café</span>
+        <input type="number" min="0" value="0" data-sabor="Café">
+      </div>
+
+      <div class="sabor">
+        <span>Coco</span>
+        <input type="number" min="0" value="0" data-sabor="Coco">
+      </div>
+
+      <div class="sabor">
+        <span>Maracujá</span>
+        <input type="number" min="0" value="0" data-sabor="Maracujá">
+      </div>
+
+      <div class="sabor">
+        <span>Ninho</span>
+        <input type="number" min="0" value="0" data-sabor="Ninho">
+      </div>
+
+      <div class="sabor">
+        <span>Outros</span>
+        <input type="number" min="0" value="0" data-sabor="Outros">
+      </div>
+
+    </div>
+
+    <div class="resumo-pedido">
+
+      <div>
+        <small>Quantidade</small>
+        <strong id="totalQuantidade">0</strong>
+      </div>
+
+      <div>
+        <small>Valor por trufa</small>
+        <strong>R$ 5,00</strong>
+      </div>
+
+      <div class="total">
+        <small>Total do pedido</small>
+        <strong id="valorTotal">R$ 0,00</strong>
+      </div>
+
+    </div>
+
+    <button id="confirmarPedido" class="btn-whatsapp">
+      Confirmar pedido pelo WhatsApp
+    </button>
+
+    <p class="observacao">
+      O pedido será enviado para a Yasmin, que confirmará
+      disponibilidade e horário diretamente pelo WhatsApp.
+    </p>
+
+  </section>
+
+  <!-- CONTATO -->
+  <section class="contato">
+
+    <div>
+      <span>PARA FESTAS E EVENTOS</span>
+      <h2>Precisa de mais opções?</h2>
+      <p>
+        Tem outras opções de doces ou está planejando
+        uma festa? Fale diretamente comigo.
+      </p>
+    </div>
+
+    <a
+      class="btn-contato"
+      href="https://wa.me/5531982369189?text=Oi%20Yasmin!%20Quero%20conversar%20sobre%20outras%20opções%20de%20doces%20e%20itens%20para%20minha%20festa."
+      target="_blank"
+      rel="noopener">
+      Falar com Yasmin
+    </a>
+
+  </section>
+
+</main>
+
+<footer>
+  <strong>Yasmin Souza</strong>
+  <span>Trufas artesanais</span>
+</footer>
+
+<!-- PAINEL PRIVADO -->
+
+<div id="painelControle" class="modal">
+
+  <div class="painel">
+
+    <button id="fecharPainel" class="fechar">×</button>
+
+    <!-- LOGIN -->
+    <div id="loginArea">
+
+      <img src="yasmin.png" class="foto-login" alt="Yasmin">
+
+      <h2>Espaço Controle</h2>
+      <p>Acesso exclusivo da Yasmin</p>
+
+      <input
+        id="senhaControle"
+        type="password"
+        inputmode="numeric"
+        maxlength="4"
+        placeholder="Senha">
+
+      <button id="entrarControle" class="btn-principal">
+        Entrar
+      </button>
+
+      <div id="erroSenha" class="erro"></div>
+
+    </div>
+
+    <!-- SISTEMA -->
+    <div id="sistemaControle" class="oculto">
+
+      <div class="painel-topo">
+        <div>
+          <span>ESPAÇO CONTROLE</span>
+          <h2>Yasmin Trufas</h2>
+        </div>
+
+        <button id="sairControle" class="btn-sair">
+          Sair
+        </button>
+      </div>
+
+      <!-- INDICADORES -->
+
+      <div class="indicadores">
+
+        <div class="indicador">
+          <span>Vendas</span>
+          <strong id="dashVendas">R$ 0,00</strong>
+        </div>
+
+        <div class="indicador">
+          <span>Estoque</span>
+          <strong id="dashEstoque">0</strong>
+        </div>
+
+        <div class="indicador">
+          <span>Gastos</span>
+          <strong id="dashGastos">R$ 0,00</strong>
+        </div>
+
+        <div class="indicador destaque">
+          <span>Lucro</span>
+          <strong id="dashLucro">R$ 0,00</strong>
+        </div>
+
+      </div>
+
+      <!-- PERÍODOS -->
+
+      <div class="periodos">
+
+        <div>
+          <span>Semana</span>
+          <strong id="periodoSemana">R$ 0,00</strong>
+        </div>
+
+        <div>
+          <span>Mês</span>
+          <strong id="periodoMes">R$ 0,00</strong>
+        </div>
+
+        <div>
+          <span>Ano</span>
+          <strong id="periodoAno">R$ 0,00</strong>
+        </div>
+
+      </div>
+
+      <!-- NOVA VENDA -->
+
+      <div class="controle-card">
+
+        <div class="card-titulo">
+          <div>
+            <span>01</span>
+            <h3>Registrar venda</h3>
+          </div>
+        </div>
+
+        <div class="form-grid">
+
+          <label>
+            Total de trufas vendidas
+            <input id="vendaTotal" type="number" min="1" placeholder="Ex.: 5">
+          </label>
+
+          <label>
+            Local da venda
+            <input id="vendaLocal" type="text" placeholder="Ex.: Escola">
+          </label>
+
+          <label>
+            Tempo da venda (min)
+            <input id="vendaTempo" type="number" min="0" placeholder="Opcional">
+          </label>
+
+        </div>
+
+        <div class="subtitulo-flex">
+          <span class="subtitulo">Sabores — opcional</span>
+          <div class="controles-linhas">
+            <button type="button" class="btn-linha" onclick="adicionarLinhaSabor('venda')">+</button>
+            <button type="button" class="btn-linha" onclick="removerLinhaSabor('venda')">-</button>
+          </div>
+        </div>
+
+        <div class="mini-sabores" id="containerVendaSabores">
+
+          <label>Amendoim <input class="venda-sabor" data-sabor="Amendoim" type="number" min="0"></label>
+          <label>Brigadeiro <input class="venda-sabor" data-sabor="Brigadeiro" type="number" min="0"></label>
+          <label>Café <input class="venda-sabor" data-sabor="Café" type="number" min="0"></label>
+          <label>Coco <input class="venda-sabor" data-sabor="Coco" type="number" min="0"></label>
+          <label>Maracujá <input class="venda-sabor" data-sabor="Maracujá" type="number" min="0"></label>
+          <label>Ninho <input class="venda-sabor" data-sabor="Ninho" type="number" min="0"></label>
+          <label>Outros <input class="venda-sabor" data-sabor="Outros" type="number" min="0"></label>
+
+        </div>
+
+        <button id="salvarVenda" class="btn-principal">
+          Salvar venda
+        </button>
+
+      </div>
+
+      <!-- PRODUÇÃO -->
+
+      <div class="controle-card">
+
+        <div class="card-titulo">
+          <div>
+            <span>02</span>
+            <h3>Registrar produção</h3>
+          </div>
+        </div>
+
+        <div class="form-grid">
+
+          <label>
+            Total produzido
+            <input id="producaoTotal" type="number" min="1" placeholder="Ex.: 20">
+          </label>
+
+          <label>
+            Valor gasto
+            <input id="producaoGasto" type="number" min="0" step="0.01" placeholder="Ex.: 35,00">
+          </label>
+
+          <label>
+            Local da produção
+            <input id="producaoLocal" type="text" placeholder="Opcional">
+          </label>
+
+          <label>
+            Tempo de produção (min)
+            <input id="producaoTempo" type="number" min="0" placeholder="Opcional">
+          </label>
+
+        </div>
+
+        <div class="subtitulo-flex">
+          <span class="subtitulo">Sabores — opcional</span>
+          <div class="controles-linhas">
+            <button type="button" class="btn-linha" onclick="adicionarLinhaSabor('producao')">+</button>
+            <button type="button" class="btn-linha" onclick="removerLinhaSabor('producao')">-</button>
+          </div>
+        </div>
+
+        <div class="mini-sabores" id="containerProducaoSabores">
+
+          <label>Amendoim <input class="producao-sabor" data-sabor="Amendoim" type="number" min="0"></label>
+          <label>Brigadeiro <input class="producao-sabor" data-sabor="Brigadeiro" type="number" min="0"></label>
+          <label>Café <input class="producao-sabor" data-sabor="Café" type="number" min="0"></label>
+          <label>Coco <input class="producao-sabor" data-sabor="Coco" type="number" min="0"></label>
+          <label>Maracujá <input class="producao-sabor" data-sabor="Maracujá" type="number" min="0"></label>
+          <label>Ninho <input class="producao-sabor" data-sabor="Ninho" type="number" min="0"></label>
+          <label>Outros <input class="producao-sabor" data-sabor="Outros" type="number" min="0"></label>
+
+        </div>
+
+        <button id="salvarProducao" class="btn-principal">
+          Salvar produção
+        </button>
+
+      </div>
+
+      <!-- VENDAS REGISTRADAS -->
+
+      <div class="controle-card">
+
+        <div class="card-titulo">
+          <div>
+            <span>03</span>
+            <h3>Vendas registradas</h3>
+          </div>
+        </div>
+
+        <div class="tabela-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Qtd.</th>
+                <th>Valor</th>
+                <th>Sabores</th>
+              </tr>
+            </thead>
+
+            <tbody id="tabelaVendas"></tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- PRODUÇÕES -->
+
+      <div class="controle-card">
+
+        <div class="card-titulo">
+          <div>
+            <span>04</span>
+            <h3>Produções registradas</h3>
+          </div>
+        </div>
+
+        <div class="tabela-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Qtd.</th>
+                <th>Gasto</th>
+                <th>Custo/trufa</th>
+              </tr>
+            </thead>
+
+            <tbody id="tabelaProducoes"></tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
