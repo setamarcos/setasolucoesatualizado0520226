@@ -20,28 +20,20 @@
   <div class="logo-area">
     <img src="logo.png" alt="Yasmin Trufas" class="logo">
   </div>
-
   <div id="dataHora" class="data-hora"></div>
 </header>
 
 <main>
 
-  <!-- APRESENTAÇÃO -->
   <section class="hero">
-
     <div class="hero-texto">
       <span class="tag">TRUFAS ARTESANAIS</span>
-
       <h1>Um doce feito<br>para <strong>você.</strong></h1>
-
       <p>
         Escolha seus sabores, informe a quantidade
         e envie seu pedido diretamente para a Yasmin.
       </p>
-
-      <a href="#pedido" class="btn-principal">
-        Fazer pedido
-      </a>
+      <a href="#pedido" class="btn-principal">Fazer pedido</a>
     </div>
 
     <div class="perfil">
@@ -52,12 +44,9 @@
         <span>• Espaço Controle Yasmin</span>
       </button>
     </div>
-
   </section>
 
-  <!-- VÍDEO -->
   <section class="secao-video">
-
     <div class="titulo-secao">
       <span>CONHEÇA</span>
       <h2>Minhas trufas</h2>
@@ -69,12 +58,9 @@
         Seu navegador não suporta vídeo.
       </video>
     </div>
-
   </section>
 
-  <!-- FOTOS -->
   <section class="galeria">
-
     <div class="titulo-secao">
       <span>FEITAS COM CARINHO</span>
       <h2>Escolha seu sabor</h2>
@@ -88,12 +74,9 @@
       <img src="trufa5.png" alt="Trufa 5">
       <img src="trufa6.png" alt="Trufa 6">
     </div>
-
   </section>
 
-  <!-- PEDIDO -->
   <section id="pedido" class="pedido">
-
     <div class="titulo-secao">
       <span>SEU PEDIDO</span>
       <h2>Monte suas trufas</h2>
@@ -139,7 +122,6 @@
     </div>
 
     <div class="resumo-pedido">
-
       <div>
         <small>Quantidade</small>
         <strong id="totalQuantidade">0</strong>
@@ -154,7 +136,6 @@
         <small>Total do pedido</small>
         <strong id="valorTotal">R$ 0,00</strong>
       </div>
-
     </div>
 
     <button id="confirmarPedido" class="btn-whatsapp">
@@ -165,12 +146,9 @@
       O pedido será enviado para a Yasmin, que confirmará
       disponibilidade e horário diretamente pelo WhatsApp.
     </p>
-
   </section>
 
-  <!-- CONTATO -->
   <section class="contato">
-
     <div>
       <span>PARA FESTAS E EVENTOS</span>
       <h2>Precisa de mais opções?</h2>
@@ -187,7 +165,6 @@
       rel="noopener">
       Falar com Yasmin
     </a>
-
   </section>
 
 </main>
@@ -197,15 +174,12 @@
   <span>Trufas artesanais</span>
 </footer>
 
-<!-- PAINEL PRIVADO -->
-
 <div id="painelControle" class="modal">
 
   <div class="painel">
 
     <button id="fecharPainel" class="fechar">×</button>
 
-    <!-- LOGIN -->
     <div id="loginArea">
 
       <img src="yasmin.png" class="foto-login" alt="Yasmin">
@@ -228,7 +202,6 @@
 
     </div>
 
-    <!-- SISTEMA -->
     <div id="sistemaControle" class="oculto">
 
       <div class="painel-topo">
@@ -241,8 +214,6 @@
           Sair
         </button>
       </div>
-
-      <!-- INDICADORES -->
 
       <div class="indicadores">
 
@@ -268,8 +239,6 @@
 
       </div>
 
-      <!-- PERÍODOS -->
-
       <div class="periodos">
 
         <div>
@@ -289,7 +258,7 @@
 
       </div>
 
-      <!-- NOVA VENDA -->
+      <!-- VENDA -->
 
       <div class="controle-card">
 
@@ -321,9 +290,10 @@
 
         <div class="subtitulo-flex">
           <span class="subtitulo">Sabores — opcional</span>
+
           <div class="controles-linhas">
             <button type="button" class="btn-linha" onclick="adicionarLinhaSabor('venda')">+</button>
-            <button type="button" class="btn-linha" onclick="removerLinhaSabor('venda')">-</button>
+            <button type="button" class="btn-linha" onclick="removerLinhaSabor('venda')">−</button>
           </div>
         </div>
 
@@ -382,9 +352,10 @@
 
         <div class="subtitulo-flex">
           <span class="subtitulo">Sabores — opcional</span>
+
           <div class="controles-linhas">
             <button type="button" class="btn-linha" onclick="adicionarLinhaSabor('producao')">+</button>
-            <button type="button" class="btn-linha" onclick="removerLinhaSabor('producao')">-</button>
+            <button type="button" class="btn-linha" onclick="removerLinhaSabor('producao')">−</button>
           </div>
         </div>
 
@@ -425,6 +396,7 @@
                 <th>Qtd.</th>
                 <th>Valor</th>
                 <th>Sabores</th>
+                <th>Ações</th>
               </tr>
             </thead>
 
@@ -453,6 +425,8 @@
                 <th>Qtd.</th>
                 <th>Gasto</th>
                 <th>Custo/trufa</th>
+                <th>Sabores</th>
+                <th>Ações</th>
               </tr>
             </thead>
 
@@ -463,9 +437,7 @@
       </div>
 
     </div>
-
   </div>
-
 </div>
 
 <div id="toast"></div>
