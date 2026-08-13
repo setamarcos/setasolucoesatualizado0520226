@@ -85,22 +85,20 @@ function toggleFiltro(elemento, texto) {
   }
 }
 
-// Gerar Prompt
 function gerarPromptEstruturado() {
   let painel = document.getElementById('prompt-final');
   painel.innerText = "";
   painel.style.display = 'none';
 
-  let prompt = `IA TE TRARA MELHOR RESULTADO ASSIM:\n`;
-  prompt += `### TAREFA PRINCIPAL ###\n`;
+  // Edite apenas este bloco abaixo:
+  let prompt = `### TAREFA PRINCIPAL ###\n`;
   prompt += `${document.getElementById('solicitacao').value}\n\n`;
   prompt += `### CONTEXTO ###\n`;
   prompt += `${document.getElementById('detalhe').value}\n\n`;
-  prompt += `O QUE EU TE ENTREGUEI ASSIM:\n`;
-  prompt += `### RESTRIÇÕES - O QUE EVITAR ###\n`;
-  prompt += `${document.getElementById('evitar').value || "Nenhuma restrição informada."}\n\n`;
+  prompt += `### RESTRIÇÕES ###\n`;
+  prompt += `${document.getElementById('evitar').value || "Sem restrições adicionais."}\n\n`;
   prompt += `### INSTRUÇÃO FINAL ###\n`;
-  prompt += `Atue como um especialista sênior ultrapragmático. Vá direto à solução técnica ou prática. Elimine qualquer preâmbulo, validação óbvia ou cortesia robótica. Entregue exatamente o que foi pedido em blocos limpos, organizados e focados em execução imediata via celular.`;
+  prompt += `Atue como um especialista sênior ultrapragmático. Vá direto à solução técnica ou prática. Elimine preâmbulos, validações óbvias ou cortesia. Entregue a resposta.`;
 
   painel.innerText = prompt;
   painel.style.display = 'block';
