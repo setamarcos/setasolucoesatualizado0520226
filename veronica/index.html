@@ -5,6 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Verônica Castro | Atendimento Domiciliar</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 :root {
   --azul-suave: #1b4d8e;
@@ -28,7 +29,6 @@ body {
   min-height: 100vh;
 }
 
-/* --- CONTEÚDO PRINCIPAL (Vitrine Ampliada) --- */
 #conteudo-principal {
   width: 100%; max-width: 960px; margin: auto;
   background: var(--branco); min-height: 100vh;
@@ -36,7 +36,6 @@ body {
   display: flex; flex-direction: column; padding: 20px 24px 40px;
 }
 
-/* --- PAINEL PRIVADO (Ampliado) --- */
 #painel-privado {
   display: none; width: 100%; max-width: 960px; margin: auto;
   background: var(--branco); min-height: 100vh;
@@ -68,7 +67,6 @@ tr:nth-child(even) { background-color: #f9fafb; }
 .btn-editar { background: #f39c12; }
 .btn-excluir { background: #e74c3c; }
 
-/* Cabeçalho Perfil Vitrine */
 .header-perfil { text-align: center; padding: 10px 0 12px; }
 .foto-container { width: 110px; height: 110px; margin: 0 auto 10px; position: relative; }
 .foto-perfil { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: center 15%; border: 4px solid var(--rosa-suave); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
@@ -87,7 +85,6 @@ tr:nth-child(even) { background-color: #f9fafb; }
 .btn-whatsapp { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background-color: var(--azul-suave); color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 30px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 15px rgba(27, 77, 142, 0.2); }
 .btn-whatsapp svg { width: 16px; height: 16px; fill: currentColor; }
 
-/* Seção Serviço Único & Agenda Simples */
 .secao-servicos { margin-bottom: 16px; }
 .titulo-secao { font-size: 18px; color: var(--azul-suave); margin: 0 0 12px; border-bottom: 2px solid var(--rosa-suave); padding-bottom: 4px; display: inline-block; font-weight: 600; }
 .servico-unico { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--branco); border: 1px solid var(--borda); border-radius: 12px; margin-bottom: 12px; }
@@ -98,13 +95,15 @@ tr:nth-child(even) { background-color: #f9fafb; }
 .servico-preco { font-size: 14px; font-weight: 700; color: #27ae60; text-align: right; }
 .servico-preco span { display: block; font-size: 9.5px; color: var(--texto-suave); font-weight: 400; }
 
-/* Bloco Agenda Simples - TUDO NA MESMA LINHA */
 .bloco-agenda { background: #fafafa; border: 1px solid var(--borda); border-radius: 12px; padding: 12px; margin-top: 10px; }
 .agenda-linha-unica { display: flex; gap: 8px; align-items: flex-end; width: 100%; flex-wrap: wrap; }
 .agenda-col { flex: 1; min-width: 130px; display: flex; flex-direction: column; }
 .agenda-label { font-size: 11px; font-weight: 600; color: var(--azul-suave); margin-bottom: 4px; white-space: nowrap; }
 .agenda-select, .agenda-input { width: 100%; padding: 8px; border: 1px solid var(--borda); border-radius: 8px; font-size: 13px; background: #fff; outline: none; }
 .btn-agendar-site { background: #27ae60; color: #fff; border: none; padding: 9px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; white-space: nowrap; height: 35px; }
+
+.grid-graficos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 12px; }
+.grafico-box { background: #fff; border: 1px solid var(--borda); border-radius: 8px; padding: 8px; }
 
 .rodape { margin-top: auto; text-align: center; padding: 20px 0 0; background-color: transparent; font-size: 12px; color: var(--texto-suave); line-height: 1.5; }
 .rodape-flor { display: block; font-size: 14px; margin: 2px 0; }
@@ -119,7 +118,6 @@ tr:nth-child(even) { background-color: #f9fafb; }
 </head>
 <body>
 
-<!-- Conteúdo Principal / Vitrine -->
 <div id="conteudo-principal">
   <header class="header-perfil">
     <div class="foto-container"><img src="veronica.jpg" alt="Verônica Castro" class="foto-perfil"></div>
@@ -151,7 +149,6 @@ tr:nth-child(even) { background-color: #f9fafb; }
       </div>
     </div>
 
-    <!-- Bloco Agenda Simples (Campos Ajustados) -->
     <div class="bloco-agenda">
       <div class="agenda-linha-unica">
         <div class="agenda-col" style="flex: 1.2;">
@@ -197,7 +194,6 @@ tr:nth-child(even) { background-color: #f9fafb; }
   </footer>
 </div>
 
-<!-- Painel Privado -->
 <div id="painel-privado">
   <div class="painel-header">
     <div style="width: 50px;"></div>
@@ -242,7 +238,6 @@ tr:nth-child(even) { background-color: #f9fafb; }
     </div>
   </div>
 
-  <!-- Resumos Financeiros -->
   <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:6px; margin-bottom:8px;">
     <div class="painel-card" style="padding:6px; text-align:center;"><div style="font-size:9px; color:var(--texto-suave);">Atend. Mês</div><div id="tot-atend-mes" style="font-weight:700; color:var(--azul-suave); font-size:12px;">0</div></div>
     <div class="painel-card" style="padding:6px; text-align:center;"><div style="font-size:9px; color:var(--texto-suave);">Total R$ Mês</div><div id="tot-valor-mes" style="font-weight:700; color:var(--azul-suave); font-size:12px;">R$ 0,00</div></div>
@@ -252,9 +247,18 @@ tr:nth-child(even) { background-color: #f9fafb; }
     <div class="painel-card" style="padding:6px; text-align:center;"><div style="font-size:9px; color:var(--texto-suave);">Média Mensal</div><div id="tot-media-mes" style="font-weight:700; color:var(--azul-suave); font-size:12px;">R$ 0,00</div></div>
   </div>
 
-  <div class="painel-card" style="background:#fdf8e2; border-color:#f39c12; text-align:center; padding:6px;"><div id="relex-txt" style="font-size:11px; font-style:italic;">Carregando...</div></div>
+  <!-- SEÇÃO DE GRÁFICOS INTERATIVOS -->
+  <div class="painel-card">
+    <div class="painel-card-title">📊 ANÁLISE GRÁFICA EM TEMPO REAL</div>
+    <div class="grid-graficos">
+      <div class="grafico-box"><canvas id="chartPizzaDiaAtend"></canvas></div>
+      <div class="grafico-box"><canvas id="chartBarrasDiaAtend"></canvas></div>
+      <div class="grafico-box"><canvas id="chartPizzaDiaValor"></canvas></div>
+      <div class="grafico-box"><canvas id="chartPizzaMesValor"></canvas></div>
+    </div>
+    <div class="grafico-box" style="margin-top: 12px;"><canvas id="chartBarrasAnoValor"></canvas></div>
+  </div>
 
-  <!-- TABELA AGENDA (AGENDAMENTOS DO SITE COM COLUNA WHATSAPP) -->
   <div class="painel-card" style="padding: 6px;">
     <div class="painel-card-title" style="padding: 2px;">📅 AGENDAMENTOS DO SITE (AGENDA)</div>
     <div class="tabela-container" style="max-height: 160px;">
@@ -274,9 +278,8 @@ tr:nth-child(even) { background-color: #f9fafb; }
     </div>
   </div>
 
-  <!-- REGISTRO DO MÊS -->
   <div class="painel-card" style="padding: 6px;">
-    <div class="painel-card-title" style="padding: 2px;">📊 REGISTRO DO MÊS (CRESCE AUTOMATICAMENTE)</div>
+    <div class="painel-card-title" style="padding: 2px;">📊 REGISTRO DE ATENDIMENTOS</div>
     <div class="tabela-container">
       <table>
         <thead>
@@ -297,7 +300,6 @@ tr:nth-child(even) { background-color: #f9fafb; }
   </div>
 </div>
 
-<!-- Modal de Senha -->
 <div id="modal-senha">
   <div class="modal-box">
     <div style="font-size: 24px; margin-bottom: 6px;">🌷</div>
@@ -312,37 +314,31 @@ tr:nth-child(even) { background-color: #f9fafb; }
 <script>
 const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyWTN1XC2JWhqWFPiVvxKSM8EUGUW8BvxSw59j5kQx8BD580ctuiqjiFW2uPPwjF3a9/exec";
 
+var instanciasGraficos = {};
+
 var momentosDoAno = [
   { frase: "Recria tua vida, sempre.", autor: "Cora Coralina" },
   { frase: "Delicadeza das pequenas coisas.", autor: "Cecília Meireles" },
   { frase: "Renda-se ao que não conhece.", autor: "Clarice Lispector" },
   { frase: "O que a memória ama, fica eterno.", autor: "Adélia Prado" },
-  { frase: "Tempo pra si é acalmar a alma.", autor: "Lya Luft" },
-  { frase: "Agradeço o que tenho e luto pelo que sou; o que me falta não me define, o que me move me faz gigante.", autor: "Clarice Lispector" },
-  { frase: "Ter o que é possível hoje já é vencer a partida de um futuro melhor.", autor: "Cora Coralina" },
-  { frase: "Não sofra pelo que ainda não alcançou; olhe a grandeza do passo que você já deu.", autor: "Adélia Prado" },
-  { frase: "A beleza está em olhar para a própria história e ver que estamos bem melhor do que imaginávamos.", autor: "Cecília Meireles" },
-  { frase: "Valorize cada pequena conquista diária. A vida recompensa quem sabe enxergar a própria força.", autor: "Lya Luft" }
+  { frase: "Tempo pra si é acalmar a alma.", autor: "Lya Luft" }
 ];
 
 function obterDiaDoAno(data) {
   var inicio = new Date(data.getFullYear(), 0, 0);
   var diff = (data - inicio) + ((inicio.getTimezoneOffset() - data.getTimezoneOffset()) * 60 * 1000);
-  var umDia = 1000 * 60 * 60 * 24;
-  return Math.floor(diff / umDia);
+  return Math.floor(diff / (1000 * 60 * 60 * 24));
 }
 
 function preencherDiasUteis() {
   var selectDia = document.getElementById('select-dia');
   selectDia.innerHTML = "";
   var hoje = new Date();
-  
   var contador = 0;
   var d = new Date(hoje);
   while (contador < 10) {
     d.setDate(d.getDate() + 1);
-    var diaSemana = d.getDay();
-    if (diaSemana !== 0 && diaSemana !== 6) { 
+    if (d.getDay() !== 0 && d.getDay() !== 6) { 
       var iso = d.toISOString().split('T')[0];
       var textoFormatado = d.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
       var opt = document.createElement('option');
@@ -354,22 +350,14 @@ function preencherDiasUteis() {
   }
 }
 
-// --- ENVIO DE AGENDAMENTO VIA SITE ---
 function enviarAgendamentoSite() {
   var nomeCliente = document.getElementById('input-nome-cliente').value.trim();
   var telCliente = document.getElementById('input-tel-cliente').value.trim();
   var diaSelecionado = document.getElementById('select-dia').value;
   var horarioSelecionado = document.getElementById('select-horario').value;
 
-  if (!nomeCliente) {
-    alert("Por favor, digite seu nome antes de agendar.");
-    document.getElementById('input-nome-cliente').focus();
-    return;
-  }
-  
-  if (!telCliente) {
-    alert("Por favor, digite seu número de telefone/WhatsApp.");
-    document.getElementById('input-tel-cliente').focus();
+  if (!nomeCliente || !telCliente) {
+    alert("Por favor, informe Nome e Telefone.");
     return;
   }
 
@@ -383,46 +371,28 @@ function enviarAgendamentoSite() {
     status: 'Pendente'
   };
 
-  // 1. Salva no LocalStorage
   let listaAgendamentos = JSON.parse(localStorage.getItem('veronica_agendamentos') || '[]');
   listaAgendamentos.unshift(payload);
   localStorage.setItem('veronica_agendamentos', JSON.stringify(listaAgendamentos));
 
-  // 2. Renderiza a tabela localmente
   carregarAgenda();
 
-  // 3. Envia para o Google Apps Script
   fetch(URL_SCRIPT, {
     method: 'POST',
     mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
-  }).catch(err => console.error("Erro no envio do agendamento:", err));
+  }).catch(err => console.error(err));
 
-  // 4. Formata a mensagem e abre o WhatsApp
   var partesData = diaSelecionado.split('-');
-  var dataFormatadaBr = partesData.reverse().join('/');
-  
-  var textoZap = `Olá Verônica! Gostaria de agendar Manicure Pé e Mão.\n\n` +
-                 `👤 *Nome:* ${nomeCliente}\n` +
-                 `📞 *Telefone:* ${telCliente}\n` +
-                 `📅 *Data:* ${dataFormatadaBr}\n` +
-                 `⏰ *Horário:* ${horarioSelecionado}`;
-                 
-  var urlZap = `https://wa.me/5531991946163?text=` + encodeURIComponent(textoZap);
-
-  document.getElementById('input-nome-cliente').value = '';
-  document.getElementById('input-tel-cliente').value = '';
-
-  window.open(urlZap, '_blank');
+  var textoZap = `Olá Verônica! Gostaria de agendar Manicure Pé e Mão.\n\n👤 *Nome:* ${nomeCliente}\n📞 *Telefone:* ${telCliente}\n📅 *Data:* ${partesData.reverse().join('/')}\n⏰ *Horário:* ${horarioSelecionado}`;
+  window.open(`https://wa.me/5531991946163?text=` + encodeURIComponent(textoZap), '_blank');
 }
 
-// --- RENDERIZAR TABELA DE AGENDAMENTOS DO SITE ---
 function carregarAgenda() {
   let listaAgendamentos = JSON.parse(localStorage.getItem('veronica_agendamentos') || '[]');
   var tbody = document.getElementById('tabela-agenda-corpo');
   if (!tbody) return;
-  
   tbody.innerHTML = '';
 
   if (listaAgendamentos.length === 0) {
@@ -439,18 +409,14 @@ function carregarAgenda() {
       <td>${item.telefone || ''}</td>
       <td>${dataFormatada}</td>
       <td>${item.horario || ''}</td>
-      <td>
-        <button class="btn-acao btn-excluir" onclick="excluirAgenda(${index})">Excluir</button>
-      </td>
+      <td><button class="btn-acao btn-excluir" onclick="excluirAgenda(${index})">Excluir</button></td>
     `;
     tbody.appendChild(tr);
   });
 }
 
-// --- SALVAR ATENDIMENTO (PAINEL PRIVADO) ---
 function salvarAtendimento() {
   const editIndex = parseInt(document.getElementById('edit-index').value);
-  
   const dados = {
     tipo: 'atendimento',
     dataRegistro: new Date().toLocaleString('pt-BR'),
@@ -465,234 +431,69 @@ function salvarAtendimento() {
     pgto: Array.from(document.querySelectorAll('.pgto:checked')).map(cb=>cb.value).join(', ')
   };
 
-  if(!dados.nome || !dados.valor || !dados.data){ 
-    alert("Preencha Cliente, Data e Valor."); 
-    return; 
-  }
+  if(!dados.nome || !dados.valor || !dados.data){ alert("Preencha Cliente, Data e Valor."); return; }
   
   let listaAtendimentos = JSON.parse(localStorage.getItem('veronica_atendimentos') || '[]');
-  
-  if (editIndex >= 0) {
-    listaAtendimentos[editIndex] = dados;
-  } else {
-    listaAtendimentos.unshift(dados);
-  }
+  if (editIndex >= 0) listaAtendimentos[editIndex] = dados;
+  else listaAtendimentos.unshift(dados);
   
   localStorage.setItem('veronica_atendimentos', JSON.stringify(listaAtendimentos));
   
   fetch(URL_SCRIPT, {
-    method: 'POST',
-    mode: 'no-cors',
+    method: 'POST', mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dados)
-  })
-  .then(() => {
-    limparForm();
-    carregarPlanilha();
-  })
-  .catch(err => {
-    console.error("Erro ao exportar:", err);
-    limparForm();
-    carregarPlanilha();
-  });
+  }).then(() => { limparForm(); carregarPlanilha(); });
 }
 
-// --- EXCLUIR AGENDAMENTO ---
 function excluirAgenda(index) {
-  if (confirm("Excluir este agendamento da lista?")) {
+  if (confirm("Excluir este agendamento?")) {
     let listaAgendamentos = JSON.parse(localStorage.getItem('veronica_agendamentos') || '[]');
     let itemRemovido = listaAgendamentos.splice(index, 1)[0];
     localStorage.setItem('veronica_agendamentos', JSON.stringify(listaAgendamentos));
-    
-    fetch(URL_SCRIPT, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tipo: 'excluir_agendamento', dados: itemRemovido })
-    }).catch(err => console.error("Erro na exclusão:", err));
-
+    fetch(URL_SCRIPT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tipo: 'excluir_agendamento', dados: itemRemovido }) });
     carregarAgenda();
   }
 }
 
-// --- EXCLUIR ATENDIMENTO ---
 function excluir(index){ 
   if(confirm("Excluir este registro?")){ 
     let listaAtendimentos = JSON.parse(localStorage.getItem('veronica_atendimentos') || '[]');
     let itemRemovido = listaAtendimentos.splice(index, 1)[0];
     localStorage.setItem('veronica_atendimentos', JSON.stringify(listaAtendimentos));
-    
-    fetch(URL_SCRIPT, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tipo: 'excluir_atendimento', dados: itemRemovido })
-    }).catch(err => console.error("Erro na exclusão:", err));
-
+    fetch(URL_SCRIPT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tipo: 'excluir_atendimento', dados: itemRemovido }) });
     carregarPlanilha();
   } 
-}
-
-function definirMomentoDoDia() {
-  var hoje = new Date();
-  var opcoesData = { weekday: 'long', day: 'numeric', month: 'long' };
-  document.getElementById('txt-data').innerText = hoje.toLocaleDateString('pt-BR', opcoesData);
-  
-  var diaAno = obterDiaDoAno(hoje);
-  var indice = diaAno % momentosDoAno.length;
-  var selecionado = momentosDoAno[indice];
-  
-  document.getElementById('txt-momento').innerText = '"' + selecionado.frase + '"';
-  document.getElementById('autor-momento').innerText = '— ' + selecionado.autor;
-  
-  var dataIso = hoje.toISOString().split('T')[0];
-  var inputDataEl = document.getElementById('input-data');
-  if(inputDataEl && !inputDataEl.value) {
-    inputDataEl.value = dataIso;
-    atualizarRetornoAutomatico();
-  }
-}
-
-function atualizarRetornoAutomatico() {
-  var dataVal = document.getElementById('input-data').value;
-  if (!dataVal) return;
-  var d = new Date(dataVal + 'T00:00:00');
-  d.setDate(d.getDate() + 14);
-  var retornoIso = d.toISOString().split('T')[0];
-  document.getElementById('input-retorno').value = retornoIso;
-}
-
-function solicitarSenha() {
-  document.getElementById('modal-senha').style.display = 'flex';
-  document.getElementById('input-senha-veronica').focus();
-}
-
-function fecharModal(e) {
-  if(e) e.preventDefault();
-  document.getElementById('modal-senha').style.display = 'none';
-  document.getElementById('input-senha-veronica').value = "";
-}
-
-function validarSenha() {
-  if (document.getElementById('input-senha-veronica').value === "1401") {
-    fecharModal();
-    document.getElementById('conteudo-principal').style.display = 'none';
-    document.getElementById('painel-privado').style.display = 'flex';
-    setarCabecalhoEspaco();
-    carregarAgenda();
-    carregarPlanilha();
-  } else {
-    alert("Senha incorreta.");
-    document.getElementById('input-senha-veronica').value = "";
-  }
-}
-
-function sairPainel() {
-  document.getElementById('painel-privado').style.display = 'none';
-  document.getElementById('conteudo-principal').style.display = 'flex';
-}
-
-function setarCabecalhoEspaco(){
-  const hoje = new Date();
-  const opcoesData = { weekday: 'long', day: 'numeric', month: 'long' };
-  const dataFormatada = hoje.toLocaleDateString('pt-BR', opcoesData);
-  
-  const espacoDataEl = document.getElementById('espaco-data');
-  if(espacoDataEl) espacoDataEl.innerText = dataFormatada;
-  
-  const comem = ["Dia da renovação","Dia do autocuidado","Dia da beleza","Dia da gratidão","Dia da leveza", "Dia de cuidar de si", "Dia de pausas suaves"];
-  const espacoComemoraEl = document.getElementById('espaco-comemora');
-  if(espacoComemoraEl) espacoComemoraEl.innerText = "Hoje comemoramos: " + comem[obterDiaDoAno(hoje) % comem.length];
-  
-  const relexTxtEl = document.getElementById('relex-txt');
-  if(relexTxtEl) relexTxtEl.innerText = '"' + momentosDoAno[obterDiaDoAno(hoje) % momentosDoAno.length].frase + '" — ' + momentosDoAno[obterDiaDoAno(hoje) % momentosDoAno.length].autor;
-}
-
-function editarAtendimento(index) {
-  let listaAtendimentos = JSON.parse(localStorage.getItem('veronica_atendimentos') || '[]');
-  let item = listaAtendimentos[index];
-  if(!item) return;
-
-  document.getElementById('edit-index').value = index;
-  document.getElementById('input-cliente').value = item.nome || '';
-  document.getElementById('input-data').value = item.data || '';
-  document.getElementById('input-retorno').value = item.retorno || '';
-  document.getElementById('input-valor').value = item.valor || '50,00';
-  document.getElementById('input-tempo').value = item.tempo || '';
-  document.getElementById('input-niver').value = item.niver || '';
-  document.getElementById('input-endereco').value = item.endereco || '';
-  document.getElementById('input-obs').value = item.obs || '';
-
-  document.querySelectorAll('.pgto').forEach(cb => {
-    cb.checked = item.pgto ? item.pgto.includes(cb.value) : false;
-  });
-
-  document.getElementById('form-titulo').innerText = "✏️ EDITAR ATENDIMENTO";
-  document.getElementById('btn-salvar').innerText = "Atualizar Atendimento";
-  document.getElementById('btn-cancelar').style.display = "block";
-}
-
-function limparForm() {
-  document.getElementById('edit-index').value = "-1";
-  document.getElementById('input-cliente').value = '';
-  document.getElementById('input-retorno').value = '';
-  document.getElementById('input-valor').value = '50,00';
-  document.getElementById('input-tempo').value = '';
-  document.getElementById('input-niver').value = '';
-  document.getElementById('input-endereco').value = '';
-  document.getElementById('input-obs').value = '';
-  document.querySelectorAll('.pgto').forEach(cb => cb.checked = false);
-  
-  var hoje = new Date().toISOString().split('T')[0];
-  document.getElementById('input-data').value = hoje;
-  atualizarRetornoAutomatico();
-
-  document.getElementById('form-titulo').innerText = "📝 NOVO ATENDIMENTO";
-  document.getElementById('btn-salvar').innerText = "Salvar Cliente / Atendimento";
-  document.getElementById('btn-cancelar').style.display = "none";
 }
 
 function carregarPlanilha() {
   let listaAtendimentos = JSON.parse(localStorage.getItem('veronica_atendimentos') || '[]');
   var tbody = document.getElementById('tabela-corpo');
   tbody.innerHTML = '';
-  
-  if(listaAtendimentos.length === 0){
-    tbody.innerHTML = `<tr><td colspan="8">Nenhum atendimento ainda.</td></tr>`;
-    document.getElementById('tot-atend-mes').innerText = '0';
-    document.getElementById('tot-valor-mes').innerText = 'R$ 0,00';
-    document.getElementById('tot-valor-ano').innerText = 'R$ 0,00';
-    document.getElementById('tot-melhor-mes').innerText = '-';
-    document.getElementById('tot-pior-mes').innerText = '-';
-    document.getElementById('tot-media-mes').innerText = 'R$ 0,00';
-    return;
-  }
-  
-  var totalMesValorCalc = 0;
-  var totalAnoValorCalc = 0;
-  var qtdeMes = 0;
-  var agora = new Date();
-  var mesAtual = agora.getMonth();
-  var anoAtual = agora.getFullYear();
-  
+
+  var totalMesValorCalc = 0, totalAnoValorCalc = 0, qtdeMes = 0;
+  var agora = new Date(), mesAtual = agora.getMonth(), anoAtual = agora.getFullYear();
   var mesesTotais = {};
+
+  var diasSemanaAtend = {}, diasMesAtend = {}, diasSemanaValor = {}, diasMesValor = {}, mesAnoValor = {};
 
   listaAtendimentos.forEach((r, i) => {
     var valNum = parseFloat(String(r.valor).replace(',', '.')) || 0;
-    var dataParts = r.data ? r.data.split('-') : [];
-    var anoAtend = dataParts.length === 3 ? parseInt(dataParts[0]) : anoAtual;
-    var mesAtend = dataParts.length === 3 ? parseInt(dataParts[1]) - 1 : mesAtual;
+    var dObj = r.data ? new Date(r.data + 'T00:00:00') : new Date();
+    var diaSemanaNom = dObj.toLocaleDateString('pt-BR', { weekday: 'short' });
+    var diaNum = dObj.getDate();
+    var chaveMesStr = `${dObj.getFullYear()}-${String(dObj.getMonth()+1).padStart(2, '0')}`;
 
-    if (anoAtend === anoAtual) {
+    diasSemanaAtend[diaSemanaNom] = (diasSemanaAtend[diaSemanaNom] || 0) + 1;
+    diasMesAtend[diaNum] = (diasMesAtend[diaNum] || 0) + 1;
+    diasSemanaValor[diaSemanaNom] = (diasSemanaValor[diaSemanaNom] || 0) + valNum;
+    diasMesValor[diaNum] = (diasMesValor[diaNum] || 0) + valNum;
+    mesAnoValor[chaveMesStr] = (mesAnoValor[chaveMesStr] || 0) + valNum;
+
+    if (dObj.getFullYear() === anoAtual) {
       totalAnoValorCalc += valNum;
-      if (mesAtend === mesAtual) {
-        qtdeMes++;
-        totalMesValorCalc += valNum;
-      }
+      if (dObj.getMonth() === mesAtual) { qtdeMes++; totalMesValorCalc += valNum; }
     }
-
-    var chaveMes = `${anoAtend}-${String(mesAtend+1).padStart(2, '0')}`;
-    mesesTotais[chaveMes] = (mesesTotais[chaveMes] || 0) + valNum;
 
     var tr = document.createElement('tr');
     tr.innerHTML = `
@@ -711,29 +512,114 @@ function carregarPlanilha() {
     tbody.appendChild(tr);
   });
 
-  var valoresMesesArr = Object.values(mesesTotais);
-  var melhorMesVal = valoresMesesArr.length > 0 ? Math.max(...valoresMesesArr) : 0;
-  var piorMesVal = valoresMesesArr.length > 0 ? Math.min(...valoresMesesArr) : 0;
-  var mediaMesVal = valoresMesesArr.length > 0 ? (valoresMesesArr.reduce((a, b) => a + b, 0) / valoresMesesArr.length) : 0;
-
   document.getElementById('tot-atend-mes').innerText = qtdeMes;
   document.getElementById('tot-valor-mes').innerText = 'R$ ' + totalMesValorCalc.toFixed(2).replace('.', ',');
   document.getElementById('tot-valor-ano').innerText = 'R$ ' + totalAnoValorCalc.toFixed(2).replace('.', ',');
-  document.getElementById('tot-melhor-mes').innerText = melhorMesVal > 0 ? 'R$ ' + melhorMesVal.toFixed(2).replace('.', ',') : '-';
-  document.getElementById('tot-pior-mes').innerText = piorMesVal > 0 ? 'R$ ' + piorMesVal.toFixed(2).replace('.', ',') : '-';
-  document.getElementById('tot-media-mes').innerText = 'R$ ' + mediaMesVal.toFixed(2).replace('.', ',');
+
+  renderizarGraficosLocais({
+    diasSemanaAtend, diasMesAtend, diasSemanaValor, diasMesValor, mesAnoValor
+  });
+}
+
+function renderizarGraficosLocais(dados) {
+  const cores = ['#1b4d8e', '#f39c12', '#27ae60', '#e74c3c', '#9b59b6', '#34495e', '#16a085'];
+
+  const criar = (id, tipo, rotulos, val, titulo) => {
+    if (instanciasGraficos[id]) instanciasGraficos[id].destroy();
+    const ctx = document.getElementById(id).getContext('2d');
+    instanciasGraficos[id] = new Chart(ctx, {
+      type: tipo,
+      data: { labels: rotulos, datasets: [{ label: titulo, data: val, backgroundColor: cores }] },
+      options: { responsive: true, plugins: { title: { display: true, text: titulo } } }
+    });
+  };
+
+  criar('chartPizzaDiaAtend', 'pie', Object.keys(dados.diasSemanaAtend), Object.values(dados.diasSemanaAtend), 'Atendimentos x Dia da Semana');
+  criar('chartBarrasDiaAtend', 'bar', Object.keys(dados.diasMesAtend), Object.values(dados.diasMesAtend), 'Atendimentos x Dia do Mês');
+  criar('chartPizzaDiaValor', 'pie', Object.keys(dados.diasSemanaValor), Object.values(dados.diasSemanaValor), 'Valor x Dia da Semana');
+  criar('chartPizzaMesValor', 'pie', Object.keys(dados.diasMesValor), Object.values(dados.diasMesValor), 'Valor x Dia do Mês');
+  criar('chartBarrasAnoValor', 'bar', Object.keys(dados.mesAnoValor), Object.values(dados.mesAnoValor), 'Total Ano: Valor x Mês');
+}
+
+function definirMomentoDoDia() {
+  var hoje = new Date();
+  document.getElementById('txt-data').innerText = hoje.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+  var selecionado = momentosDoAno[obterDiaDoAno(hoje) % momentosDoAno.length];
+  document.getElementById('txt-momento').innerText = '"' + selecionado.frase + '"';
+  document.getElementById('autor-momento').innerText = '— ' + selecionado.autor;
+  document.getElementById('input-data').value = hoje.toISOString().split('T')[0];
+  atualizarRetornoAutomatico();
+}
+
+function atualizarRetornoAutomatico() {
+  var dataVal = document.getElementById('input-data').value;
+  if (!dataVal) return;
+  var d = new Date(dataVal + 'T00:00:00');
+  d.setDate(d.getDate() + 14);
+  document.getElementById('input-retorno').value = d.toISOString().split('T')[0];
+}
+
+function solicitarSenha() { document.getElementById('modal-senha').style.display = 'flex'; document.getElementById('input-senha-veronica').focus(); }
+function fecharModal(e) { if(e) e.preventDefault(); document.getElementById('modal-senha').style.display = 'none'; document.getElementById('input-senha-veronica').value = ""; }
+
+function validarSenha() {
+  if (document.getElementById('input-senha-veronica').value === "1401") {
+    fecharModal();
+    document.getElementById('conteudo-principal').style.display = 'none';
+    document.getElementById('painel-privado').style.display = 'flex';
+    carregarAgenda();
+    carregarPlanilha();
+  } else { alert("Senha incorreta."); }
+}
+
+function sairPainel() {
+  document.getElementById('painel-privado').style.display = 'none';
+  document.getElementById('conteudo-principal').style.display = 'flex';
+}
+
+function editarAtendimento(index) {
+  let listaAtendimentos = JSON.parse(localStorage.getItem('veronica_atendimentos') || '[]');
+  let item = listaAtendimentos[index];
+  if(!item) return;
+
+  document.getElementById('edit-index').value = index;
+  document.getElementById('input-cliente').value = item.nome || '';
+  document.getElementById('input-data').value = item.data || '';
+  document.getElementById('input-retorno').value = item.retorno || '';
+  document.getElementById('input-valor').value = item.valor || '50,00';
+  document.getElementById('input-tempo').value = item.tempo || '';
+  document.getElementById('input-niver').value = item.niver || '';
+  document.getElementById('input-endereco').value = item.endereco || '';
+  document.getElementById('input-obs').value = item.obs || '';
+
+  document.querySelectorAll('.pgto').forEach(cb => { cb.checked = item.pgto ? item.pgto.includes(cb.value) : false; });
+  document.getElementById('form-titulo').innerText = "✏️ EDITAR ATENDIMENTO";
+  document.getElementById('btn-salvar').innerText = "Atualizar Atendimento";
+  document.getElementById('btn-cancelar').style.display = "block";
+}
+
+function limparForm() {
+  document.getElementById('edit-index').value = "-1";
+  document.getElementById('input-cliente').value = '';
+  document.getElementById('input-retorno').value = '';
+  document.getElementById('input-valor').value = '50,00';
+  document.getElementById('input-tempo').value = '';
+  document.getElementById('input-niver').value = '';
+  document.getElementById('input-endereco').value = '';
+  document.getElementById('input-obs').value = '';
+  document.querySelectorAll('.pgto').forEach(cb => cb.checked = false);
+  document.getElementById('input-data').value = new Date().toISOString().split('T')[0];
+  atualizarRetornoAutomatico();
+  document.getElementById('form-titulo').innerText = "📝 NOVO ATENDIMENTO";
+  document.getElementById('btn-salvar').innerText = "Salvar Cliente / Atendimento";
+  document.getElementById('btn-cancelar').style.display = "none";
 }
 
 window.onload = function() {
   definirMomentoDoDia();
-  setarCabecalhoEspaco();
   preencherDiasUteis();
   carregarAgenda();
   carregarPlanilha();
-  
-  const conteudo = document.getElementById('conteudo-principal');
-  conteudo.style.visibility = 'visible';
-  conteudo.style.opacity = '1';
 };
 </script>
 </body>
