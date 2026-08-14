@@ -40,36 +40,35 @@
       </div>
     </div>
 
-    <div class="bloco-agenda">
-      <div class="agenda-linha-unica">
-        <div class="agenda-col" style="flex: 1.2;">
-          <label class="agenda-label" for="select-dia">1. Dia:</label>
-          <select id="select-dia" class="agenda-select"></select>
-        </div>
-        
-        <div class="agenda-col" style="flex: 0.8;">
-          <label class="agenda-label" for="select-horario">2. Horário:</label>
-          <select id="select-horario" class="agenda-select">
-            <option value="17:20">17:20</option>
-            <option value="18:30">18:30</option>
-            <option value="19:40">19:40</option>
-          </select>
-        </div>
-
-        <div class="agenda-col" style="flex: 1.5;">
-          <label class="agenda-label" for="input-nome-cliente">3. Seu Nome:</label>
-          <input type="text" id="input-nome-cliente" class="agenda-input" placeholder="Seu nome completo">
-        </div>
-
-        <div class="agenda-col" style="flex: 1.2;">
-          <label class="agenda-label" for="input-tel-cliente">4. Telefone:</label>
-          <input type="tel" id="input-tel-cliente" class="agenda-input" placeholder="(31) 99999-9999">
-        </div>
-
-        <button class="btn-agendar-site" onclick="enviarAgendamentoSite()">Agendar Horário</button>
-      </div>
+<div class="bloco-agenda">
+  <div class="agenda-linha-unica" style="flex-wrap: wrap;">
+    <div class="agenda-col" style="flex: 1.2;">
+      <label class="agenda-label" for="select-dia">1. Dia:</label>
+      <select id="select-dia" class="agenda-select"></select>
     </div>
-  </section>
+    
+    <div class="agenda-col" style="flex: 0.8;">
+      <label class="agenda-label" for="select-horario">2. Horário:</label>
+      <select id="select-horario" class="agenda-select">
+        <option value="17:20">17:20</option>
+        <option value="18:30">18:30</option>
+        <option value="19:40">19:40</option>
+      </select>
+    </div>
+
+    <div class="agenda-col" style="flex: 1.2;">
+      <label class="agenda-label" for="input-nome-cliente">3. Seu Nome:</label>
+      <input type="text" id="input-nome-cliente" class="agenda-input" placeholder="Seu nome completo">
+    </div>
+
+    <div class="agenda-col" style="flex: 1;">
+      <label class="agenda-label" for="input-tel-cliente">4. Telefone:</label>
+      <input type="tel" id="input-tel-cliente" class="agenda-input" placeholder="(31) 99999-9999">
+    </div>
+
+    <button class="btn-agendar-site" onclick="enviarAgendamentoSite()">Agendar Horário</button>
+  </div>
+</div>
 
   <div class="area-acao">
     <a href="https://wa.me/5531991946163?text=Olá%20Verônica!%20Gostaria%20de%20conversar%20sobre%20os%20atendimentos." class="btn-whatsapp" target="_blank">
