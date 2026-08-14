@@ -310,6 +310,8 @@ Com carinho,<br>
 </div>
 
 <script>
+const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyWTN1XC2JWhqWFPiVvxKSM8EUGUW8BvxSw59j5kQx8BD580ctuiqjiFW2uPPwjF3a9/exec";
+
 var momentosDoAno = [
   { frase: "Recria tua vida, sempre.", autor: "Cora Coralina" },
   { frase: "Delicadeza das pequenas coisas.", autor: "Cecília Meireles" },
@@ -363,23 +365,32 @@ function enviarAgendamentoSite() {
     return;
   }
 
-  // Grava localmente no INÍCIO da lista (unshift) para figurar no TOPO da tabela
-  let listaAgendamentos = JSON.parse(localStorage.getItem('veronica_agendamentos') || '[]');
-  listaAgendamentos.unshift({
+  const payload = {
+    tipo: 'agendamento',
     nome: nomeCliente,
     dia: diaSelecionado,
-    horario: horarioSelecionado
-  });
+    horario: horarioSelecionado,
+    status: 'Pendente'
+  };
+
+  // 1. Salva localmente
+  let listaAgendamentos = JSON.parse(localStorage.getItem('veronica_agendamentos') || '[]');
+  listaAgendamentos.unshift(payload);
   localStorage.setItem('veronica_agendamentos', JSON.stringify(listaAgendamentos));
+
+  // 2. Envia para o Apps Script
+  fetch(URL_SCRIPT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  }).catch(err => console.error("Erro no envio do agendamento:", err));
 
   var partesData = diaSelecionado.split('-');
   var dataFormatadaBr = partesData.reverse().join('/');
-
   var textoZap = `Olá Verônica! Gostaria de agendar Manicure Pé e Mão para o dia ${dataFormatadaBr} às ${horarioSelecionado}. Meu nome é ${nomeCliente}. WhatsApp confirmamos aqui.`;
   var urlZap = `https://wa.me/5531991946163?text=` + encodeURIComponent(textoZap);
 
   alert("Olá, " + nomeCliente + "! Muito obrigada por agendar. Recebi sua solicitação e, assim que possível confirmo via Whats.");
-  
   document.getElementById('input-nome-cliente').value = '';
   window.open(urlZap, '_blank');
 }
@@ -493,7 +504,8 @@ function setarCabecalhoEspaco(){
 
 function salvarAtendimento() {
   const dados = {
-    nome: document.getElementById('input-cliente').value, 
+    tipo: 'atendimento',
+    nome: document.getElementById('input-cliente').value.trim(), 
     data: document.getElementById('input-data').value, 
     retorno: document.getElementById('input-retorno').value,
     valor: document.getElementById('input-valor').value, 
@@ -503,29 +515,31 @@ function salvarAtendimento() {
     obs: document.getElementById('input-obs').value,
     pgto: Array.from(document.querySelectorAll('.pgto:checked')).map(cb=>cb.value).join(', ')
   };
-  if(!dados.nome || !dados.valor || !dados.data){ alert("Preencha Cliente, Data e Valor."); return; }
+
+  if(!dados.nome || !dados.valor || !dados.data){ 
+    alert("Preencha Cliente, Data e Valor."); 
+    return; 
+  }
   
-  // Salva no INÍCIO da lista local (unshift) para ficar na Linha 1 da Tabela
+  // 1. Salva localmente
   let listaAtendimentos = JSON.parse(localStorage.getItem('veronica_atendimentos') || '[]');
   listaAtendimentos.unshift(dados);
   localStorage.setItem('veronica_atendimentos', JSON.stringify(listaAtendimentos));
   
-  const urlScript = "https://script.google.com/macros/s/AKfycbyWTN1XC2JWhqWFPiVvxKSM8EUGUW8BvxSw59j5kQx8BD580ctuiqjiFW2uPPwjF3a9/exec";
-  
-  fetch(urlScript, {
+  // 2. Envia para o Apps Script
+  fetch(URL_SCRIPT, {
     method: 'POST',
-    mode: 'no-cors',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify(dados)
-  }).then(() => {
+  })
+  .then(() => {
     alert(dados.nome + ' salvo e exportado para a planilha com sucesso!');
     limparForm();
     carregarPlanilha();
-  }).catch(err => {
+  })
+  .catch(err => {
     console.error("Erro ao exportar:", err);
-    alert(dados.nome + ' salvo localmente, mas houve um erro ao enviar para a planilha.');
+    alert(dados.nome + ' salvo localmente.');
     limparForm();
     carregarPlanilha();
   });
