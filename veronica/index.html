@@ -5,7 +5,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Verônica Castro | Atendimento Domiciliar</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 :root {
   --azul-suave: #1b4d8e;
@@ -102,9 +101,6 @@ tr:nth-child(even) { background-color: #f9fafb; }
 .agenda-select, .agenda-input { width: 100%; padding: 8px; border: 1px solid var(--borda); border-radius: 8px; font-size: 13px; background: #fff; outline: none; }
 .btn-agendar-site { background: #27ae60; color: #fff; border: none; padding: 9px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; white-space: nowrap; height: 35px; }
 
-.grid-graficos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 12px; }
-.grafico-box { background: #fff; border: 1px solid var(--borda); border-radius: 8px; padding: 8px; }
-
 .rodape { margin-top: auto; text-align: center; padding: 20px 0 0; background-color: transparent; font-size: 12px; color: var(--texto-suave); line-height: 1.5; }
 .rodape-flor { display: block; font-size: 14px; margin: 2px 0; }
 .rodape-assina { font-weight: 600; color: var(--azul-suave); }
@@ -172,7 +168,7 @@ tr:nth-child(even) { background-color: #f9fafb; }
 
         <div class="agenda-col" style="flex: 1.2;">
           <label class="agenda-label" for="input-tel-cliente">4. WhatsApp/Tel:</label>
-          <input type="tel" id="input-tel-cliente" class="agenda-input" placeholder="(31) 99999-9999">
+          <input type="tel" id="input-tel-cliente" class="agenda-input" placeholder="(31) 99999-9999" oninput="mascaraTelefone(this)" maxlength="15">
         </div>
 
         <button class="btn-agendar-site" onclick="enviarAgendamentoSite()">Agendar Horário</button>
@@ -199,8 +195,6 @@ tr:nth-child(even) { background-color: #f9fafb; }
     <div style="width: 50px;"></div>
     <div class="painel-titulo-box">
       <div class="painel-titulo">Meu Espaço 🌸</div>
-      <div id="espaco-data" style="font-size:10px; font-weight:600; color:var(--azul-suave); text-transform:capitalize;"></div>
-      <div id="espaco-comemora" style="font-size:10.5px; color:var(--texto-principal);"></div>
     </div>
     <button class="btn-sair" onclick="sairPainel()">Sair</button>
   </div>
@@ -238,25 +232,10 @@ tr:nth-child(even) { background-color: #f9fafb; }
     </div>
   </div>
 
-  <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:6px; margin-bottom:8px;">
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:8px;">
     <div class="painel-card" style="padding:6px; text-align:center;"><div style="font-size:9px; color:var(--texto-suave);">Atend. Mês</div><div id="tot-atend-mes" style="font-weight:700; color:var(--azul-suave); font-size:12px;">0</div></div>
     <div class="painel-card" style="padding:6px; text-align:center;"><div style="font-size:9px; color:var(--texto-suave);">Total R$ Mês</div><div id="tot-valor-mes" style="font-weight:700; color:var(--azul-suave); font-size:12px;">R$ 0,00</div></div>
     <div class="painel-card" style="padding:6px; text-align:center;"><div style="font-size:9px; color:var(--texto-suave);">Total Ano</div><div id="tot-valor-ano" style="font-weight:700; color:var(--azul-suave); font-size:12px;">R$ 0,00</div></div>
-    <div class="painel-card" style="padding:6px; text-align:center;"><div style="font-size:9px; color:var(--texto-suave);">Melhor Mês</div><div id="tot-melhor-mes" style="font-weight:700; color:var(--azul-suave); font-size:12px;">-</div></div>
-    <div class="painel-card" style="padding:6px; text-align:center;"><div style="font-size:9px; color:var(--texto-suave);">Pior Mês</div><div id="tot-pior-mes" style="font-weight:700; color:var(--azul-suave); font-size:12px;">-</div></div>
-    <div class="painel-card" style="padding:6px; text-align:center;"><div style="font-size:9px; color:var(--texto-suave);">Média Mensal</div><div id="tot-media-mes" style="font-weight:700; color:var(--azul-suave); font-size:12px;">R$ 0,00</div></div>
-  </div>
-
-  <!-- SEÇÃO DE GRÁFICOS INTERATIVOS -->
-  <div class="painel-card">
-    <div class="painel-card-title">📊 ANÁLISE GRÁFICA EM TEMPO REAL</div>
-    <div class="grid-graficos">
-      <div class="grafico-box"><canvas id="chartPizzaDiaAtend"></canvas></div>
-      <div class="grafico-box"><canvas id="chartBarrasDiaAtend"></canvas></div>
-      <div class="grafico-box"><canvas id="chartPizzaDiaValor"></canvas></div>
-      <div class="grafico-box"><canvas id="chartPizzaMesValor"></canvas></div>
-    </div>
-    <div class="grafico-box" style="margin-top: 12px;"><canvas id="chartBarrasAnoValor"></canvas></div>
   </div>
 
   <div class="painel-card" style="padding: 6px;">
@@ -314,8 +293,6 @@ tr:nth-child(even) { background-color: #f9fafb; }
 <script>
 const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyWTN1XC2JWhqWFPiVvxKSM8EUGUW8BvxSw59j5kQx8BD580ctuiqjiFW2uPPwjF3a9/exec";
 
-var instanciasGraficos = {};
-
 var momentosDoAno = [
   { frase: "Recria tua vida, sempre.", autor: "Cora Coralina" },
   { frase: "Delicadeza das pequenas coisas.", autor: "Cecília Meireles" },
@@ -323,6 +300,21 @@ var momentosDoAno = [
   { frase: "O que a memória ama, fica eterno.", autor: "Adélia Prado" },
   { frase: "Tempo pra si é acalmar a alma.", autor: "Lya Luft" }
 ];
+
+function mascaraTelefone(input) {
+  let v = input.value.replace(/\D/g, '');
+  if (v.length > 11) v = v.substring(0, 11);
+  if (v.length > 10) {
+    v = v.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+  } else if (v.length > 6) {
+    v = v.replace(/^(\d{2})(\d{4})(\d{0,4})$/, '($1) $2-$3');
+  } else if (v.length > 2) {
+    v = v.replace(/^(\d{2})(\d{0,5})$/, '($1) $2');
+  } else if (v.length > 0) {
+    v = v.replace(/^(\d*)$/, '($1');
+  }
+  input.value = v;
+}
 
 function obterDiaDoAno(data) {
   var inicio = new Date(data.getFullYear(), 0, 0);
@@ -356,8 +348,9 @@ function enviarAgendamentoSite() {
   var diaSelecionado = document.getElementById('select-dia').value;
   var horarioSelecionado = document.getElementById('select-horario').value;
 
-  if (!nomeCliente || !telCliente) {
-    alert("Por favor, informe Nome e Telefone.");
+  var apenasNumeros = telCliente.replace(/\D/g, '');
+  if (!nomeCliente || apenasNumeros.length < 10) {
+    alert("Por favor, informe seu Nome e um Telefone/WhatsApp válido com DDD.");
     return;
   }
 
@@ -473,22 +466,10 @@ function carregarPlanilha() {
 
   var totalMesValorCalc = 0, totalAnoValorCalc = 0, qtdeMes = 0;
   var agora = new Date(), mesAtual = agora.getMonth(), anoAtual = agora.getFullYear();
-  var mesesTotais = {};
-
-  var diasSemanaAtend = {}, diasMesAtend = {}, diasSemanaValor = {}, diasMesValor = {}, mesAnoValor = {};
 
   listaAtendimentos.forEach((r, i) => {
     var valNum = parseFloat(String(r.valor).replace(',', '.')) || 0;
     var dObj = r.data ? new Date(r.data + 'T00:00:00') : new Date();
-    var diaSemanaNom = dObj.toLocaleDateString('pt-BR', { weekday: 'short' });
-    var diaNum = dObj.getDate();
-    var chaveMesStr = `${dObj.getFullYear()}-${String(dObj.getMonth()+1).padStart(2, '0')}`;
-
-    diasSemanaAtend[diaSemanaNom] = (diasSemanaAtend[diaSemanaNom] || 0) + 1;
-    diasMesAtend[diaNum] = (diasMesAtend[diaNum] || 0) + 1;
-    diasSemanaValor[diaSemanaNom] = (diasSemanaValor[diaSemanaNom] || 0) + valNum;
-    diasMesValor[diaNum] = (diasMesValor[diaNum] || 0) + valNum;
-    mesAnoValor[chaveMesStr] = (mesAnoValor[chaveMesStr] || 0) + valNum;
 
     if (dObj.getFullYear() === anoAtual) {
       totalAnoValorCalc += valNum;
@@ -515,30 +496,6 @@ function carregarPlanilha() {
   document.getElementById('tot-atend-mes').innerText = qtdeMes;
   document.getElementById('tot-valor-mes').innerText = 'R$ ' + totalMesValorCalc.toFixed(2).replace('.', ',');
   document.getElementById('tot-valor-ano').innerText = 'R$ ' + totalAnoValorCalc.toFixed(2).replace('.', ',');
-
-  renderizarGraficosLocais({
-    diasSemanaAtend, diasMesAtend, diasSemanaValor, diasMesValor, mesAnoValor
-  });
-}
-
-function renderizarGraficosLocais(dados) {
-  const cores = ['#1b4d8e', '#f39c12', '#27ae60', '#e74c3c', '#9b59b6', '#34495e', '#16a085'];
-
-  const criar = (id, tipo, rotulos, val, titulo) => {
-    if (instanciasGraficos[id]) instanciasGraficos[id].destroy();
-    const ctx = document.getElementById(id).getContext('2d');
-    instanciasGraficos[id] = new Chart(ctx, {
-      type: tipo,
-      data: { labels: rotulos, datasets: [{ label: titulo, data: val, backgroundColor: cores }] },
-      options: { responsive: true, plugins: { title: { display: true, text: titulo } } }
-    });
-  };
-
-  criar('chartPizzaDiaAtend', 'pie', Object.keys(dados.diasSemanaAtend), Object.values(dados.diasSemanaAtend), 'Atendimentos x Dia da Semana');
-  criar('chartBarrasDiaAtend', 'bar', Object.keys(dados.diasMesAtend), Object.values(dados.diasMesAtend), 'Atendimentos x Dia do Mês');
-  criar('chartPizzaDiaValor', 'pie', Object.keys(dados.diasSemanaValor), Object.values(dados.diasSemanaValor), 'Valor x Dia da Semana');
-  criar('chartPizzaMesValor', 'pie', Object.keys(dados.diasMesValor), Object.values(dados.diasMesValor), 'Valor x Dia do Mês');
-  criar('chartBarrasAnoValor', 'bar', Object.keys(dados.mesAnoValor), Object.values(dados.mesAnoValor), 'Total Ano: Valor x Mês');
 }
 
 function definirMomentoDoDia() {
