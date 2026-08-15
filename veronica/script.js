@@ -1,48 +1,41 @@
-'use strict';
-
 /* =========================================================
-   CONFIGURAÇÃO
+   VERÔNICA CASTRO - SCRIPT PRINCIPAL
+   ---------------------------------------------------------
+   Mantém:
+   - Agendamentos
+   - Atendimento
+   - WhatsApp
+   - Google Sheets
+   - Exclusão
+   - Edição
+   - Senha
+   - Momento do dia
+   - Retorno automático
+   - Estatísticas
+   - Cache local
+   - Sincronização entre aparelhos
    ========================================================= */
 
-const URL_SCRIPT =
-  "https://script.google.com/macros/s/AKfycbyWTN1XC2JWhqWFPiVvxKSM8EUGUW8BvxSw59j5kQx8BD580ctuiqjiFW2uPPwjF3a9/exec";
+const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyWTN1XC2JWhqWFPiVvxKSM8EUGUW8BvxSw59j5kQx8BD580ctuiqjiFW2uPPwjF3a9/exec";
 
-const CHAVE_AGENDAMENTOS = 'veronica_agendamentos';
-const CHAVE_ATENDIMENTOS = 'veronica_atendimentos';
+const CHAVE_ATENDIMENTOS = "veronica_atendimentos";
+const CHAVE_AGENDAMENTOS = "veronica_agendamentos";
 
-const SENHA_PAINEL = '1401';
-
-const NUMERO_WHATSAPP = '5531991946163';
-
-let sincronizacaoEmAndamento = false;
-let intervaloSincronizacao = null;
+let sincronizando = false;
+let ultimaSincronizacao = 0;
+let timerSincronizacao = null;
 
 
 /* =========================================================
-   MOMENTOS DO DIA
+   FRASES
    ========================================================= */
 
 var momentosDoAno = [
-  {
-    frase: "Recria tua vida, sempre.",
-    autor: "Cora Coralina"
-  },
-  {
-    frase: "Delicadeza das pequenas coisas.",
-    autor: "Cecília Meireles"
-  },
-  {
-    frase: "Renda-se ao que não conhece.",
-    autor: "Clarice Lispector"
-  },
-  {
-    frase: "O que a memória ama, fica eterno.",
-    autor: "Adélia Prado"
-  },
-  {
-    frase: "Tempo pra si é acalmar a alma.",
-    autor: "Lya Luft"
-  }
+  { frase: "Recria tua vida, sempre.", autor: "Cora Coralina" },
+  { frase: "Delicadeza das pequenas coisas.", autor: "Cecília Meireles" },
+  { frase: "Renda-se ao que não conhece.", autor: "Clarice Lispector" },
+  { frase: "O que a memória ama, fica eterno.", autor: "Adélia Prado" },
+  { frase: "Tempo pra si é acalmar a alma.", autor: "Lya Luft" }
 ];
 
 
@@ -52,7 +45,6 @@ var momentosDoAno = [
 
 function obterDiaDoAno(data) {
   var inicio = new Date(data.getFullYear(), 0, 0);
-
   var diff =
     (data - inicio) +
     ((inicio.getTimezoneOffset() - data.getTimezoneOffset()) * 60 * 1000);
@@ -61,389 +53,243 @@ function obterDiaDoAno(data) {
 }
 
 
-function dataLocalISO(data) {
-  data = data || new Date();
-
-  var ano = data.getFullYear();
-  var mes = String(data.getMonth() + 1).padStart(2, '0');
-  var dia = String(data.getDate()).padStart(2, '0');
-
-  return ano + '-' + mes + '-' + dia;
+function escaparHTML(valor) {
+  return String(valor == null ? "" : valor)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 
-function formatarDataBR(data) {
-  if (!data) return '';
+function numeroBR(valor) {
+  if (valor == null || valor === "") return 0;
 
-  var texto = String(data);
+  var texto = String(valor)
+    .replace("R$", "")
+    .replace(/\s/g, "")
+    .trim();
 
-  if (/^\d{4}-\d{2}-\d{2}$/.test(texto)) {
-    return texto.split('-').reverse().join('/');
+  if (texto.indexOf(",") >= 0) {
+    texto = texto.replace(/\./g, "").replace(",", ".");
   }
 
-  var dataObj = new Date(texto);
+  var n = parseFloat(texto);
 
-  if (isNaN(dataObj.getTime())) {
-    return '';
-  }
-
-  return dataObj.toLocaleDateString('pt-BR');
+  return isNaN(n) ? 0 : n;
 }
 
 
-function formatarMoeda(valor) {
-  var numero = converterValorParaNumero(valor);
-
-  return 'R$ ' + numero
+function dinheiroBR(valor) {
+  return "R$ " + numeroBR(valor)
     .toFixed(2)
-    .replace('.', ',');
+    .replace(".", ",");
 }
 
 
-function converterValorParaNumero(valor) {
-  if (
-    valor === null ||
-    valor === undefined ||
-    valor === ''
-  ) {
-    return 0;
+function hojeISO() {
+  var d = new Date();
+
+  var ano = d.getFullYear();
+  var mes = String(d.getMonth() + 1).padStart(2, "0");
+  var dia = String(d.getDate()).padStart(2, "0");
+
+  return ano + "-" + mes + "-" + dia;
+}
+
+
+function dataBR(data) {
+  if (!data) return "";
+
+  var texto = String(data).trim();
+
+  /* YYYY-MM-DD */
+  if (/^\d{4}-\d{2}-\d{2}/.test(texto)) {
+    var p = texto.substring(0, 10).split("-");
+    return p[2] + "/" + p[1] + "/" + p[0];
   }
+
+  /* DD/MM/YYYY */
+  if (/^\d{2}\/\d{2}\/\d{4}/.test(texto)) {
+    return texto.substring(0, 10);
+  }
+
+  /* Data do Google / JavaScript */
+  var d = new Date(texto);
+
+  if (!isNaN(d.getTime())) {
+    return String(d.getDate()).padStart(2, "0") + "/" +
+      String(d.getMonth() + 1).padStart(2, "0") + "/" +
+      d.getFullYear();
+  }
+
+  return texto;
+}
+
+
+function normalizarDataISO(valor) {
+  if (!valor) return "";
 
   var texto = String(valor).trim();
 
-  texto = texto
-    .replace(/R\$/gi, '')
-    .replace(/\s/g, '');
-
-  /*
-    Exemplos:
-    50
-    50,00
-    R$ 50,00
-    1.250,00
-    1250.00
-  */
-
-  if (texto.includes(',') && texto.includes('.')) {
-    texto = texto.replace(/\./g, '').replace(',', '.');
-  } else if (texto.includes(',')) {
-    texto = texto.replace(',', '.');
+  if (/^\d{4}-\d{2}-\d{2}$/.test(texto)) {
+    return texto;
   }
 
-  var numero = Number(texto);
-
-  return Number.isFinite(numero)
-    ? numero
-    : 0;
-}
-
-
-function gerarId() {
-  if (window.crypto && crypto.randomUUID) {
-    return crypto.randomUUID();
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(texto)) {
+    var p = texto.split("/");
+    return p[2] + "-" + p[1] + "-" + p[0];
   }
 
-  return 'web-' +
-    Date.now() +
-    '-' +
-    Math.random().toString(36).substring(2, 12);
-}
+  var d = new Date(texto);
 
+  if (!isNaN(d.getTime())) {
+    return d.getFullYear() + "-" +
+      String(d.getMonth() + 1).padStart(2, "0") + "-" +
+      String(d.getDate()).padStart(2, "0");
+  }
 
-function escaparHTML(valor) {
-  return String(valor || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+  return texto;
 }
 
 
 /* =========================================================
-   LOCAL STORAGE
+   CORREÇÃO DE HORÁRIO VINDO DO GOOGLE SHEETS
    ========================================================= */
 
-function lerListaLocal(chave) {
+function normalizarHorario(valor) {
+  if (valor == null || valor === "") return "";
+
+  var texto = String(valor).trim();
+
+  /*
+     Se já estiver no formato HH:MM
+  */
+  var match = texto.match(/^(\d{1,2}):(\d{1,2})/);
+
+  if (match) {
+    var h = String(parseInt(match[1], 10)).padStart(2, "0");
+    var m = String(parseInt(match[2], 10)).padStart(2, "0");
+
+    return h + ":" + m;
+  }
+
+  /*
+     Google pode mandar:
+     Sat Dec 30 1899 17:20:00
+  */
+  var data = new Date(texto);
+
+  if (!isNaN(data.getTime())) {
+    return String(data.getHours()).padStart(2, "0") +
+      ":" +
+      String(data.getMinutes()).padStart(2, "0");
+  }
+
+  /*
+     Número decimal do Sheets.
+     Exemplo:
+     0.7222 = aproximadamente 17:20
+  */
+  var n = parseFloat(texto);
+
+  if (!isNaN(n) && n >= 0 && n < 1) {
+    var minutos = Math.round(n * 24 * 60);
+
+    var horas = Math.floor(minutos / 60);
+    var mins = minutos % 60;
+
+    return String(horas).padStart(2, "0") +
+      ":" +
+      String(mins).padStart(2, "0");
+  }
+
+  return texto;
+}
+
+
+/* =========================================================
+   LEITURA DO CACHE
+   ========================================================= */
+
+function lerAtendimentosLocal() {
   try {
     return JSON.parse(
-      localStorage.getItem(chave) || '[]'
+      localStorage.getItem(CHAVE_ATENDIMENTOS) || "[]"
     );
-  } catch (erro) {
-    console.error('Erro ao ler localStorage:', erro);
+  } catch (e) {
     return [];
   }
 }
 
 
-function salvarListaLocal(chave, lista) {
+function lerAgendamentosLocal() {
   try {
-    localStorage.setItem(
-      chave,
-      JSON.stringify(lista)
+    return JSON.parse(
+      localStorage.getItem(CHAVE_AGENDAMENTOS) || "[]"
     );
-  } catch (erro) {
-    console.error('Erro ao salvar localStorage:', erro);
+  } catch (e) {
+    return [];
   }
 }
 
 
-/* =========================================================
-   COMUNICAÇÃO COM GOOGLE APPS SCRIPT
-   ========================================================= */
-
-async function requisicaoGet() {
-  const resposta = await fetch(
-    URL_SCRIPT + '?acao=ping&_=' + Date.now(),
-    {
-      method: 'GET',
-      cache: 'no-store'
-    }
+function salvarAtendimentosLocal(lista) {
+  localStorage.setItem(
+    CHAVE_ATENDIMENTOS,
+    JSON.stringify(lista || [])
   );
-
-  if (!resposta.ok) {
-    throw new Error(
-      'Erro HTTP ao consultar o Apps Script: ' +
-      resposta.status
-    );
-  }
-
-  return resposta.json();
 }
 
 
-async function buscarDadosDaNuvem() {
-  const resposta = await fetch(
-    URL_SCRIPT + '?_=' + Date.now(),
-    {
-      method: 'GET',
-      cache: 'no-store'
-    }
-  );
-
-  if (!resposta.ok) {
-    throw new Error(
-      'Erro HTTP ao buscar dados: ' +
-      resposta.status
-    );
-  }
-
-  const resultado = await resposta.json();
-
-  if (!resultado || resultado.status !== 'sucesso') {
-    throw new Error(
-      resultado && resultado.mensagem
-        ? resultado.mensagem
-        : 'Resposta inválida do Apps Script.'
-    );
-  }
-
-  return resultado.dados || {};
-}
-
-
-async function enviarParaNuvem(payload) {
-  const resposta = await fetch(
-    URL_SCRIPT,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain;charset=utf-8'
-      },
-      body: JSON.stringify(payload)
-    }
-  );
-
-  if (!resposta.ok) {
-    throw new Error(
-      'Erro HTTP ao enviar dados: ' +
-      resposta.status
-    );
-  }
-
-  const resultado = await resposta.json();
-
-  if (!resultado || resultado.status !== 'sucesso') {
-    throw new Error(
-      resultado && resultado.mensagem
-        ? resultado.mensagem
-        : 'Erro retornado pelo Apps Script.'
-    );
-  }
-
-  return resultado;
-}
-
-
-/* =========================================================
-   SINCRONIZAÇÃO PRINCIPAL
-   ========================================================= */
-
-async function sincronizarComNuvem(silencioso) {
-
-  if (sincronizacaoEmAndamento) {
-    return false;
-  }
-
-  sincronizacaoEmAndamento = true;
-
-  try {
-
-    const dados = await buscarDadosDaNuvem();
-
-    const atendimentos =
-      Array.isArray(dados.atendimentos)
-        ? dados.atendimentos
-        : [];
-
-    const agendamentos =
-      Array.isArray(dados.agendamentos)
-        ? dados.agendamentos
-        : [];
-
-    /*
-      GOOGLE SHEETS É A FONTE PRINCIPAL.
-      O localStorage passa a ser apenas um cache.
-    */
-
-    salvarListaLocal(
-      CHAVE_ATENDIMENTOS,
-      atendimentos
-    );
-
-    salvarListaLocal(
-      CHAVE_AGENDAMENTOS,
-      agendamentos
-    );
-
-    carregarAgenda();
-    carregarPlanilha();
-
-    console.log(
-      'Sincronização concluída:',
-      atendimentos.length,
-      'atendimentos;',
-      agendamentos.length,
-      'agendamentos.'
-    );
-
-    return true;
-
-  } catch (erro) {
-
-    console.error(
-      'Falha na sincronização:',
-      erro
-    );
-
-    if (!silencioso) {
-      alert(
-        'Não foi possível atualizar os dados da nuvem.\n\n' +
-        'Verifique sua conexão com a internet e tente novamente.'
-      );
-    }
-
-    /*
-      Se a internet falhar, o aparelho continua
-      mostrando o último cache disponível.
-    */
-
-    carregarAgenda();
-    carregarPlanilha();
-
-    return false;
-
-  } finally {
-
-    sincronizacaoEmAndamento = false;
-  }
-}
-
-
-/* =========================================================
-   SINCRONIZAÇÃO AUTOMÁTICA
-   ========================================================= */
-
-function iniciarSincronizacaoAutomatica() {
-
-  if (intervaloSincronizacao) {
-    clearInterval(intervaloSincronizacao);
-  }
-
-  /*
-    Atualiza a cada 15 segundos.
-    Assim, se outro Android cadastrar algo,
-    este aparelho busca a alteração.
-  */
-
-  intervaloSincronizacao = setInterval(
-    function() {
-      var painel = document.getElementById('painel-privado');
-
-      if (
-        painel &&
-        painel.style.display !== 'none'
-      ) {
-        sincronizarComNuvem(true);
-      }
-    },
-    15000
+function salvarAgendamentosLocal(lista) {
+  localStorage.setItem(
+    CHAVE_AGENDAMENTOS,
+    JSON.stringify(lista || [])
   );
 }
 
 
 /* =========================================================
-   AGENDA DO SITE
+   DIAS ÚTEIS
    ========================================================= */
 
 function preencherDiasUteis() {
-
-  var selectDia =
-    document.getElementById('select-dia');
+  var selectDia = document.getElementById("select-dia");
 
   if (!selectDia) return;
 
-  selectDia.innerHTML = '';
+  selectDia.innerHTML = "";
 
   var hoje = new Date();
-
   var contador = 0;
-
   var d = new Date(hoje);
 
   while (contador < 10) {
-
     d.setDate(d.getDate() + 1);
 
     var diaSemana = d.getDay();
 
-    /*
-      Domingo = 0
-      Sábado = 6
-    */
+    if (diaSemana !== 0 && diaSemana !== 6) {
+      var ano = d.getFullYear();
+      var mes = String(d.getMonth() + 1).padStart(2, "0");
+      var dia = String(d.getDate()).padStart(2, "0");
 
-    if (
-      diaSemana !== 0 &&
-      diaSemana !== 6
-    ) {
+      var iso = ano + "-" + mes + "-" + dia;
 
-      var iso = dataLocalISO(d);
+      var textoFormatado = d.toLocaleDateString(
+        "pt-BR",
+        {
+          weekday: "long",
+          day: "numeric",
+          month: "long"
+        }
+      );
 
-      var textoFormatado =
-        d.toLocaleDateString(
-          'pt-BR',
-          {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'long'
-          }
-        );
-
-      var opt =
-        document.createElement('option');
+      var opt = document.createElement("option");
 
       opt.value = iso;
-
       opt.text =
         textoFormatado.charAt(0).toUpperCase() +
         textoFormatado.slice(1);
@@ -457,307 +303,161 @@ function preencherDiasUteis() {
 
 
 /* =========================================================
-   ENVIAR AGENDAMENTO DO SITE
+   ENVIO DE AGENDAMENTO
    ========================================================= */
 
-async function enviarAgendamentoSite() {
-
+function enviarAgendamentoSite() {
   var nomeCliente =
-    document
-      .getElementById('input-nome-cliente')
-      .value
-      .trim();
+    document.getElementById("input-nome-cliente").value.trim();
 
   var telCliente =
-    document
-      .getElementById('input-tel-cliente')
-      .value
-      .trim();
+    document.getElementById("input-tel-cliente").value.trim();
 
   var diaSelecionado =
-    document
-      .getElementById('select-dia')
-      .value;
+    document.getElementById("select-dia").value;
 
   var horarioSelecionado =
-    document
-      .getElementById('select-horario')
-      .value;
-
+    document.getElementById("select-horario").value;
 
   if (!nomeCliente || !telCliente) {
-
-    alert(
-      'Por favor, preencha seu nome e telefone para agendar.'
-    );
-
+    alert("Por favor, preencha seu nome e telefone para agendar.");
     return;
   }
 
-
   var btnAgendar =
-    document.querySelector(
-      '.btn-agendar-site'
-    );
-
+    document.querySelector(".btn-agendar-site");
 
   if (btnAgendar) {
-
     btnAgendar.disabled = true;
-
-    btnAgendar.innerText =
-      'Agendando...';
-
-    btnAgendar.style.opacity =
-      '0.6';
+    btnAgendar.innerText = "Agendando...";
+    btnAgendar.style.opacity = "0.6";
   }
-
 
   var payload = {
-
-    tipo: 'agendamento',
-
-    id: gerarId(),
-
-    dataRegistro:
-      new Date().toLocaleString('pt-BR'),
-
+    tipo: "agendamento",
+    dataRegistro: new Date().toLocaleString("pt-BR"),
     nome: nomeCliente,
-
     telefone: telCliente,
-
     dia: diaSelecionado,
-
-    horario: horarioSelecionado,
-
-    status: 'Pendente'
+    horario: normalizarHorario(horarioSelecionado),
+    status: "Pendente"
   };
 
+  /*
+     Cache imediato.
+     Assim a tela responde sem esperar a internet.
+  */
+  var lista = lerAgendamentosLocal();
 
-  try {
+  lista.unshift(payload);
 
-    /*
-      PRIMEIRO envia para a nuvem.
-      Só depois atualiza a tabela local.
-    */
+  salvarAgendamentosLocal(lista);
 
-    var resultado =
-      await enviarParaNuvem(payload);
+  carregarAgenda();
 
+  /*
+     Envia para o servidor sem bloquear a tela.
+  */
+  enviarParaServidor(payload)
+    .then(function () {
+      ultimaSincronizacao = 0;
+    })
+    .catch(function (erro) {
+      console.warn("Agendamento enviado/pendente:", erro);
+    })
+    .finally(function () {
+      if (btnAgendar) {
+        btnAgendar.disabled = false;
+        btnAgendar.innerText = "Agendar Horário";
+        btnAgendar.style.opacity = "1";
+      }
+    });
 
-    /*
-      O Apps Script devolve todos os dados.
-      Usamos a resposta oficial da nuvem.
-    */
+  var dataFormatadaBr =
+    dataBR(diaSelecionado);
 
-    if (
-      resultado &&
-      resultado.dados
-    ) {
+  var textoZap =
+    "Olá Verônica! Gostaria de agendar Manicure Pé e Mão.\n\n" +
+    "👤 Nome: " + nomeCliente + "\n" +
+    "📞 Telefone: " + telCliente + "\n" +
+    "📅 Data: " + dataFormatadaBr + "\n" +
+    "⏰ Horário: " + normalizarHorario(horarioSelecionado);
 
-      salvarListaLocal(
-        CHAVE_AGENDAMENTOS,
-        resultado.dados.agendamentos || []
-      );
+  var urlZap =
+    "https://wa.me/5531991946163?text=" +
+    encodeURIComponent(textoZap);
 
-      salvarListaLocal(
-        CHAVE_ATENDIMENTOS,
-        resultado.dados.atendimentos || []
-      );
+  document.getElementById("input-nome-cliente").value = "";
+  document.getElementById("input-tel-cliente").value = "";
 
-    } else {
-
-      /*
-        Fallback.
-      */
-
-      var lista =
-        lerListaLocal(
-          CHAVE_AGENDAMENTOS
-        );
-
-      lista.unshift(payload);
-
-      salvarListaLocal(
-        CHAVE_AGENDAMENTOS,
-        lista
-      );
-    }
-
-
-    carregarAgenda();
-
-
-    /*
-      WhatsApp
-    */
-
-    var dataFormatadaBr =
-      diaSelecionado
-        .split('-')
-        .reverse()
-        .join('/');
-
-
-    var textoZap =
-      "Olá Verônica! Gostaria de agendar Manicure Pé e Mão.\n\n" +
-      "👤 Nome: " + nomeCliente + "\n" +
-      "📞 Telefone: " + telCliente + "\n" +
-      "📅 Data: " + dataFormatadaBr + "\n" +
-      "⏰ Horário: " + horarioSelecionado;
-
-
-    var urlZap =
-      "https://wa.me/" +
-      NUMERO_WHATSAPP +
-      "?text=" +
-      encodeURIComponent(textoZap);
-
-
-    /*
-      Limpa os campos.
-    */
-
-    document
-      .getElementById('input-nome-cliente')
-      .value = '';
-
-    document
-      .getElementById('input-tel-cliente')
-      .value = '';
-
-
-    /*
-      Abre WhatsApp.
-    */
-
-    window.open(
-      urlZap,
-      '_blank'
-    );
-
-
-  } catch (erro) {
-
-    console.error(
-      'Erro ao salvar agendamento:',
-      erro
-    );
-
-    alert(
-      'Não foi possível salvar o agendamento na nuvem.\n\n' +
-      'Tente novamente.'
-    );
-
-  } finally {
-
-    if (btnAgendar) {
-
-      btnAgendar.disabled = false;
-
-      btnAgendar.innerText =
-        'Agendar Horário';
-
-      btnAgendar.style.opacity =
-        '1';
-    }
-  }
+  window.open(urlZap, "_blank");
 }
 
 
 /* =========================================================
-   CARREGAR AGENDA
+   POST CENTRALIZADO
+   ========================================================= */
+
+function enviarParaServidor(dados) {
+  return fetch(URL_SCRIPT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8"
+    },
+    body: JSON.stringify(dados)
+  });
+}
+
+
+/* =========================================================
+   AGENDA
    ========================================================= */
 
 function carregarAgenda() {
-
-  var listaAgendamentos =
-    lerListaLocal(
-      CHAVE_AGENDAMENTOS
-    );
+  var lista = lerAgendamentosLocal();
 
   var tbody =
-    document.getElementById(
-      'tabela-agenda-corpo'
-    );
+    document.getElementById("tabela-agenda-corpo");
 
   if (!tbody) return;
 
-  tbody.innerHTML = '';
+  tbody.innerHTML = "";
 
-
-  if (
-    listaAgendamentos.length === 0
-  ) {
-
+  if (!lista.length) {
     tbody.innerHTML =
-      '<tr>' +
-      '<td colspan="6">' +
-      'Nenhum agendamento registrado.' +
-      '</td>' +
-      '</tr>';
+      '<tr><td colspan="6">Nenhum agendamento registrado.</td></tr>';
 
     return;
   }
 
+  lista.forEach(function (item, index) {
+    var dataFormatada = dataBR(item.dia);
+    var horario = normalizarHorario(item.horario);
 
-  listaAgendamentos.forEach(
-    function(item, index) {
+    var tr = document.createElement("tr");
 
-      var dataFormatada =
-        item.dia
-          ? item.dia
-              .split('-')
-              .reverse()
-              .join('/')
-          : '';
+    tr.innerHTML =
+      "<td>" + (index + 1) + "</td>" +
+      '<td style="text-align:left">' +
+      escaparHTML(item.nome || "") +
+      "</td>" +
+      "<td>" +
+      escaparHTML(item.telefone || "") +
+      "</td>" +
+      "<td>" +
+      escaparHTML(dataFormatada) +
+      "</td>" +
+      "<td>" +
+      escaparHTML(horario) +
+      "</td>" +
+      "<td>" +
+      '<button class="btn-acao btn-excluir" onclick="excluirAgenda(' +
+      index +
+      ')">Excluir</button>' +
+      "</td>";
 
-
-      var tr =
-        document.createElement('tr');
-
-
-      tr.innerHTML =
-
-        '<td>' +
-        (index + 1) +
-        '</td>' +
-
-        '<td style="text-align:left">' +
-        escaparHTML(item.nome) +
-        '</td>' +
-
-        '<td>' +
-        escaparHTML(item.telefone) +
-        '</td>' +
-
-        '<td>' +
-        escaparHTML(dataFormatada) +
-        '</td>' +
-
-        '<td>' +
-        escaparHTML(item.horario) +
-        '</td>' +
-
-        '<td>' +
-
-        '<button ' +
-        'type="button" ' +
-        'class="btn-acao btn-excluir" ' +
-        'onclick="excluirAgenda(' +
-        index +
-        ')">' +
-
-        'Excluir' +
-
-        '</button>' +
-
-        '</td>';
-
-
-      tbody.appendChild(tr);
-    }
-  );
+    tbody.appendChild(tr);
+  });
 }
 
 
@@ -765,66 +465,27 @@ function carregarAgenda() {
    EXCLUIR AGENDAMENTO
    ========================================================= */
 
-async function excluirAgenda(index) {
+function excluirAgenda(index) {
+  var lista = lerAgendamentosLocal();
 
-  var listaAgendamentos =
-    lerListaLocal(
-      CHAVE_AGENDAMENTOS
-    );
+  if (!lista[index]) return;
 
-  var itemRemovido =
-    listaAgendamentos[index];
+  var itemRemovido = lista.splice(index, 1)[0];
 
+  salvarAgendamentosLocal(lista);
 
-  if (!itemRemovido) {
-    return;
-  }
+  carregarAgenda();
 
-
-  var confirmacao =
-    confirm(
-      'Excluir o agendamento de "' +
-      (itemRemovido.nome || 'cliente') +
-      '"?'
-    );
-
-
-  if (!confirmacao) {
-    return;
-  }
-
-
-  try {
-
-    await enviarParaNuvem({
-
-      tipo: 'excluir_agendamento',
-
-      dados: itemRemovido
-
-    });
-
-
-    /*
-      Depois de excluir, busca novamente
-      a versão oficial do Google Sheets.
-    */
-
-    await sincronizarComNuvem(true);
-
-
-  } catch (erro) {
-
-    console.error(
-      'Erro ao excluir agendamento:',
-      erro
-    );
-
-    alert(
-      'Não foi possível excluir o agendamento da nuvem.'
-    );
-
-  }
+  enviarParaServidor({
+    tipo: "excluir_agendamento",
+    dados: itemRemovido
+  })
+  .then(function () {
+    ultimaSincronizacao = 0;
+  })
+  .catch(function (e) {
+    console.warn("Exclusão enviada:", e);
+  });
 }
 
 
@@ -832,229 +493,106 @@ async function excluirAgenda(index) {
    SALVAR ATENDIMENTO
    ========================================================= */
 
-async function salvarAtendimento() {
-
+function salvarAtendimento() {
   var editIndex =
     parseInt(
-      document
-        .getElementById('edit-index')
-        .value,
+      document.getElementById("edit-index").value,
       10
     );
 
-
   var btnSalvar =
-    document.getElementById(
-      'btn-salvar'
-    );
-
-
-  var listaAtendimentos =
-    lerListaLocal(
-      CHAVE_ATENDIMENTOS
-    );
-
-
-  /*
-    IMPORTANTE:
-    Se estiver editando, mantém o ID
-    original do Google Sheets.
-  */
-
-  var registroExistente =
-    editIndex >= 0 &&
-    editIndex < listaAtendimentos.length
-      ? listaAtendimentos[editIndex]
-      : null;
-
-
-  var id =
-    registroExistente &&
-    registroExistente.id
-      ? registroExistente.id
-      : gerarId();
-
+    document.getElementById("btn-salvar");
 
   var dados = {
-
-    tipo: 'atendimento',
-
-    id: id,
-
-    dataRegistro:
-      new Date().toLocaleString('pt-BR'),
+    tipo: "atendimento",
+    dataRegistro: new Date().toLocaleString("pt-BR"),
 
     nome:
-      document
-        .getElementById('input-cliente')
-        .value
-        .trim(),
+      document.getElementById("input-cliente").value.trim(),
 
     data:
-      document
-        .getElementById('input-data')
-        .value,
+      document.getElementById("input-data").value,
 
     retorno:
-      document
-        .getElementById('input-retorno')
-        .value,
+      document.getElementById("input-retorno").value,
 
     valor:
-      document
-        .getElementById('input-valor')
-        .value
-        .trim(),
+      document.getElementById("input-valor").value,
 
     tempo:
-      document
-        .getElementById('input-tempo')
-        .value
-        .trim(),
+      document.getElementById("input-tempo").value,
 
     niver:
-      document
-        .getElementById('input-niver')
-        .value,
+      document.getElementById("input-niver").value,
 
     endereco:
-      document
-        .getElementById('input-endereco')
-        .value
-        .trim(),
+      document.getElementById("input-endereco").value,
 
     obs:
-      document
-        .getElementById('input-obs')
-        .value
-        .trim(),
+      document.getElementById("input-obs").value,
 
     pgto:
-      Array
-        .from(
-          document.querySelectorAll(
-            '.pgto:checked'
-          )
-        )
-        .map(
-          function(cb) {
-            return cb.value;
-          }
-        )
-        .join(', ')
+      Array.from(
+        document.querySelectorAll(".pgto:checked")
+      )
+      .map(function (cb) {
+        return cb.value;
+      })
+      .join(", ")
   };
 
-
-  if (
-    !dados.nome ||
-    !dados.valor ||
-    !dados.data
-  ) {
-
+  if (!dados.nome || !dados.valor || !dados.data) {
     alert(
-      'Por favor, preencha pelo menos o Nome do Cliente, a Data e o Valor.'
+      "Por favor, preencha pelo menos o Nome do Cliente, a Data e o Valor."
     );
-
     return;
   }
 
-
   if (btnSalvar) {
-
     btnSalvar.disabled = true;
-
-    btnSalvar.innerText =
-      'Salvando na Nuvem, aguarde...';
-
-    btnSalvar.style.opacity =
-      '0.6';
+    btnSalvar.innerText = "Salvando...";
+    btnSalvar.style.opacity = "0.6";
   }
 
+  var lista = lerAtendimentosLocal();
 
-  try {
+  /*
+     Edição local.
+  */
+  if (editIndex >= 0 && lista[editIndex]) {
+    lista[editIndex] = dados;
+  } else {
+    lista.unshift(dados);
+  }
 
-    var resultado =
-      await enviarParaNuvem(
-        dados
+  salvarAtendimentosLocal(lista);
+
+  carregarPlanilha();
+
+  /*
+     Continua enviando exatamente como atendimento,
+     preservando o funcionamento do dpost existente.
+  */
+  enviarParaServidor(dados)
+    .then(function () {
+      ultimaSincronizacao = 0;
+    })
+    .catch(function (erro) {
+      console.warn(
+        "Atendimento enviado/pendente:",
+        erro
       );
+    })
+    .finally(function () {
+      limparForm();
 
-
-    /*
-      Usa a resposta do Apps Script
-      para atualizar o aparelho.
-    */
-
-    if (
-      resultado &&
-      resultado.dados
-    ) {
-
-      salvarListaLocal(
-        CHAVE_ATENDIMENTOS,
-        resultado.dados.atendimentos || []
-      );
-
-      salvarListaLocal(
-        CHAVE_AGENDAMENTOS,
-        resultado.dados.agendamentos || []
-      );
-
-    } else {
-
-      /*
-        Fallback local.
-      */
-
-      if (editIndex >= 0) {
-
-        listaAtendimentos[
-          editIndex
-        ] = dados;
-
-      } else {
-
-        listaAtendimentos.unshift(
-          dados
-        );
+      if (btnSalvar) {
+        btnSalvar.disabled = false;
+        btnSalvar.innerText =
+          "Salvar Cliente / Atendimento";
+        btnSalvar.style.opacity = "1";
       }
-
-      salvarListaLocal(
-        CHAVE_ATENDIMENTOS,
-        listaAtendimentos
-      );
-    }
-
-
-    carregarPlanilha();
-
-    limparForm();
-
-
-  } catch (erro) {
-
-    console.error(
-      'Erro ao salvar atendimento:',
-      erro
-    );
-
-    alert(
-      'Não foi possível salvar o atendimento na nuvem.\n\n' +
-      'Nenhuma alteração foi confirmada no sistema.'
-    );
-
-  } finally {
-
-    if (btnSalvar) {
-
-      btnSalvar.disabled = false;
-
-      btnSalvar.innerText =
-        'Salvar Cliente / Atendimento';
-
-      btnSalvar.style.opacity =
-        '1';
-    }
-  }
+    });
 }
 
 
@@ -1062,65 +600,27 @@ async function salvarAtendimento() {
    EXCLUIR ATENDIMENTO
    ========================================================= */
 
-async function excluir(index) {
+function excluir(index) {
+  var lista = lerAtendimentosLocal();
 
-  var listaAtendimentos =
-    lerListaLocal(
-      CHAVE_ATENDIMENTOS
-    );
+  if (!lista[index]) return;
 
+  var itemRemovido = lista.splice(index, 1)[0];
 
-  var itemRemovido =
-    listaAtendimentos[index];
+  salvarAtendimentosLocal(lista);
 
+  carregarPlanilha();
 
-  if (!itemRemovido) {
-    return;
-  }
-
-
-  var confirmacao =
-    confirm(
-      'Excluir o atendimento de "' +
-      (itemRemovido.nome || 'cliente') +
-      '"?'
-    );
-
-
-  if (!confirmacao) {
-    return;
-  }
-
-
-  try {
-
-    await enviarParaNuvem({
-
-      tipo: 'excluir_atendimento',
-
-      dados: itemRemovido
-
-    });
-
-
-    /*
-      Recarrega a versão oficial.
-    */
-
-    await sincronizarComNuvem(true);
-
-
-  } catch (erro) {
-
-    console.error(
-      'Erro ao excluir atendimento:',
-      erro
-    );
-
-    alert(
-      'Não foi possível excluir o atendimento da nuvem.'
-    );
-  }
+  enviarParaServidor({
+    tipo: "excluir_atendimento",
+    dados: itemRemovido
+  })
+  .then(function () {
+    ultimaSincronizacao = 0;
+  })
+  .catch(function (e) {
+    console.warn("Exclusão enviada:", e);
+  });
 }
 
 
@@ -1129,81 +629,53 @@ async function excluir(index) {
    ========================================================= */
 
 function definirMomentoDoDia() {
+  var hoje = new Date();
 
-  var hoje =
-    new Date();
+  var txtData =
+    document.getElementById("txt-data");
 
-
-  var elementoData =
-    document.getElementById(
-      'txt-data'
-    );
-
-
-  var elementoMomento =
-    document.getElementById(
-      'txt-momento'
-    );
-
-
-  var elementoAutor =
-    document.getElementById(
-      'autor-momento'
-    );
-
-
-  if (elementoData) {
-
-    elementoData.innerText =
+  if (txtData) {
+    txtData.innerText =
       hoje.toLocaleDateString(
-        'pt-BR',
+        "pt-BR",
         {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'long'
+          weekday: "long",
+          day: "numeric",
+          month: "long"
         }
       );
   }
 
-
-  var selecionado =
+  var sel =
     momentosDoAno[
       obterDiaDoAno(hoje) %
       momentosDoAno.length
     ];
 
+  var txtMomento =
+    document.getElementById("txt-momento");
 
-  if (elementoMomento) {
+  var autor =
+    document.getElementById("autor-momento");
 
-    elementoMomento.innerText =
-      '"' +
-      selecionado.frase +
-      '"';
+  if (txtMomento) {
+    txtMomento.innerText =
+      '"' + sel.frase + '"';
   }
 
-
-  if (elementoAutor) {
-
-    elementoAutor.innerText =
-      '— ' +
-      selecionado.autor;
+  if (autor) {
+    autor.innerText =
+      "— " + sel.autor;
   }
 
-
-  var inputData =
-    document.getElementById(
-      'input-data'
-    );
-
+  var inputDataEl =
+    document.getElementById("input-data");
 
   if (
-    inputData &&
-    !inputData.value
+    inputDataEl &&
+    !inputDataEl.value
   ) {
-
-    inputData.value =
-      dataLocalISO(hoje);
-
+    inputDataEl.value = hojeISO();
     atualizarRetornoAutomatico();
   }
 }
@@ -1214,42 +686,29 @@ function definirMomentoDoDia() {
    ========================================================= */
 
 function atualizarRetornoAutomatico() {
+  var campo =
+    document.getElementById("input-data");
 
-  var inputData =
-    document.getElementById(
-      'input-data'
-    );
+  var retorno =
+    document.getElementById("input-retorno");
 
-
-  var inputRetorno =
-    document.getElementById(
-      'input-retorno'
-    );
-
-
-  if (
-    !inputData ||
-    !inputRetorno ||
-    !inputData.value
-  ) {
+  if (!campo || !retorno || !campo.value) {
     return;
   }
 
-
-  var data =
+  var d =
     new Date(
-      inputData.value +
-      'T00:00:00'
+      campo.value + "T00:00:00"
     );
 
+  d.setDate(d.getDate() + 14);
 
-  data.setDate(
-    data.getDate() + 14
-  );
-
-
-  inputRetorno.value =
-    dataLocalISO(data);
+  retorno.value =
+    d.getFullYear() +
+    "-" +
+    String(d.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(d.getDate()).padStart(2, "0");
 }
 
 
@@ -1258,251 +717,134 @@ function atualizarRetornoAutomatico() {
    ========================================================= */
 
 function solicitarSenha() {
-
   var modal =
+    document.getElementById("modal-senha");
+
+  if (!modal) return;
+
+  modal.style.display = "flex";
+
+  var campo =
     document.getElementById(
-      'modal-senha'
+      "input-senha-veronica"
     );
 
-
-  var input =
-    document.getElementById(
-      'input-senha-veronica'
-    );
-
-
-  if (!modal || !input) {
-    return;
-  }
-
-
-  modal.style.display =
-    'flex';
-
-  input.value =
-    '';
-
-  input.focus();
+  if (campo) campo.focus();
 }
 
 
-function fecharModal(evento) {
-
-  if (evento) {
-    evento.preventDefault();
-  }
-
+function fecharModal(e) {
+  if (e) e.preventDefault();
 
   var modal =
-    document.getElementById(
-      'modal-senha'
-    );
-
-
-  var input =
-    document.getElementById(
-      'input-senha-veronica'
-    );
-
+    document.getElementById("modal-senha");
 
   if (modal) {
-    modal.style.display =
-      'none';
+    modal.style.display = "none";
   }
 
-
-  if (input) {
-    input.value =
-      '';
-  }
-}
-
-
-async function validarSenha() {
-
-  var input =
+  var campo =
     document.getElementById(
-      'input-senha-veronica'
+      "input-senha-veronica"
     );
 
-
-  if (!input) {
-    return;
-  }
-
-
-  if (
-    input.value !==
-    SENHA_PAINEL
-  ) {
-
-    alert(
-      'Senha incorreta.'
-    );
-
-    input.value =
-      '';
-
-    input.focus();
-
-    return;
-  }
-
-
-  fecharModal();
-
-
-  document.getElementById(
-    'conteudo-principal'
-  ).style.display =
-    'none';
-
-
-  document.getElementById(
-    'painel-privado'
-  ).style.display =
-    'flex';
-
-
-  setarCabecalhoEspaco();
-
-
-  /*
-    Primeiro mostra o último cache.
-  */
-
-  carregarAgenda();
-  carregarPlanilha();
-
-
-  /*
-    Depois busca o Google Sheets.
-  */
-
-  await sincronizarComNuvem(false);
-
-
-  /*
-    E inicia atualização automática.
-  */
-
-  iniciarSincronizacaoAutomatica();
+  if (campo) campo.value = "";
 }
 
 
-function sairPainel() {
-
-  document.getElementById(
-    'painel-privado'
-  ).style.display =
-    'none';
-
-
-  document.getElementById(
-    'conteudo-principal'
-  ).style.display =
-    'flex';
-
-
-  if (intervaloSincronizacao) {
-
-    clearInterval(
-      intervaloSincronizacao
+function validarSenha() {
+  var campo =
+    document.getElementById(
+      "input-senha-veronica"
     );
 
-    intervaloSincronizacao =
-      null;
+  if (!campo) return;
+
+  if (campo.value === "1401") {
+    fecharModal();
+
+    document.getElementById(
+      "conteudo-principal"
+    ).style.display = "none";
+
+    document.getElementById(
+      "painel-privado"
+    ).style.display = "flex";
+
+    setarCabecalhoEspaco();
+
+    carregarAgenda();
+    carregarPlanilha();
+
+    /*
+       Ao entrar no espaço privado,
+       força sincronização imediatamente.
+    */
+    sincronizarAgora(true);
+
+  } else {
+    alert("Senha incorreta.");
+    campo.value = "";
   }
 }
 
 
 /* =========================================================
-   CABEÇALHO DO ESPAÇO PRIVADO
+   SAIR
+   ========================================================= */
+
+function sairPainel() {
+  document.getElementById(
+    "painel-privado"
+  ).style.display = "none";
+
+  document.getElementById(
+    "conteudo-principal"
+  ).style.display = "flex";
+}
+
+
+/* =========================================================
+   CABEÇALHO
    ========================================================= */
 
 function setarCabecalhoEspaco() {
+  var hoje = new Date();
 
-  var hoje =
-    new Date();
+  var campo =
+    document.getElementById("espaco-data");
 
-
-  var elementoData =
-    document.getElementById(
-      'espaco-data'
-    );
-
-
-  var elementoComemora =
-    document.getElementById(
-      'espaco-comemora'
-    );
-
-
-  var reflexao =
-    document.getElementById(
-      'relex-txt'
-    );
-
-
-  if (elementoData) {
-
-    elementoData.innerText =
+  if (campo) {
+    campo.innerText =
       hoje.toLocaleDateString(
-        'pt-BR',
+        "pt-BR",
         {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'long'
+          weekday: "long",
+          day: "numeric",
+          month: "long"
         }
       );
   }
 
-
-  var comemoracoes = [
-
-    'Dia da renovação',
-
-    'Dia do autocuidado',
-
-    'Dia da beleza',
-
-    'Dia da gratidão',
-
-    'Dia da leveza'
+  var comem = [
+    "Dia da renovação",
+    "Dia do autocuidado",
+    "Dia da beleza",
+    "Dia da gratidão",
+    "Dia da leveza"
   ];
 
+  var campoComem =
+    document.getElementById(
+      "espaco-comemora"
+    );
 
-  if (elementoComemora) {
-
-    elementoComemora.innerText =
-      'Hoje comemoramos: ' +
-      comemoracoes[
+  if (campoComem) {
+    campoComem.innerText =
+      "Hoje comemoramos: " +
+      comem[
         obterDiaDoAno(hoje) %
-        comemoracoes.length
-      ];
-  }
-
-
-  var frasesReflexao = [
-
-    'Cuide de você com o mesmo carinho que oferece aos outros.',
-
-    'Cada pequeno cuidado também é uma forma de amor.',
-
-    'Reserve um tempo para respirar, descansar e recomeçar.',
-
-    'A delicadeza também mora nos pequenos momentos.',
-
-    'Seu trabalho transforma cuidado em bem-estar.'
-  ];
-
-
-  if (reflexao) {
-
-    reflexao.innerText =
-      frasesReflexao[
-        obterDiaDoAno(hoje) %
-        frasesReflexao.length
+        comem.length
       ];
   }
 }
@@ -1513,125 +855,77 @@ function setarCabecalhoEspaco() {
    ========================================================= */
 
 function editarAtendimento(index) {
+  var lista = lerAtendimentosLocal();
 
-  var lista =
-    lerListaLocal(
-      CHAVE_ATENDIMENTOS
-    );
+  var item = lista[index];
 
-
-  var item =
-    lista[index];
-
-
-  if (!item) {
-    return;
-  }
-
+  if (!item) return;
 
   document.getElementById(
-    'edit-index'
+    "edit-index"
   ).value = index;
 
+  document.getElementById(
+    "input-cliente"
+  ).value = item.nome || "";
 
   document.getElementById(
-    'input-cliente'
+    "input-data"
   ).value =
-    item.nome || '';
-
+    normalizarDataISO(item.data || "");
 
   document.getElementById(
-    'input-data'
+    "input-retorno"
   ).value =
-    item.data || '';
-
+    normalizarDataISO(item.retorno || "");
 
   document.getElementById(
-    'input-retorno'
+    "input-valor"
   ).value =
-    item.retorno || '';
-
+    item.valor || "50,00";
 
   document.getElementById(
-    'input-valor'
+    "input-tempo"
   ).value =
-    item.valor !== undefined &&
-    item.valor !== null
-      ? item.valor
-      : '50,00';
-
+    item.tempo || "";
 
   document.getElementById(
-    'input-tempo'
+    "input-niver"
   ).value =
-    item.tempo || '';
-
+    normalizarDataISO(item.niver || "");
 
   document.getElementById(
-    'input-niver'
+    "input-endereco"
   ).value =
-    item.niver || '';
-
+    item.endereco || "";
 
   document.getElementById(
-    'input-endereco'
+    "input-obs"
   ).value =
-    item.endereco || '';
-
-
-  document.getElementById(
-    'input-obs'
-  ).value =
-    item.obs || '';
-
+    item.obs || "";
 
   document
-    .querySelectorAll('.pgto')
-    .forEach(
-      function(cb) {
-
-        cb.checked =
-          item.pgto
-            ? item.pgto
-                .split(',')
-                .map(
-                  function(valor) {
-                    return valor.trim();
-                  }
-                )
-                .includes(cb.value)
-            : false;
-      }
-    );
-
+    .querySelectorAll(".pgto")
+    .forEach(function (cb) {
+      cb.checked =
+        item.pgto
+          ? item.pgto.includes(cb.value)
+          : false;
+    });
 
   document.getElementById(
-    'form-titulo'
+    "form-titulo"
   ).innerText =
-    '✏️ EDITAR ATENDIMENTO';
-
+    "✏️ EDITAR ATENDIMENTO";
 
   document.getElementById(
-    'btn-salvar'
+    "btn-salvar"
   ).innerText =
-    'Atualizar Atendimento';
-
-
-  document.getElementById(
-    'btn-cancelar'
-  ).style.display =
-    'block';
-
+    "Atualizar Atendimento";
 
   document.getElementById(
-    'input-cliente'
-  ).focus();
-
-
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
+    "btn-cancelar"
+  ).style.display = "block";
 }
 
 
@@ -1640,563 +934,790 @@ function editarAtendimento(index) {
    ========================================================= */
 
 function limparForm() {
+  document.getElementById(
+    "edit-index"
+  ).value = "-1";
 
   document.getElementById(
-    'edit-index'
-  ).value =
-    '-1';
-
+    "input-cliente"
+  ).value = "";
 
   document.getElementById(
-    'input-cliente'
-  ).value =
-    '';
-
+    "input-retorno"
+  ).value = "";
 
   document.getElementById(
-    'input-retorno'
-  ).value =
-    '';
-
+    "input-valor"
+  ).value = "50,00";
 
   document.getElementById(
-    'input-valor'
-  ).value =
-    '50,00';
-
+    "input-tempo"
+  ).value = "";
 
   document.getElementById(
-    'input-tempo'
-  ).value =
-    '';
-
+    "input-niver"
+  ).value = "";
 
   document.getElementById(
-    'input-niver'
-  ).value =
-    '';
-
+    "input-endereco"
+  ).value = "";
 
   document.getElementById(
-    'input-endereco'
-  ).value =
-    '';
-
-
-  document.getElementById(
-    'input-obs'
-  ).value =
-    '';
-
+    "input-obs"
+  ).value = "";
 
   document
-    .querySelectorAll('.pgto')
-    .forEach(
-      function(cb) {
-        cb.checked = false;
-      }
-    );
-
+    .querySelectorAll(".pgto")
+    .forEach(function (cb) {
+      cb.checked = false;
+    });
 
   document.getElementById(
-    'input-data'
-  ).value =
-    dataLocalISO();
-
+    "input-data"
+  ).value = hojeISO();
 
   atualizarRetornoAutomatico();
 
-
   document.getElementById(
-    'form-titulo'
+    "form-titulo"
   ).innerText =
-    '📝 NOVO ATENDIMENTO';
-
+    "📝 NOVO ATENDIMENTO";
 
   document.getElementById(
-    'btn-salvar'
+    "btn-salvar"
   ).innerText =
-    'Salvar Cliente / Atendimento';
-
+    "Salvar Cliente / Atendimento";
 
   document.getElementById(
-    'btn-cancelar'
-  ).style.display =
-    'none';
+    "btn-cancelar"
+  ).style.display = "none";
 }
 
 
 /* =========================================================
-   CARREGAR TABELA DE ATENDIMENTOS
+   CARREGAR REGISTRO LOCAL
    ========================================================= */
 
 function carregarPlanilha() {
-
-  var listaAtendimentos =
-    lerListaLocal(
-      CHAVE_ATENDIMENTOS
-    );
-
+  var lista =
+    lerAtendimentosLocal();
 
   var tbody =
     document.getElementById(
-      'tabela-corpo'
+      "tabela-corpo"
     );
 
+  if (!tbody) return;
 
-  if (!tbody) {
-    return;
-  }
+  tbody.innerHTML = "";
 
+  var totalMesValorCalc = 0;
+  var totalAnoValorCalc = 0;
+  var qtdeMes = 0;
 
-  tbody.innerHTML =
-    '';
-
-
-  var agora =
-    new Date();
-
+  var agora = new Date();
 
   var mesAtual =
     agora.getMonth();
 
-
   var anoAtual =
     agora.getFullYear();
 
+  lista.forEach(function (r, i) {
+    var valNum =
+      numeroBR(r.valor);
 
-  var totalMes =
-    0;
+    var dataISO =
+      normalizarDataISO(r.data);
 
+    var partes =
+      dataISO
+        ? dataISO.split("-")
+        : [];
 
-  var totalAno =
-    0;
+    var anoAtend =
+      partes.length === 3
+        ? parseInt(partes[0], 10)
+        : anoAtual;
 
+    var mesAtend =
+      partes.length === 3
+        ? parseInt(partes[1], 10) - 1
+        : mesAtual;
 
-  var quantidadeMes =
-    0;
+    if (anoAtend === anoAtual) {
+      totalAnoValorCalc += valNum;
 
-
-  var totaisPorMes =
-    Array(12).fill(0);
-
-
-  listaAtendimentos.forEach(
-    function(registro, index) {
-
-      var valor =
-        converterValorParaNumero(
-          registro.valor
-        );
-
-
-      var anoAtend =
-        null;
-
-
-      var mesAtend =
-        null;
-
-
-      if (registro.data) {
-
-        var partes =
-          registro.data.split('-');
-
-
-        if (partes.length === 3) {
-
-          anoAtend =
-            Number(partes[0]);
-
-
-          mesAtend =
-            Number(partes[1]) - 1;
-        }
+      if (mesAtend === mesAtual) {
+        qtdeMes++;
+        totalMesValorCalc += valNum;
       }
+    }
+
+    var tr =
+      document.createElement("tr");
+
+    tr.innerHTML =
+      "<td>" +
+      (i + 1) +
+      "</td>" +
+
+      '<td style="text-align:left">' +
+      escaparHTML(r.nome || "") +
+      "</td>" +
+
+      "<td>" +
+      escaparHTML(
+        dataBR(dataISO)
+      ) +
+      "</td>" +
+
+      "<td>" +
+      escaparHTML(
+        dataBR(r.retorno)
+      ) +
+      "</td>" +
+
+      "<td>" +
+      dinheiroBR(valNum) +
+      "</td>" +
+
+      "<td>" +
+      escaparHTML(r.tempo || "") +
+      "</td>" +
+
+      '<td style="text-align:left">' +
+      escaparHTML(r.obs || "") +
+      "</td>" +
+
+      "<td>" +
+      '<button class="btn-acao btn-editar" onclick="editarAtendimento(' +
+      i +
+      ')">Editar</button> ' +
+
+      '<button class="btn-acao btn-excluir" onclick="excluir(' +
+      i +
+      ')">Excluir</button>' +
+
+      "</td>";
+
+    tbody.appendChild(tr);
+  });
+
+  var elAtend =
+    document.getElementById(
+      "tot-atend-mes"
+    );
+
+  var elMes =
+    document.getElementById(
+      "tot-valor-mes"
+    );
+
+  var elAno =
+    document.getElementById(
+      "tot-valor-ano"
+    );
+
+  if (elAtend) {
+    elAtend.innerText = qtdeMes;
+  }
+
+  if (elMes) {
+    elMes.innerText =
+      dinheiroBR(totalMesValorCalc);
+  }
+
+  if (elAno) {
+    elAno.innerText =
+      dinheiroBR(totalAnoValorCalc);
+  }
+
+  calcularMelhorPiorMes(lista);
+}
 
 
-      if (
-        anoAtend === anoAtual &&
-        mesAtend >= 0 &&
-        mesAtend <= 11
-      ) {
+/* =========================================================
+   MELHOR / PIOR / MÉDIA
+   ========================================================= */
 
-        totalAno +=
-          valor;
+function calcularMelhorPiorMes(lista) {
+  var totais = {};
 
+  lista.forEach(function (item) {
+    var data =
+      normalizarDataISO(item.data);
 
-        totaisPorMes[
-          mesAtend
-        ] += valor;
+    if (!data) return;
 
+    var partes =
+      data.split("-");
 
-        if (
-          mesAtend ===
-          mesAtual
-        ) {
+    if (partes.length !== 3) return;
 
-          quantidadeMes++;
+    var chave =
+      partes[0] + "-" + partes[1];
 
-          totalMes +=
-            valor;
-        }
+    if (!totais[chave]) {
+      totais[chave] = 0;
+    }
+
+    totais[chave] += numeroBR(item.valor);
+  });
+
+  var chaves =
+    Object.keys(totais);
+
+  var melhor = null;
+  var pior = null;
+
+  chaves.forEach(function (chave) {
+    var valor = totais[chave];
+
+    if (!melhor || valor > melhor.valor) {
+      melhor = {
+        chave: chave,
+        valor: valor
+      };
+    }
+
+    if (!pior || valor < pior.valor) {
+      pior = {
+        chave: chave,
+        valor: valor
+      };
+    }
+  });
+
+  var melhorEl =
+    document.getElementById(
+      "tot-melhor-mes"
+    );
+
+  var piorEl =
+    document.getElementById(
+      "tot-pior-mes"
+    );
+
+  var mediaEl =
+    document.getElementById(
+      "tot-media-mes"
+    );
+
+  if (!melhor) {
+    if (melhorEl) melhorEl.innerText = "-";
+    if (piorEl) piorEl.innerText = "-";
+    if (mediaEl) mediaEl.innerText = "R$ 0,00";
+    return;
+  }
+
+  function nomeMes(chave) {
+    var p = chave.split("-");
+
+    var d =
+      new Date(
+        parseInt(p[0], 10),
+        parseInt(p[1], 10) - 1,
+        1
+      );
+
+    return d.toLocaleDateString(
+      "pt-BR",
+      {
+        month: "2-digit",
+        year: "numeric"
       }
-
-
-      var tr =
-        document.createElement(
-          'tr'
-        );
-
-
-      tr.innerHTML =
-
-        '<td>' +
-        (index + 1) +
-        '</td>' +
-
-        '<td class="texto-esquerda">' +
-        escaparHTML(
-          registro.nome
-        ) +
-        '</td>' +
-
-        '<td>' +
-        escaparHTML(
-          formatarDataBR(
-            registro.data
-          )
-        ) +
-        '</td>' +
-
-        '<td>' +
-        escaparHTML(
-          formatarDataBR(
-            registro.retorno
-          )
-        ) +
-        '</td>' +
-
-        '<td>' +
-        formatarMoeda(valor) +
-        '</td>' +
-
-        '<td>' +
-        escaparHTML(
-          registro.tempo
-        ) +
-        '</td>' +
-
-        '<td class="texto-esquerda">' +
-        escaparHTML(
-          registro.obs
-        ) +
-        '</td>' +
-
-        '<td>' +
-
-        '<button ' +
-        'type="button" ' +
-        'class="btn-acao btn-editar" ' +
-        'onclick="editarAtendimento(' +
-        index +
-        ')">' +
-
-        'Editar' +
-
-        '</button>' +
-
-        '<button ' +
-        'type="button" ' +
-        'class="btn-acao btn-excluir" ' +
-        'onclick="excluir(' +
-        index +
-        ')">' +
-
-        'Excluir' +
-
-        '</button>' +
-
-        '</td>';
-
-
-      tbody.appendChild(tr);
-    }
-  );
-
-
-  /*
-    Indicadores
-  */
-
-  var elementoQtd =
-    document.getElementById(
-      'tot-atend-mes'
     );
-
-
-  var elementoValorMes =
-    document.getElementById(
-      'tot-valor-mes'
-    );
-
-
-  var elementoValorAno =
-    document.getElementById(
-      'tot-valor-ano'
-    );
-
-
-  var elementoMelhor =
-    document.getElementById(
-      'tot-melhor-mes'
-    );
-
-
-  var elementoPior =
-    document.getElementById(
-      'tot-pior-mes'
-    );
-
-
-  var elementoMedia =
-    document.getElementById(
-      'tot-media-mes'
-    );
-
-
-  if (elementoQtd) {
-
-    elementoQtd.innerText =
-      quantidadeMes;
   }
 
-
-  if (elementoValorMes) {
-
-    elementoValorMes.innerText =
-      formatarMoeda(
-        totalMes
-      );
+  if (melhorEl) {
+    melhorEl.innerText =
+      nomeMes(melhor.chave);
   }
 
-
-  if (elementoValorAno) {
-
-    elementoValorAno.innerText =
-      formatarMoeda(
-        totalAno
-      );
+  if (piorEl) {
+    piorEl.innerText =
+      nomeMes(pior.chave);
   }
 
+  var soma = 0;
 
-  /*
-    Melhor / pior mês
-  */
+  chaves.forEach(function (c) {
+    soma += totais[c];
+  });
 
-  var mesesComValores =
-    totaisPorMes
-      .map(
-        function(valor, mes) {
-          return {
-            valor: valor,
-            mes: mes
-          };
-        }
-      )
-      .filter(
-        function(item) {
-          return item.valor > 0;
-        }
-      );
+  var media =
+    chaves.length
+      ? soma / chaves.length
+      : 0;
 
-
-  if (
-    mesesComValores.length > 0
-  ) {
-
-    var maior =
-      [...mesesComValores]
-        .sort(
-          function(a, b) {
-            return b.valor - a.valor;
-          }
-        )[0];
-
-
-    var menor =
-      [...mesesComValores]
-        .sort(
-          function(a, b) {
-            return a.valor - b.valor;
-          }
-        )[0];
-
-
-    if (elementoMelhor) {
-
-      elementoMelhor.innerText =
-        String(
-          maior.mes + 1
-        ).padStart(2, '0') +
-        '/' +
-        anoAtual;
-    }
-
-
-    if (elementoPior) {
-
-      elementoPior.innerText =
-        String(
-          menor.mes + 1
-        ).padStart(2, '0') +
-        '/' +
-        anoAtual;
-    }
-
-
-    if (elementoMedia) {
-
-      elementoMedia.innerText =
-        formatarMoeda(
-          totalAno /
-          mesesComValores.length
-        );
-    }
-
-  } else {
-
-    if (elementoMelhor) {
-      elementoMelhor.innerText = '-';
-    }
-
-    if (elementoPior) {
-      elementoPior.innerText = '-';
-    }
-
-    if (elementoMedia) {
-      elementoMedia.innerText =
-        formatarMoeda(0);
-    }
-  }
-
-
-  /*
-    Se não houver registros.
-  */
-
-  if (
-    listaAtendimentos.length === 0
-  ) {
-
-    tbody.innerHTML =
-      '<tr>' +
-      '<td colspan="8">' +
-      'Nenhum atendimento registrado.' +
-      '</td>' +
-      '</tr>';
+  if (mediaEl) {
+    mediaEl.innerText =
+      dinheiroBR(media);
   }
 }
 
 
 /* =========================================================
-   TECLA ENTER NA SENHA
+   SINCRONIZAÇÃO
+   ---------------------------------------------------------
+   O dger do seu Apps Script deve responder ao GET.
+   O código aceita vários formatos de resposta para não
+   quebrar caso o retorno esteja encapsulado em dados/data.
    ========================================================= */
 
-function configurarEventosSenha() {
+function extrairDadosServidor(resposta) {
+  if (!resposta) return null;
 
-  var input =
-    document.getElementById(
-      'input-senha-veronica'
+  var dados = resposta;
+
+  if (typeof dados === "string") {
+    try {
+      dados = JSON.parse(dados);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  if (!dados) return null;
+
+  /*
+     Formato ideal:
+     {
+       atendimentos: [],
+       agendamentos: []
+     }
+  */
+  if (
+    Array.isArray(dados.atendimentos) ||
+    Array.isArray(dados.agendamentos)
+  ) {
+    return {
+      atendimentos:
+        Array.isArray(dados.atendimentos)
+          ? dados.atendimentos
+          : null,
+
+      agendamentos:
+        Array.isArray(dados.agendamentos)
+          ? dados.agendamentos
+          : null
+    };
+  }
+
+  /*
+     Outros formatos comuns.
+  */
+  if (
+    dados.dados &&
+    typeof dados.dados === "object"
+  ) {
+    return extrairDadosServidor(
+      dados.dados
     );
+  }
+
+  if (
+    dados.data &&
+    typeof dados.data === "object"
+  ) {
+    return extrairDadosServidor(
+      dados.data
+    );
+  }
+
+  /*
+     Se vierem duas listas com nomes diferentes.
+  */
+  if (
+    Array.isArray(dados.agenda) ||
+    Array.isArray(dados.atendimento)
+  ) {
+    return {
+      atendimentos:
+        Array.isArray(dados.atendimento)
+          ? dados.atendimento
+          : null,
+
+      agendamentos:
+        Array.isArray(dados.agenda)
+          ? dados.agenda
+          : null
+    };
+  }
+
+  /*
+     Se vier simplesmente uma lista.
+  */
+  if (Array.isArray(dados)) {
+    var atend = [];
+    var agenda = [];
+
+    dados.forEach(function (item) {
+      if (!item || typeof item !== "object") {
+        return;
+      }
+
+      var tipo =
+        String(
+          item.tipo ||
+          item.Tipo ||
+          ""
+        ).toLowerCase();
+
+      if (
+        tipo.includes("agendamento") ||
+        item.horario ||
+        item.telefone
+      ) {
+        agenda.push(item);
+      } else {
+        atend.push(item);
+      }
+    });
+
+    return {
+      atendimentos: atend,
+      agendamentos: agenda
+    };
+  }
+
+  return null;
+}
 
 
-  if (!input) {
+/* =========================================================
+   NORMALIZAÇÃO DOS DADOS DO SERVIDOR
+   ========================================================= */
+
+function normalizarAtendimentoServidor(item) {
+  if (!item) return null;
+
+  return {
+    tipo: "atendimento",
+
+    dataRegistro:
+      item.dataRegistro ||
+      item.DataRegistro ||
+      "",
+
+    nome:
+      item.nome ||
+      item.Nome ||
+      item.cliente ||
+      item.Cliente ||
+      "",
+
+    data:
+      normalizarDataISO(
+        item.data ||
+        item.Data ||
+        item.dataAtendimento ||
+        item.DataAtendimento ||
+        ""
+      ),
+
+    retorno:
+      normalizarDataISO(
+        item.retorno ||
+        item.Retorno ||
+        ""
+      ),
+
+    valor:
+      item.valor ??
+      item.Valor ??
+      "0",
+
+    tempo:
+      item.tempo ||
+      item.Tempo ||
+      "",
+
+    niver:
+      normalizarDataISO(
+        item.niver ||
+        item.Niver ||
+        item.aniversario ||
+        item.Aniversario ||
+        ""
+      ),
+
+    endereco:
+      item.endereco ||
+      item.Endereco ||
+      "",
+
+    obs:
+      item.obs ||
+      item.Obs ||
+      item.observacao ||
+      item.Observacao ||
+      "",
+
+    pgto:
+      item.pgto ||
+      item.Pgto ||
+      item.formaPgto ||
+      ""
+  };
+}
+
+
+function normalizarAgendamentoServidor(item) {
+  if (!item) return null;
+
+  return {
+    tipo: "agendamento",
+
+    dataRegistro:
+      item.dataRegistro ||
+      item.DataRegistro ||
+      "",
+
+    nome:
+      item.nome ||
+      item.Nome ||
+      item.cliente ||
+      item.Cliente ||
+      "",
+
+    telefone:
+      item.telefone ||
+      item.Telefone ||
+      item.tel ||
+      item.Tel ||
+      "",
+
+    dia:
+      normalizarDataISO(
+        item.dia ||
+        item.Dia ||
+        item.data ||
+        item.Data ||
+        ""
+      ),
+
+    horario:
+      normalizarHorario(
+        item.horario ||
+        item.Horario ||
+        item.hora ||
+        item.Hora ||
+        ""
+      ),
+
+    status:
+      item.status ||
+      item.Status ||
+      "Pendente"
+  };
+}
+
+
+/* =========================================================
+   SINCRONIZAÇÃO PRINCIPAL
+   ========================================================= */
+
+async function sincronizarAgora(forcar) {
+  var agora = Date.now();
+
+  /*
+     Evita várias chamadas simultâneas.
+  */
+  if (sincronizando) return;
+
+  /*
+     Se acabou de sincronizar, não repete imediatamente.
+  */
+  if (
+    !forcar &&
+    agora - ultimaSincronizacao < 5000
+  ) {
     return;
   }
 
+  sincronizando = true;
 
-  input.addEventListener(
-    'keydown',
-    function(evento) {
+  try {
+    /*
+       dger via GET.
 
+       O parâmetro "dger=1" ajuda a identificar
+       a leitura sem alterar o dpost.
+    */
+    var separador =
+      URL_SCRIPT.includes("?")
+        ? "&"
+        : "?";
+
+    var url =
+      URL_SCRIPT +
+      separador +
+      "dger=1&_=" +
+      Date.now();
+
+    var resposta =
+      await fetch(url, {
+        method: "GET",
+        cache: "no-store"
+      });
+
+    if (!resposta.ok) {
+      throw new Error(
+        "Servidor respondeu " +
+        resposta.status
+      );
+    }
+
+    var texto =
+      await resposta.text();
+
+    var dados =
+      extrairDadosServidor(texto);
+
+    /*
+       Se o dger respondeu corretamente,
+       atualiza o cache local dos aparelhos.
+    */
+    if (dados) {
       if (
-        evento.key === 'Enter'
+        Array.isArray(
+          dados.atendimentos
+        )
       ) {
+        var listaAtendimentos =
+          dados.atendimentos
+            .map(
+              normalizarAtendimentoServidor
+            )
+            .filter(Boolean);
 
-        validarSenha();
-      }
-
-
-      if (
-        evento.key === 'Escape'
-      ) {
-
-        fecharModal(
-          evento
+        salvarAtendimentosLocal(
+          listaAtendimentos
         );
       }
-    }
-  );
 
+      if (
+        Array.isArray(
+          dados.agendamentos
+        )
+      ) {
+        var listaAgendamentos =
+          dados.agendamentos
+            .map(
+              normalizarAgendamentoServidor
+            )
+            .filter(Boolean);
 
-  var modal =
-    document.getElementById(
-      'modal-senha'
-    );
-
-
-  if (modal) {
-
-    modal.addEventListener(
-      'click',
-      function(evento) {
-
-        if (
-          evento.target.id ===
-          'modal-senha'
-        ) {
-
-          fecharModal();
-        }
+        salvarAgendamentosLocal(
+          listaAgendamentos
+        );
       }
+
+      carregarAgenda();
+      carregarPlanilha();
+
+      ultimaSincronizacao =
+        Date.now();
+    }
+
+  } catch (erro) {
+    /*
+       Se estiver sem internet,
+       NÃO apaga o cache.
+
+       Assim nada desaparece da tela.
+    */
+    console.warn(
+      "Sincronização temporariamente indisponível:",
+      erro
     );
+
+  } finally {
+    sincronizando = false;
   }
 }
+
+
+/* =========================================================
+   SINCRONIZAÇÃO AUTOMÁTICA
+   ========================================================= */
+
+function iniciarSincronizacao() {
+  if (timerSincronizacao) {
+    clearInterval(
+      timerSincronizacao
+    );
+  }
+
+  /*
+     Primeira leitura.
+  */
+  sincronizarAgora(true);
+
+  /*
+     A cada 10 segundos.
+     Leve para Android.
+  */
+  timerSincronizacao =
+    setInterval(function () {
+      sincronizarAgora(false);
+    }, 10000);
+}
+
+
+/* =========================================================
+   QUANDO VOLTA PARA A ABA
+   ========================================================= */
+
+document.addEventListener(
+  "visibilitychange",
+  function () {
+    if (
+      document.visibilityState ===
+      "visible"
+    ) {
+      sincronizarAgora(true);
+    }
+  }
+);
+
+
+/* =========================================================
+   QUANDO A JANELA RECEBE FOCO
+   ========================================================= */
+
+window.addEventListener(
+  "focus",
+  function () {
+    sincronizarAgora(true);
+  }
+);
 
 
 /* =========================================================
    INICIALIZAÇÃO
    ========================================================= */
 
-window.addEventListener(
-  'load',
-  function() {
+window.onload = function () {
 
-    definirMomentoDoDia();
+  /*
+     Primeiro mostra o cache imediatamente.
+     Isso deixa o Android rápido.
+  */
+  definirMomentoDoDia();
 
-    setarCabecalhoEspaco();
+  setarCabecalhoEspaco();
 
-    preencherDiasUteis();
+  preencherDiasUteis();
 
-    carregarAgenda();
+  carregarAgenda();
 
-    carregarPlanilha();
+  carregarPlanilha();
 
-    configurarEventosSenha();
-
-
-    /*
-      O site público não precisa consultar
-      a planilha o tempo todo.
-
-      A sincronização começa quando
-      o painel privado é aberto.
-    */
-
-    console.log(
-      'Sistema Verônica Castro iniciado.'
-    );
-  }
-);
+  /*
+     Depois busca a versão central.
+  */
+  iniciarSincronizacao();
+};
