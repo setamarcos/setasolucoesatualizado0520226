@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#1A33D8"><title>Casa Monte Sinai | Gestão</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><div><b>SETA SOLUÇÕES</b><h1>Casa Monte Sinai</h1><span>Gestão de locação e prospecção</span></div><i id="status">Conectando...</i></header>
+<nav>
+<button data-tab="painel">Painel</button><button data-tab="imovel">Imóvel</button>
+<button data-tab="prospeccao">Prospecção</button><button data-tab="divulgacao">Divulgação</button>
+<button data-tab="mensagens">Mensagens</button><button data-tab="contatos">Contatos</button>
+</nav>
+<main>
+<section id="painel" class="tab"><div class="hero"><div><small>MONTE SINAI · ESMERALDAS/MG</small><h2>Casa parada → ativo comercial</h2><p>Foco: locação mobiliada por quinzena ou mês para empresas, equipes e famílias.</p></div><strong>R$ 2.500/mês</strong></div><div id="stats" class="cards"></div><article><h3>Estratégia</h3><p><b>B2B:</b> alojamento temporário para equipes de obra e profissionais deslocados.</p><p><b>Famílias:</b> estadia prolongada com piscina, lago, churrasqueira e área gramada.</p><p><b>Localização:</b> Monte Sinai com acesso regional para Esmeraldas, Betim e Contagem.</p></article></section>
+<section id="imovel" class="tab"><h2>Imóvel</h2><div id="imovelForm" class="form"></div><button id="saveImovel">Salvar</button></section>
+<section id="prospeccao" class="tab"><div class="title"><h2>Prospecção B2B</h2><button onclick="novo('Prospeccao')">+ Novo</button></div><div class="table"><table><thead><tr><th>Empresa</th><th>Região</th><th>Segmento</th><th>Prioridade</th><th>Status</th><th></th></tr></thead><tbody id="pros"></tbody></table></div></section>
+<section id="divulgacao" class="tab"><div class="title"><h2>Sites de divulgação</h2><button onclick="novo('Divulgacao')">+ Novo</button></div><div class="table"><table><thead><tr><th>Canal</th><th>Modelo</th><th>Prioridade</th><th>Status</th><th>Observação</th></tr></thead><tbody id="sites"></tbody></table></div></section>
+<section id="mensagens" class="tab"><h2>Mensagens</h2><article><h3>Empresa / construtora</h3><textarea id="b2b" readonly></textarea><button onclick="copiar('b2b')">Copiar</button></article><article><h3>Família</h3><textarea id="familia" readonly></textarea><button onclick="copiar('familia')">Copiar</button></article></section>
+<section id="contatos" class="tab"><div class="title"><h2>Controle de contatos</h2><button onclick="novo('Contatos')">+ Novo</button></div><div class="table"><table><thead><tr><th>Data</th><th>Empresa/Pessoa</th><th>Canal</th><th>Resultado</th><th>Valor</th></tr></thead><tbody id="contacts"></tbody></table></div></section>
+</main>
+<div id="modal" hidden><div class="modal"><button class="x" onclick="fechar()">×</button><h2 id="mt">Novo registro</h2><form id="mf"></form></div></div>
+<script src="script.js"></script>
+</body></html>
