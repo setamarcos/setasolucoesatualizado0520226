@@ -1,0 +1,45 @@
+COMO USAR — CASA MONTE SINAI / VITRINE
+
+1) Apps Script
+- Abra o projeto atual.
+- Substitua o Code.gs pelo Code.gs deste ZIP.
+- Salve.
+- Implantar > Gerenciar implantações > editar Web App.
+- Crie uma nova versão mantendo a mesma URL /exec.
+- Teste: .../exec?action=ping
+- Deve retornar JSON indicando API online.
+
+2) GitHub
+Substitua no repositório da Vitrine:
+index.html
+script.js
+style.css
+O endereço /aluguel/ continua o mesmo.
+
+3) Administrativo
+Na Vitrine clique em Administrativo.
+Senha: 0211.
+
+4) Imóvel
+Edite os dados e clique em Salvar.
+
+5) Fotos
+No painel:
+Fotos > escolha Grupo > Ambiente > cole a URL do Google Drive > Salvar.
+Grupos:
+Casa: Sala, Quartos, Banheiro, Cozinha, Área de serviço, Área da sala / varanda, Estacionamento.
+Área de lazer: Churrasqueira, Ambiente externo, Área comum.
+Área da piscina: Piscina, Gramado, Área comum.
+
+O painel grava a URL na aba Fotos.
+A Vitrine lê somente fotos ativas.
+Sem foto, não existe espaço vazio.
+
+6) Segurança
+O administrativo fica escondido da apresentação comercial e exige a senha 0211.
+É uma proteção simples de interface, não autenticação de alta segurança.
+
+7) Importante
+Não crie outra planilha.
+Não altere SHEET_ID.
+Não altere a URL /exec.
