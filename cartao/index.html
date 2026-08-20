@@ -88,10 +88,10 @@ button.btn-action.secondary:hover { background: #218838; }
 button.btn-action.whatsapp { background: #25d366; color: #fff; }
 button.btn-action.whatsapp:hover { background: #1ebe57; }
 
-/* Página A4 Real (Oculta da visualização direta, usada apenas para impressão e captura) */
+/* Página A4 Real */
 #a4-page { width: 21cm; min-height: 29.7cm; background: #FFFFFF; display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start; padding: 0.8cm 0.4cm; gap: 6mm 5mm; position: absolute; left: -9999px; top: 0; }
 
-/* Miniatura da Página A4 exibida na interface */
+/* Miniatura da Página A4 */
 #a4-mini-preview { width: 320px; height: 452px; background: #FFFFFF; border: 1px solid #ccc; box-shadow: inset 0 0 10px rgba(0,0,0,0.05); overflow: hidden; position: relative; display: flex; flex-wrap: wrap; justify-content: center; align-content: flex-start; padding: 12px 6px; gap: 4px 3px; transform-origin: top center; }
 
 .card { width: var(--card-w); height: var(--card-h); background: var(--card-bg); color: var(--card-color); border: 1px dashed var(--guide-color); position: relative; overflow: hidden; padding: 3mm; display: flex; }
@@ -283,10 +283,10 @@ button.btn-action.whatsapp:hover { background: #1ebe57; }
                     <label>Alinhamento Matriz (3x3):</label>
                     <div class="matrix-container">
                         <div class="matrix-col">
-                            <span>DIREITA</span>
-                            <label><input type="radio" name="posMat" value="top-right" onchange="gerarCartoes()"> alto</label>
-                            <label><input type="radio" name="posMat" value="center-right" onchange="gerarCartoes()"> meio</label>
-                            <label><input type="radio" name="posMat" value="bottom-right" onchange="gerarCartoes()"> baixo</label>
+                            <span>ESQUERDA</span>
+                            <label><input type="radio" name="posMat" value="top-left" onchange="gerarCartoes()"> alto</label>
+                            <label><input type="radio" name="posMat" value="center-left" onchange="gerarCartoes()"> meio</label>
+                            <label><input type="radio" name="posMat" value="bottom-left" onchange="gerarCartoes()"> baixo</label>
                         </div>
                         <div class="matrix-col">
                             <span>CENTRO</span>
@@ -295,10 +295,10 @@ button.btn-action.whatsapp:hover { background: #1ebe57; }
                             <label><input type="radio" name="posMat" value="bottom-center" onchange="gerarCartoes()"> baixo</label>
                         </div>
                         <div class="matrix-col">
-                            <span>ESQUERDA</span>
-                            <label><input type="radio" name="posMat" value="top-left" onchange="gerarCartoes()"> alto</label>
-                            <label><input type="radio" name="posMat" value="center-left" onchange="gerarCartoes()"> meio</label>
-                            <label><input type="radio" name="posMat" value="bottom-left" onchange="gerarCartoes()"> baixo</label>
+                            <span>DIREITA</span>
+                            <label><input type="radio" name="posMat" value="top-right" onchange="gerarCartoes()"> alto</label>
+                            <label><input type="radio" name="posMat" value="center-right" onchange="gerarCartoes()"> meio</label>
+                            <label><input type="radio" name="posMat" value="bottom-right" onchange="gerarCartoes()"> baixo</label>
                         </div>
                     </div>
                 </div>
@@ -335,7 +335,6 @@ button.btn-action.whatsapp:hover { background: #1ebe57; }
                 </div>
             </div>
 
-            <!-- Botões de Saída posicionados ao lado do bloco logo -->
             <div class="action-area">
                 <div class="print-warning">
                     ⚠️ Na impressão, configure a <strong>"Escala"</strong> para <strong>100%</strong>.
@@ -383,7 +382,8 @@ function enviarParaPlanilha(tipoRegistro) {
     const tel = document.getElementById('tel').value || "";
     const email = document.getElementById('email').value || "";
     
-    const isWatermark = document.querySelector('input[name="logoType"]:checked').value === 'watermark';
+    const logoTypeEl = document.querySelector('input[name="logoType"]:checked');
+    const isWatermark = logoTypeEl ? logoTypeEl.value === 'watermark' : true;
     const tipoModelo = isWatermark ? 'Marca d\'Água' : 'Logo Fixa';
 
     const dadosPayload = {
@@ -465,8 +465,12 @@ function gerarLinha(id, padraoLayout) {
 }
 
 function criarElementoCartao(isPrintVersion = false, isMini = false) {
-    const isWatermark = document.querySelector('input[name="logoType"]:checked').value === 'watermark';
-    const matPos = document.querySelector('input[name="posMat"]:checked')?.value || 'center-center';
+    const logoTypeEl = document.querySelector('input[name="logoType"]:checked');
+    const isWatermark = logoTypeEl ? logoTypeEl.value === 'watermark' : true;
+    
+    const matPosEl = document.querySelector('input[name="posMat"]:checked');
+    const matPos = matPosEl ? matPosEl.value : 'center-center';
+    
     const rawOpacity = parseInt(document.getElementById('watermarkRange').value) / 100;
     const logoScale = document.getElementById('logoSize').value;
     
@@ -484,22 +488,22 @@ function criarElementoCartao(isPrintVersion = false, isMini = false) {
 
         if (isWatermark) {
             logoStyle += ` position: absolute; z-index: 0;`;
-            let translateStr = '';
+            let transforms = [];
 
-            if (matPos.includes('top')) logoStyle += ' top: 3px;';
-            if (matPos.includes('bottom')) logoStyle += ' bottom: 3px;';
+            if (matPos.includes('top')) logoStyle += ' top: 4px;';
+            if (matPos.includes('bottom')) logoStyle += ' bottom: 4px;';
             if (matPos.includes('center') && !matPos.includes('top') && !matPos.includes('bottom')) {
-                logoStyle += ' top: 50%;'; translateStr += ' translateY(-50%)';
+                logoStyle += ' top: 50%;'; 
+                transforms.push('translateY(-50%)');
             }
 
             if (matPos.includes('left')) logoStyle += ' left: 4px;';
             if (matPos.includes('right')) logoStyle += ' right: 4px;';
             if (matPos.includes('center') && !matPos.includes('left') && !matPos.includes('right')) {
                 logoStyle += ' left: 50%;';
-                if (translateStr) translateStr = ' translate(-50%, -50%)';
-                else translateStr += ' translateX(-50%)';
+                transforms.push('translateX(-50%)');
             }
-            if (translateStr) logoStyle += ` transform:${translateStr};`;
+            if (transforms.length > 0) logoStyle += ` transform: ${transforms.join(' ')};`;
 
             logoHtml = `<img src="${logoDataUrl}" style="${logoStyle}">`;
         } else {
@@ -513,7 +517,7 @@ function criarElementoCartao(isPrintVersion = false, isMini = false) {
                 textContainerWidth = `calc(100% - ${logoScale}% - 6px)`;
             } else {
                 textContainerWidth = '100%';
-                if (matPos === 'bottom-center') {
+                if (matPos.includes('bottom')) {
                     cardFlexStyle = 'flex-direction: column-reverse; align-items: center; justify-content: center; gap: 3px;';
                 } else {
                     cardFlexStyle = 'flex-direction: column; align-items: center; justify-content: center; gap: 3px;';
@@ -556,19 +560,20 @@ function gerarCartoes() {
     document.documentElement.style.setProperty('--global-line-spacing', spacing);
     document.documentElement.style.setProperty('--card-bg', document.getElementById('cardColor').value);
     
-    // Cartão individual principal (topo da coluna direita)
+    // Cartão individual principal
     singleCardContainer.appendChild(criarElementoCartao(false, false));
     
     const qtd = parseInt(document.getElementById('qtdCartoes').value) || 10;
     
-    // Versão A4 real (impressão) e Miniatura A4 (tela)
+    // A4 real e miniatura
     for(let i = 0; i < qtd; i++) { 
         a4page.appendChild(criarElementoCartao(true, false));
         a4MiniPreview.appendChild(criarElementoCartao(false, true));
     }
 }
 
-gerarCartoes();
+// Inicializar na carga
+window.addEventListener('DOMContentLoaded', gerarCartoes);
 </script>
 </body>
 </html>
