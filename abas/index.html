@@ -7,14 +7,16 @@
   <style>
     :root {
       --primary: #002244;
-      --primary-dark: #001328;
+      --primary-dark: #000d1a;
       --accent: #ff6600;
-      --accent-hover: #e55a00;
-      --bg-gradient: linear-gradient(135deg, #001328 0%, #002244 50%, #003366 100%);
-      --card-bg: rgba(255, 255, 255, 0.95);
-      --card-hover: #ffffff;
-      --text-main: #1e293b;
-      --text-muted: #64748b;
+      --accent-hover: #ff8533;
+      --accent-glow: rgba(255, 102, 0, 0.4);
+      --bg-gradient: radial-gradient(circle at top, #002b55 0%, #001328 60%, #000914 100%);
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --card-hover: rgba(255, 255, 255, 0.12);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
     }
 
     * {
@@ -34,45 +36,76 @@
     }
     
     header {
-      background: var(--primary-dark);
+      background: rgba(0, 13, 26, 0.8);
+      backdrop-filter: blur(15px);
       color: #fff;
       text-align: center;
-      padding: 1.8rem 1rem 1.2rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      border-bottom: 3px solid var(--accent);
+      padding: 2rem 1rem 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      border-bottom: 2px solid rgba(255, 102, 0, 0.5);
       position: relative;
     }
     
     header h1 {
-      font-size: 2rem;
+      font-size: 2.2rem;
       font-weight: 800;
-      margin-bottom: 0.1rem;
-      letter-spacing: 0.8px;
-      background: linear-gradient(90deg, #ffffff, #cbd5e1);
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, #ffffff, #ff944d);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      margin-bottom: 0.2rem;
     }
     
     header p {
       font-size: 0.95rem;
-      color: #ff944d;
-      margin-bottom: 1rem;
-      font-weight: 500;
-      letter-spacing: 0.3px;
+      color: #cbd5e1;
+      margin-bottom: 1.2rem;
+      font-weight: 400;
     }
 
     .user-info-bar {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 1.2rem;
+      gap: 1rem;
       font-size: 0.85rem;
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.06);
       backdrop-filter: blur(10px);
-      padding: 0.4rem 1.2rem;
+      padding: 0.5rem 1.4rem;
       border-radius: 30px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: #f1f5f9;
+      border: 1px solid var(--card-border);
+      color: #e2e8f0;
+    }
+
+    /* Barra de Pesquisa */
+    .search-container {
+      max-width: 500px;
+      margin: 1.8rem auto 0;
+      width: 100%;
+      padding: 0 1rem;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 1.2rem;
+      border-radius: 25px;
+      border: 1px solid var(--card-border);
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+    }
+
+    .search-input::placeholder {
+      color: #94a3b8;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 15px var(--accent-glow);
+      background: rgba(255, 255, 255, 0.12);
     }
     
     .container {
@@ -82,33 +115,33 @@
       padding: 0 1.5rem;
       width: 100%;
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      justify-content: center;
     }
     
     .abas-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 1.2rem;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 1.3rem;
       width: 100%;
     }
     
     .aba-btn {
       background: var(--card-bg);
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 14px;
-      padding: 1.2rem 1rem;
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.4rem 1.2rem;
       cursor: pointer;
-      text-align: center;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      text-align: left;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
       text-decoration: none;
       color: var(--text-main);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      min-height: 145px;
+      align-items: flex-start;
+      justify-content: space-between;
+      min-height: 160px;
       position: relative;
       overflow: hidden;
     }
@@ -120,134 +153,159 @@
       left: 0;
       width: 100%;
       height: 3px;
-      background: var(--primary);
-      transition: background 0.25s ease;
+      background: transparent;
+      transition: background 0.3s ease;
     }
     
     .aba-btn:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.22);
+      transform: translateY(-6px);
       background: var(--card-hover);
-      border-color: rgba(255, 102, 0, 0.4);
+      border-color: var(--accent);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 20px var(--accent-glow);
     }
 
     .aba-btn:hover::before {
       background: var(--accent);
     }
-    
-    .aba-btn.ativo {
-      background: var(--accent);
-      color: #fff;
-      box-shadow: 0 8px 22px rgba(255, 102, 0, 0.35);
-      border-color: transparent;
+
+    /* Badges/Tags */
+    .badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    .aba-btn.ativo::before {
-      background: var(--primary-dark);
+    .badge-ia {
+      background: linear-gradient(135deg, #ff6600, #ff0055);
+      color: #fff;
     }
-    
-    .aba-btn.ativo:hover {
-      background: var(--accent-hover);
+
+    .badge-novo {
+      background: #00c853;
+      color: #fff;
+    }
+
+    .badge-sistema {
+      background: rgba(255, 255, 255, 0.15);
+      color: #cbd5e1;
     }
     
     .aba-icon {
-      width: 32px;
-      height: 32px;
-      margin-bottom: 0.6rem;
+      width: 40px;
+      height: 40px;
+      margin-bottom: 0.8rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 8px;
+      transition: all 0.3s ease;
     }
 
     .aba-icon svg {
       width: 100%;
       height: 100%;
-      fill: var(--primary);
-      transition: fill 0.25s ease;
+      fill: #ffffff;
+      transition: fill 0.3s ease;
+    }
+
+    .aba-btn:hover .aba-icon {
+      background: var(--accent);
+      transform: scale(1.05);
     }
 
     .aba-btn:hover .aba-icon svg {
-      fill: var(--accent);
-    }
-
-    .aba-btn.ativo .aba-icon svg {
       fill: #ffffff;
     }
     
+    .aba-content {
+      width: 100%;
+    }
+
     .aba-titulo {
-      font-size: 0.98rem;
+      font-size: 1.05rem;
       font-weight: 700;
-      margin-bottom: 0.25rem;
-      letter-spacing: -0.2px;
+      margin-bottom: 0.3rem;
+      color: #fff;
     }
     
     .aba-desc {
-      font-size: 0.76rem;
+      font-size: 0.78rem;
       color: var(--text-muted);
-      line-height: 1.35;
+      line-height: 1.4;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
     
-    .aba-btn.ativo .aba-desc {
-      color: rgba(255, 255, 255, 0.9);
-    }
-    
     footer {
-      background: var(--primary-dark);
-      color: #94a3b8;
+      background: rgba(0, 13, 26, 0.9);
+      color: #64748b;
       text-align: center;
-      padding: 1rem;
+      padding: 1.2rem;
       margin-top: auto;
       font-size: 0.85rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1px solid var(--card-border);
     }
 
     footer p {
-      margin-bottom: 0.2rem;
+      margin-bottom: 0.3rem;
     }
 
     footer strong {
-      color: #e2e8f0;
+      color: #cbd5e1;
+    }
+
+    .no-results {
+      display: none;
+      text-align: center;
+      width: 100%;
+      padding: 2rem;
+      color: var(--text-muted);
+      font-size: 1rem;
     }
     
     @media (max-width: 768px) {
       header h1 {
-        font-size: 1.6rem;
+        font-size: 1.7rem;
       }
       
       .user-info-bar {
         flex-direction: column;
-        gap: 0.1rem;
-        padding: 0.4rem 1rem;
-        border-radius: 16px;
+        gap: 0.2rem;
+        padding: 0.5rem 1rem;
       }
 
       .abas-grid {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-        gap: 0.8rem;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 0.9rem;
       }
       
       .aba-btn {
-        min-height: 130px;
-        padding: 1rem 0.8rem;
+        min-height: 140px;
+        padding: 1rem 0.9rem;
       }
 
       .aba-icon {
-        width: 28px;
-        height: 28px;
-        margin-bottom: 0.4rem;
+        width: 32px;
+        height: 32px;
+        padding: 6px;
       }
 
       .aba-titulo {
-        font-size: 0.9rem;
+        font-size: 0.92rem;
       }
 
       .aba-desc {
-        font-size: 0.7rem;
+        font-size: 0.72rem;
       }
     }
   </style>
@@ -256,111 +314,150 @@
   <header>
     <h1>Seta Soluções</h1>
     <p>Tecnologia e Soluções Inteligentes</p>
+    
     <div class="user-info-bar">
       <span id="saudacao">Olá, Seja bem-vindo!</span>
+      <span>•</span>
       <span><strong id="data-atual">Carregando data...</strong></span>
+    </div>
+
+    <!-- Barra de busca rápida -->
+    <div class="search-container">
+      <input type="text" id="search-bar" class="search-input" placeholder="🔍 Buscar serviço ou aba..." onkeyup="filtrarAbas()">
     </div>
   </header>
   
   <div class="container">
-    <div class="abas-grid">
+    <div class="abas-grid" id="grid-abas">
       
       <a href="/" class="aba-btn">
+        <span class="badge badge-sistema">Início</span>
         <div class="aba-icon">
           <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
         </div>
-        <div class="aba-titulo">Início</div>
-        <div class="aba-desc">Voltar para a página principal</div>
+        <div class="aba-content">
+          <div class="aba-titulo">Início</div>
+          <div class="aba-desc">Voltar para a página principal da plataforma</div>
+        </div>
       </a>
       
-      <a href="https://www.setasolucoes.com.br/iaseta/" class="aba-btn ativo">
+      <a href="https://www.setasolucoes.com.br/iaseta/" class="aba-btn">
+        <span class="badge badge-ia">IA Seta</span>
         <div class="aba-icon">
           <svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A1.5 1.5 0 0 0 6 14.5a1.5 1.5 0 0 0 7.5 1.5A1.5 1.5 0 0 0 9 14.5A1.5 1.5 0 0 0 7.5 13m9 0a1.5 1.5 0 0 0-1.5 1.5a1.5 1.5 0 0 0 1.5 1.5a1.5 1.5 0 0 0 1.5-1.5a1.5 1.5 0 0 0-1.5-1.5M12 10c-2.33 0-4.31 1.35-5.22 3.3c-.11.23.03.5.28.5h.39c.2 0 .38-.11.47-.29C8.42 12.39 10.05 11.5 12 11.5s3.58.89 4.38 2.51c.09.18.27.29.47.29h.39c.25 0 .39-.27.28-.5C16.31 11.35 14.33 10 12 10z"/></svg>
         </div>
-        <div class="aba-titulo">IA Seta</div>
-        <div class="aba-desc">Plataforma de inteligência artificial da Seta Soluções</div>
+        <div class="aba-content">
+          <div class="aba-titulo">IA Seta</div>
+          <div class="aba-desc">Plataforma de inteligência artificial da Seta Soluções</div>
+        </div>
       </a>
 
       <a href="https://www.setasolucoes.com.br/aluguel/" class="aba-btn">
+        <span class="badge badge-novo">Novo</span>
         <div class="aba-icon">
           <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
         </div>
-        <div class="aba-titulo">Aluguel</div>
-        <div class="aba-desc">Gestão e consulta de imóveis e aluguéis</div>
+        <div class="aba-content">
+          <div class="aba-titulo">Aluguel</div>
+          <div class="aba-desc">Gestão e consulta de imóveis e aluguéis</div>
+        </div>
       </a>
       
       <a href="/laura/" class="aba-btn">
         <div class="aba-icon">
           <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
         </div>
-        <div class="aba-titulo">Laura</div>
-        <div class="aba-desc">Soluções personalizadas para sua empresa</div>
+        <div class="aba-content">
+          <div class="aba-titulo">Laura</div>
+          <div class="aba-desc">Soluções personalizadas para sua empresa</div>
+        </div>
       </a>
       
       <a href="https://www.setasolucoes.com.br/cedaf2026/" class="aba-btn">
         <div class="aba-icon">
           <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
         </div>
-        <div class="aba-titulo">CEDAF 2026</div>
-        <div class="aba-desc">Plataforma de simulados, redação e análise ativa de erros</div>
+        <div class="aba-content">
+          <div class="aba-titulo">CEDAF 2026</div>
+          <div class="aba-desc">Plataforma de simulados, redação e análise de erros</div>
+        </div>
       </a>
       
       <a href="/neurociencia/" class="aba-btn">
         <div class="aba-icon">
           <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.22 19.56 10.58 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg>
         </div>
-        <div class="aba-titulo">Neurociência</div>
-        <div class="aba-desc">Aplicações de neurociência em negócios</div>
+        <div class="aba-content">
+          <div class="aba-titulo">Neurociência</div>
+          <div class="aba-desc">Aplicações de neurociência em negócios</div>
+        </div>
       </a>
       
       <a href="/governança/" class="aba-btn">
+        <span class="badge badge-ia">IA</span>
         <div class="aba-icon">
           <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
         </div>
-        <div class="aba-titulo">Governança</div>
-        <div class="aba-desc">Diagnóstico direto com IA para estruturas organizacionais</div>
+        <div class="aba-content">
+          <div class="aba-titulo">Governança</div>
+          <div class="aba-desc">Diagnóstico direto com IA para estruturas organizacionais</div>
+        </div>
       </a>
       
       <a href="/prospect-governanca-mp/" class="aba-btn">
         <div class="aba-icon">
           <svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM10 4h4v2h-4V4zm10 15H4V8h16v11z"/></svg>
         </div>
-        <div class="aba-titulo">Prospect Governança MP</div>
-        <div class="aba-desc">Ferramenta especializada em prospecção de governança</div>
+        <div class="aba-content">
+          <div class="aba-titulo">Prospect Governança MP</div>
+          <div class="aba-desc">Ferramenta especializada em prospecção de governança</div>
+        </div>
       </a>
 
       <a href="/album/" class="aba-btn">
         <div class="aba-icon">
           <svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
         </div>
-        <div class="aba-titulo">Álbum</div>
-        <div class="aba-desc">Crie álbuns de figurinhas para escolas, times e eventos</div>
+        <div class="aba-content">
+          <div class="aba-titulo">Álbum</div>
+          <div class="aba-desc">Crie álbuns de figurinhas para escolas, times e eventos</div>
+        </div>
       </a>
 
       <a href="https://www.setasolucoes.com.br/livro" class="aba-btn">
         <div class="aba-icon">
           <svg viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
         </div>
-        <div class="aba-titulo">Livro</div>
-        <div class="aba-desc">Acervo digital e registro contínuo das crônicas</div>
+        <div class="aba-content">
+          <div class="aba-titulo">Livro</div>
+          <div class="aba-desc">Acervo digital e registro contínuo das crônicas</div>
+        </div>
       </a>
 
       <a href="https://www.setasolucoes.com.br/veronica/" class="aba-btn">
         <div class="aba-icon">
           <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
         </div>
-        <div class="aba-titulo">Verônica</div>
-        <div class="aba-desc">Atendimento e soluções inteligentes personalizadas</div>
+        <div class="aba-content">
+          <div class="aba-titulo">Verônica</div>
+          <div class="aba-desc">Atendimento e soluções inteligentes personalizadas</div>
+        </div>
       </a>
 
       <a href="https://www.setasolucoes.com.br/simonesemijoias/" class="aba-btn">
         <div class="aba-icon">
           <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
         </div>
-        <div class="aba-titulo">Simone Semijoias</div>
-        <div class="aba-desc">Catálogo e novidades em semijoias exclusivas</div>
+        <div class="aba-content">
+          <div class="aba-titulo">Simone Semijoias</div>
+          <div class="aba-desc">Catálogo e novidades em semijoias exclusivas</div>
+        </div>
       </a>
       
+    </div>
+    
+    <div id="no-results" class="no-results">
+      Nenhum serviço ou aba encontrada com este termo.
     </div>
   </div>
   
@@ -370,6 +467,7 @@
   </footer>
 
   <script>
+    // Data e Saudação Dinâmicas
     const dataCorrente = new Date();
     const opcoesData = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     document.getElementById('data-atual').innerText = dataCorrente.toLocaleDateString('pt-BR', opcoesData);
@@ -384,6 +482,32 @@
       textoSaudacao = "Boa noite!";
     }
     document.getElementById('saudacao').innerText = textoSaudacao;
+
+    // Função para Busca em Tempo Real (Adicionado pela IA)
+    function filtrarAbas() {
+      const input = document.getElementById('search-bar').value.toLowerCase();
+      const abas = document.querySelectorAll('.aba-btn');
+      let encontrou = false;
+
+      abas.forEach(aba => {
+        const titulo = aba.querySelector('.aba-titulo').innerText.toLowerCase();
+        const desc = aba.querySelector('.aba-desc').innerText.toLowerCase();
+        
+        if (titulo.includes(input) || desc.includes(input)) {
+          aba.style.display = "flex";
+          encontrou = true;
+        } else {
+          aba.style.display = "none";
+        }
+      });
+
+      const msgSemResultado = document.getElementById('no-results');
+      if (encontrou) {
+        msgSemResultado.style.display = "none";
+      } else {
+        msgSemResultado.style.display = "block";
+      }
+    }
   </script>
 </body>
 </html>
