@@ -43,3 +43,9 @@ O administrativo fica escondido da apresentação comercial e exige a senha 0211
 Não crie outra planilha.
 Não altere SHEET_ID.
 Não altere a URL /exec.
+
+VERSÃO FINAL — CORREÇÃO DO ADMINISTRATIVO LOCAL
+A versão final elimina a dependência de IDs HTML virarem variáveis globais no Chrome/Windows.
+Teste: abra index.html, clique em Administrativo e use a senha 0211.
+Depois publique index.html, script.js e style.css no GitHub.
+O Code.gs permanece no Apps Script; mantenha a mesma URL /exec.
