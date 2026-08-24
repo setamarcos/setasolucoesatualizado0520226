@@ -3,8 +3,55 @@ const CONFIG={api:'https://script.google.com/macros/s/AKfycbxTzA1NS5Djj5334MBhe6
 document.addEventListener('DOMContentLoaded',()=>{load();document.querySelector('.admin-link').onclick=e=>{e.preventDefault();openLogin()};adminFooter.onclick=openLogin;document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>tab(b.dataset.tab))});
 function api(a,p={}){return new Promise((resolve,reject)=>{const cb='cb'+Date.now()+Math.random().toString(36).slice(2),s=document.createElement('script');window[cb]=d=>{delete window[cb];s.remove();resolve(d)};s.onerror=()=>{delete window[cb];s.remove();reject(Error('Falha de comunicação com o Apps Script.'))};s.src=CONFIG.api+'?'+new URLSearchParams({action:a,callback:cb,...p});document.body.appendChild(s);setTimeout(()=>{if(window[cb]){delete window[cb];s.remove();reject(Error('Tempo excedido.'))}},15000)})}
 async function load(){try{const r=await api('getPublic');if(!r.ok)throw Error(r.error);render(r.data)}catch(e){$('title').textContent='Vitrine temporariamente indisponível';$('location').textContent=e.message}}
-function render(i){$('title').textContent=i.titulo||'Imóvel';$('location').textContent=i.localizacao||'';$('price').textContent=i.valor_mensal?(i.valor_mensal+' / mês'):'';$('description').textContent=i.descricao||'';$('updated').textContent='Atualizado em '+(i.atualizado||'');const w='https://wa.me/'+(i.whatsapp||CONFIG.whatsapp)+'?text='+encodeURIComponent('Olá, vi a Vitrine Comercial da '+(i.titulo||'imóvel')+' e gostaria de saber mais informações sobre a locação.');['wa','waTop','waBottom'].forEach(id=>$(id).href=w);$('facts').innerHTML=[['Quartos',i.quartos],['Piscina',i.piscina],['Lago',i.lago],['Área gramada',i.gramado]].filter(x=>x[1]).map(x=>'<div class="fact"><b>'+esc(x[1])+'</b><span>'+esc(x[0])+'</span></div>').join('');$('gallery').innerHTML=(i.fotos||[]).map(f=>'<img src="'+esc(drive(f.URL))+'" alt="'+esc(f.Legenda||f.Ambiente||'Foto do imóvel')+'">').join('');$('areas').innerHTML=[['Tipo',i.tipo],['Área de lazer',i.area_lazer],['Piscina',i.piscina],['Lago',i.lago],['Gramado',i.gramado],['Locação quinzenal',i.valor_quinzena]].filter(x=>x[1]).map(x=>'<article><h3>'+esc(x[0])+'</h3><p>'+esc(x[1])+'</p></article>').join('')}
-function drive(u){let m=String(u||'').match(/\/file\/d\/([^/]+)/);if(m)return'https://drive.google.com/uc?export=view&id='+m[1];m=String(u||'').match(/[?&]id=([^&]+)/);return m&&String(u).includes('drive.google.com')?'https://drive.google.com/uc?export=view&id='+m[1]:u}
+
+function render(i){
+  $('title').textContent=i.titulo||'Imóvel';
+  $('location').textContent=i.localizacao||'';
+  $('price').textContent=i.valor_mensal?(i.valor_mensal+' / mês'):'';
+  $('description').textContent=i.descricao||'';
+  $('updated').textContent='Atualizado em '+(i.atualizado||'');
+  const w='https://wa.me/'+(i.whatsapp||CONFIG.whatsapp)+'?text='+encodeURIComponent('Olá, vi a Vitrine Comercial da '+(i.titulo||'imóvel')+' e gostaria de saber mais informações sobre a locação.');
+  ['wa','waTop','waBottom'].forEach(id=>$(id).href=w);
+  $('facts').innerHTML=[['Quartos',i.quartos],['Piscina',i.piscina],['Lago',i.lago],['Área gramada',i.gramado]].filter(x=>x[1]).map(x=>'<div class="fact"><b>'+esc(x[1])+'</b><span>'+esc(x[0])+'</span></div>').join('');
+  
+  // Utiliza imageUrl para processar cada f.URL da galeria pública
+  $('gallery').innerHTML=(i.fotos||[]).map(f=>{
+    const url = imageUrl(f.URL);
+    return '<img src="'+esc(url)+'" alt="'+esc(f.Legenda||f.Ambiente||'Foto do imóvel')+'">';
+  }).join('');
+
+  $('areas').innerHTML=[['Tipo',i.tipo],['Área de lazer',i.area_lazer],['Piscina',i.piscina],['Lago',i.lago],['Gramado',i.gramado],['Locação quinzenal',i.valor_quinzena]].filter(x=>x[1]).map(x=>'<article><h3>'+esc(x[0])+'</h3><p>'+esc(x[1])+'</p></article>').join('');
+}
+
+// Função de conversão do Google Drive ajustada
+function imageUrl(url) {
+  const u = String(url || '').trim();
+  if (!u) return '';
+
+  let id = '';
+
+  let m = u.match(/\/file\/d\/([^/]+)/);
+  if (m) id = m[1];
+
+  if (!id) {
+    m = u.match(/[?&]id=([^&]+)/);
+    if (m) id = m[1];
+  }
+
+  if (!id) {
+    m = u.match(/\/d\/([^/]+)/);
+    if (m) id = m[1];
+  }
+
+  if (id) {
+    return 'https://drive.google.com/thumbnail?id=' +
+      encodeURIComponent(id) +
+      '&sz=w1200';
+  }
+
+  return u;
+}
+
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function openLogin(){$('login').classList.remove('hidden');$('pass').focus()}function closeModal(){$('login').classList.add('hidden')}
 async function login(){$('loginMsg').textContent='Verificando...';const r=await api('auth',{password:$('pass').value});if(!r.ok||!r.data.authorized){$('loginMsg').textContent='Senha incorreta.';return}closeModal();$('admin').classList.remove('hidden');loadAdmin()}
@@ -13,7 +60,15 @@ function loadAdmin(){tab('imovel')}
 async function loadImovel(){const r=await api('getImovel'),i=r.data;$('tab-imovel').innerHTML='<h2>Dados do imóvel</h2><div class="form">'+['titulo','localizacao','tipo','quartos','piscina','lago','valor_mensal','valor_quinzena','area_lazer','gramado','descricao','whatsapp'].map(k=>'<label>'+k+'<input id="i_'+k+'" value="'+esc(i[k]||'')+'"></label>').join('')+'<button onclick="saveI()">Salvar dados do imóvel</button></div>'}
 async function saveI(){const o={};['titulo','localizacao','tipo','quartos','piscina','lago','valor_mensal','valor_quinzena','area_lazer','gramado','descricao','whatsapp'].forEach(k=>o[k]=document.getElementById('i_'+k).value);const r=await api('saveImovel',{data:JSON.stringify(o)});alert(r.ok?'Imóvel atualizado.':r.error);if(r.ok)load()}
 const AM={Casa:['Sala','Quartos','Banheiro','Cozinha','Área de serviço','Área da sala / varanda','Estacionamento'],'Área de lazer':['Churrasqueira','Ambiente externo','Área comum'],'Área da piscina':['Piscina','Gramado','Área comum']};
-async function loadFotos(){const r=await api('list',{table:'Fotos'}),rows=r.data||[];$('tab-fotos').innerHTML='<h2>Fotos da Vitrine</h2><p class="small">Cole uma URL compartilhável do Google Drive. O sistema tenta converter o link para exibição.</p><div class="form"><label>Grupo<select id="fg" onchange="amb()"><option>Casa</option><option>Área de lazer</option><option>Área da piscina</option></select></label><label>Ambiente<select id="fa"></select></label><label class="full">URL da foto<input id="fu" placeholder="https://drive.google.com/file/d/.../view"></label><label>Legenda<input id="fl"></label><label>Ordem<input id="fo" type="number" value="1"></label><label>Ativa<select id="ft"><option>SIM</option><option>NAO</option></select></label><button onclick="addFoto()">Adicionar foto à Vitrine</button></div><div class="photo-grid">'+rows.filter(x=>x.URL).map(x=>'<div class="photo-card"><img src="'+esc(drive(x.URL))+'"><b>'+esc(x.Ambiente)+'</b><div class="small">'+esc(x.Legenda)+'</div><button class="danger" onclick="delRow(\'Fotos\','+x._row+')">Excluir</button></div>').join('')+'</div>';amb()}
+
+async function loadFotos(){
+  const r=await api('list',{table:'Fotos'}),rows=r.data||[];
+  $('tab-fotos').innerHTML='<h2>Fotos da Vitrine</h2><p class="small">Cole uma URL compartilhável do Google Drive. O sistema tenta converter o link para exibição.</p><div class="form"><label>Grupo<select id="fg" onchange="amb()"><option>Casa</option><option>Área de lazer</option><option>Área da piscina</option></select></label><label>Ambiente<select id="fa"></select></label><label class="full">URL da foto<input id="fu" placeholder="https://drive.google.com/file/d/.../view"></label><label>Legenda<input id="fl"></label><label>Ordem<input id="fo" type="number" value="1"></label><label>Ativa<select id="ft"><option>SIM</option><option>NAO</option></select></label><button onclick="addFoto()">Adicionar foto à Vitrine</button></div><div class="photo-grid">'+
+  rows.filter(x=>x.URL).map(x=>'<div class="photo-card"><img src="'+esc(imageUrl(x.URL))+'"><b>'+esc(x.Ambiente)+'</b><div class="small">'+esc(x.Legenda)+'</div><button class="danger" onclick="delRow(\'Fotos\','+x._row+')">Excluir</button></div>').join('')+
+  '</div>';
+  amb();
+}
+
 function amb(){$('fa').innerHTML=AM[$('fg').value].map(x=>'<option>'+x+'</option>').join('')}
 async function addFoto(){if(!$('fu').value){alert('Informe a URL da foto.');return}const o={Grupo:$('fg').value,Ambiente:$('fa').value,URL:$('fu').value,Legenda:$('fl').value,Ordem:$('fo').value,Ativa:$('ft').value},r=await api('insert',{table:'Fotos',data:JSON.stringify(o)});alert(r.ok?'Foto adicionada à Vitrine.':r.error);if(r.ok)loadFotos()}
 async function loadTable(t){const map={prospeccao:'Prospeccao B2B',divulgacao:'Divulgacao',contatos:'Contatos'},table=map[t],r=await api('list',{table}),rows=r.data||[],hs={prospeccao:H1(),divulgacao:H2(),contatos:H3()}[t];$('tab-'+t).innerHTML='<h2>'+({prospeccao:'Prospecção B2B',divulgacao:'Divulgação',contatos:'Controle de contatos'}[t])+'</h2><div class="table-wrap"><table class="data"><thead><tr>'+hs.map(h=>'<th>'+h+'</th>').join('')+'<th>Ação</th></tr></thead><tbody>'+rows.map(x=>'<tr>'+hs.map(h=>'<td>'+esc(x[h])+'</td>').join('')+'<td><button class="danger" onclick="delRow(\''+table+'\','+x._row+')">Excluir</button></td></tr>').join('')+'</tbody></table></div>'}
