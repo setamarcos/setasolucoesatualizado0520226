@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seta IA - Seta Soluções</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #002244; color: #fff; padding-bottom: 30px; }
+    .container { background: #fff; color: #1e293b; max-width: 600px; margin: 20px auto; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+    
+    .header-topo { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+    .header-logo img { max-width: 130px; height: auto; display: block; }
+    .header-relogio { font-size: 12px; font-weight: bold; color: #002244; text-align: right; }
+
+    h1 { text-align: center; color: #002244; font-size: 22px; margin: 0 0 4px 0; }
+    .subtitle { text-align: center; color: #ff6600; font-size: 13px; font-weight: bold; margin-bottom: 16px; }
+
+    #login { margin-bottom: 15px; padding: 12px; background: #f1f5f9; border-radius: 8px; display: flex; gap: 8px; align-items: center; }
+    #login input { flex: 1; margin: 0; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
+    #login button { background: #16a34a; color: #fff; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; white-space: nowrap; }
+
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; margin-bottom: 6px; }
+    label { font-size: 14px; font-weight: bold; color: #002244; }
+    
+    .btn-audio-inline { background: #002244; color: #fff; border: none; padding: 6px 12px; font-size: 12px; border-radius: 6px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 4px; }
+    .btn-audio-inline.gravando { background: #dc2626; animation: piscar 1s infinite; }
+
+    textarea, select, input[type="text"] { width: 100%; padding: 10px; font-size: 14px; border-radius: 6px; border: 1px solid #cbd5e1; margin-bottom: 10px; font-family: inherit; }
+    textarea { min-height: 70px; resize: vertical; }
+
+    .checkbox-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    .checkbox-btn { background: #e2e8f0; color: #334155; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; user-select: none; }
+    .checkbox-btn.active { background: #ff6600; color: #fff; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+
+    .button-row { display: flex; gap: 8px; margin-top: 10px; }
+    button.action-btn { flex: 1; background: #ff6600; color: #fff; border: none; padding: 12px; font-size: 14px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    button.action-btn.secondary { background: #0284c7; }
+
+    .prompt-output { background: #f8fafc; padding: 12px; margin-top: 15px; border-radius: 6px; font-size: 13px; border-left: 4px solid #ff6600; white-space: pre-wrap; display: none; color: #0f172a; }
+
+    .ia-response-box { margin-top: 20px; background: #f1f5f9; padding: 15px; border-radius: 8px; border: 1px solid #cbd5e1; }
+    .feedback-buttons { display: flex; gap: 8px; margin-top: 10px; }
+    .fb-btn { flex: 1; padding: 10px; border: none; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; color: #fff; }
+    .fb-btn.yes { background: #16a34a; }
+    .fb-btn.no { background: #dc2626; }
+    .fb-btn.missing { background: #ca8a04; }
+
+    .footer-btn { background: #002244; color: #fff; border: none; padding: 12px; font-size: 13px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; margin-top: 10px; }
+
+    @keyframes piscar { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header-topo">
+      <div class="header-logo">
+        <img src="logo.png" alt="Seta Soluções" onerror="this.style.display='none'">
+      </div>
+      <div class="header-relogio" id="relogio-dinamico">--/--/---- --:--:--</div>
+    </div>
+
+    <h1>Estamos juntos nisso.</h1>
+    <div class="subtitle">Sua ideia vira um pedido claro que a IA entende.</div>
+
+    <!-- Login -->
+    <div id="login">
+      <input type="text" id="input-telefone" placeholder="(xx) xxxxx-xxxx" maxlength="15" oninput="mascaraTelefone(this)">
+      <button type="button" onclick="fazerLogin()">Entrar</button>
+    </div>
+
+    <!-- 1. Ideia Principal -->
+    <div class="section-header">
+      <label for="solicitacao">1. Sua Solicitação (Ideia principal)</label>
+      <button id="mic-solicitacao" class="btn-audio-inline" type="button" onclick="gerenciarAudio('solicitacao', this)">🎤 Gravar Áudio</button>
+    </div>
+    <textarea id="solicitacao" placeholder="O que você quer que a IA faça? Ex: Escrever uma mensagem..."></textarea>
+
+    <!-- 2. Detalhes -->
+    <div class="section-header">
+      <label for="detalhe">2. Detalhes e Contexto</label>
+      <button id="mic-detalhe" class="btn-audio-inline" type="button" onclick="gerenciarAudio('detalhe', this)">🎤 Gravar Áudio</button>
+    </div>
+    <textarea id="detalhe" placeholder="Contexto, fatos e histórico que ajudam a entender o cenário..."></textarea>
+
+    <!-- 3. O que EVITAR -->
+    <label style="margin-top: 10px; display: block;">3. O que evitar</label>
+    <div class="checkbox-group" style="margin-top: 6px;">
+      <div class="checkbox-btn" onclick="toggleFiltro(this, 'Sem enrolação e sem texto longo.')">⬜ Sem enrolação</div>
+      <div class="checkbox-btn" onclick="toggleFiltro(this, 'Foco prático e passos diretos.')">⬜ Foco Prático</div>
+      <div class="checkbox-btn" onclick="toggleFiltro(this, 'Opero pelo celular, evite dependência de PC.')">⬜ Uso no Celular</div>
+      <div class="checkbox-btn" onclick="toggleFiltro(this, 'Linguagem simples, sem termos técnicos.')">⬜ Linguagem Simples</div>
+      <div class="checkbox-btn" onclick="toggleFiltro(this, 'Sem análise baixa.')">⬜ Sem Análise Baixa</div>
+      <div class="checkbox-btn" onclick="toggleFiltro(this, 'Sem floreios, introduções ou conclusões desnecessárias.')">⬜ Sem Floreios</div>
+    </div>
+    <input type="text" id="evitar" placeholder="Outra coisa fora de cogitação...">
+
+    <!-- 4. Opções Adicionais (Faz sentido? e Área) -->
+    <div class="grid-2">
+      <div>
+        <label for="faz-sentido">Faz sentido?</label>
+        <select id="faz-sentido">
+          <option value="Sim">Sim</option>
+          <option value="Não">Não</option>
+        </select>
+      </div>
+      <div>
+        <label for="area-select">Área:</label>
+        <select id="area-select">
+          <option value="Automático (geral)" selected>Automático (geral)</option>
+          <option value="Comercial / Vendas">Comercial / Vendas</option>
+          <option value="Atendimento ao Cliente">Atendimento ao Cliente</option>
+          <option value="Operacional / Engenharia">Operacional / Engenharia</option>
+          <option value="Gestão / Governança">Gestão / Governança</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Botões -->
+    <div class="button-row">
+      <button class="action-btn" type="button" onclick="gerarPromptEstruturado()">Gerar prompt</button>
+      <button class="action-btn secondary" type="button" onclick="copiarPromptGerado()">Copiar</button>
+    </div>
+
+    <!-- Output Prompt -->
+    <div class="prompt-output" id="prompt-final"></div>
+
+    <!-- 5. Comente a resposta da IA -->
+    <div class="ia-response-box">
+      <label for="resposta_ia" style="margin-top: 0;">5. Comente a resposta da IA:</label>
+      <textarea id="resposta_ia" placeholder="Cole aqui a resposta que a IA te deu..."></textarea>
+
+      <div class="feedback-buttons">
+        <button class="fb-btn yes" type="button" onclick="executarFeedback('Acertou')">👍 Acertou</button>
+        <button class="fb-btn no" type="button" onclick="executarFeedback('Errou')">👎 Errou</button>
+        <button class="fb-btn missing" type="button" onclick="executarFeedback('Faltou Contexto')">⚠️ Faltou Contexto</button>
+      </div>
+
+      <button class="footer-btn" type="button" onclick="reiniciarNovaInteracao()">Continuar interação (Novo prompt)</button>
+    </div>
+
+  </div>
+
+  <script src="google.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
