@@ -112,7 +112,7 @@ async function carregarResumo() {
       </div>`
     ).join('') : "<div style='text-align:center;color:#999'>Nenhum registro.</div>";
   } catch(e) {
-    hist.innerHTML = "<div style='text-align:center;color:#d32f2f'>Erro de conexão local. Suba para o GitHub.</div>";
+    hist.innerHTML = "<div style='text-align:center;color:#d32f2f'>Acesso bloqueado pelo Google. Verifique as permissões do WebApp.</div>";
   }
 }
 carregarResumo();
