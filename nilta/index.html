@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nilta – Meu dia no volante | Seta Soluções</title>
+<meta name="description" content="Lançamento diário de ganhos, combustível e lucro líquido da Nilta, com médias e mensagem do dia.">
+<meta name="theme-color" content="#0b5d3b">
+<style>
+:root{--v:#0b5d3b;--v2:#e8f3ee;--t:#1c2421;--m:#5d6b65;--r:#b3261e;--a:#c98a00;--b:#fff;--l:#dfe7e3}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f4f7f5;color:var(--t)}
+header{background:var(--v);color:#fff;padding:18px 16px}header h1{margin:0;font-size:20px}header p{margin:4px 0 0;opacity:.85;font-size:14px}
+main{max-width:720px;margin:auto;padding:14px}
+.card{background:var(--b);border:1px solid var(--l);border-radius:14px;padding:16px;margin-bottom:14px}
+h2{font-size:16px;margin:0 0 12px;color:var(--v)}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{font-size:13px;color:var(--m);display:block}
+input,select{width:100%;padding:12px;font-size:17px;border:1px solid var(--l);border-radius:10px;margin-top:4px;background:#fff}
+.seg{display:flex;gap:6px;margin-top:4px}.seg button{flex:1;padding:12px;border:1px solid var(--l);background:#fff;border-radius:10px;font-size:15px}
+.seg button.on{background:var(--v);color:#fff;border-color:var(--v)}
+.btn{width:100%;padding:15px;font-size:17px;font-weight:700;border:0;border-radius:12px;background:var(--v);color:#fff;margin-top:12px;cursor:pointer}
+.btn.s{background:var(--v2);color:var(--v)}
+table{width:100%;border-collapse:collapse;font-size:15px}td{padding:7px 0;border-bottom:1px dashed var(--l)}td:last-child{text-align:right;font-weight:600}
+.tot td{border:0;font-size:19px;padding-top:12px}.pos{color:var(--v)}.neg{color:var(--r)}
+.bar{display:flex;height:22px;border-radius:8px;overflow:hidden;margin:8px 0}.bar div{height:100%}
+.leg{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;color:var(--m)}.leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px}
+.k{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.k div{background:var(--v2);border-radius:10px;padding:10px}.k b{display:block;font-size:18px}.k span{font-size:12px;color:var(--m)}
+.msg{background:#fff8e6;border-left:4px solid var(--a);padding:12px 14px;border-radius:8px;font-size:15px;line-height:1.45}
+.st{font-size:13px;color:var(--m);text-align:center;margin-top:8px;min-height:18px}
+.hist td{font-size:13px}details summary{cursor:pointer;color:var(--v);font-weight:600}
+@media(max-width:420px){.k{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header><h1>Meu dia no volante – Nilta</h1><p>Lance o dia em 30 segundos. O resto a conta faz.</p></header>
+<main>
+
+<div class="card msg" id="msg">Carregando sua mensagem do dia…</div>
+
+<div class="card">
+  <h2>Lançamento do dia</h2>
+  <div class="g">
+    <div><label>Data</label><input type="date" id="data"></div>
+    <div><label>Viagens</label><input type="number" id="viagens" inputmode="numeric" min="0" placeholder="0"></div>
+    <div style="grid-column:1/-1"><label>Valor bruto do dia (R$)</label><input type="number" id="bruto" inputmode="decimal" step="0.01" placeholder="0,00"></div>
+    <div><label>Abastecimento (R$)</label><input type="number" id="comb" inputmode="decimal" step="0.01" placeholder="0,00"></div>
+    <div><label>Litros (opcional)</label><input type="number" id="litros" inputmode="decimal" step="0.01" placeholder="0"></div>
+    <div style="grid-column:1/-1"><label>Combustível</label>
+      <div class="seg" id="tipo"><button type="button" class="on" data-v="Gasolina">Gasolina</button><button type="button" data-v="Etanol">Etanol</button></div></div>
+    <div style="grid-column:1/-1"><label>Km rodados (opcional)</label><input type="number" id="km" inputmode="numeric" placeholder="0"></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Para onde vai o dinheiro de hoje</h2>
+  <div class="bar" id="bar"></div>
+  <div class="leg"><span><i style="background:#c98a00"></i>Combustível</span><span><i style="background:#5d6b65"></i>Carro (parcela, manutenção, documentos, seguro)</span><span><i style="background:#0b5d3b"></i>Lucro</span></div>
+  <table>
+    <tr><td>Valor bruto</td><td id="r_bruto">R$ 0,00</td></tr>
+    <tr><td>− Abastecimento</td><td id="r_comb">R$ 0,00</td></tr>
+    <tr><td>− Parcela do carro</td><td id="r_parc"></td></tr>
+    <tr><td>− Manutenção</td><td id="r_man"></td></tr>
+    <tr><td>− Documentos</td><td id="r_doc"></td></tr>
+    <tr><td>− Seguro</td><td id="r_seg"></td></tr>
+    <tr class="tot"><td>Lucro líquido do dia</td><td id="r_lucro">R$ 0,00</td></tr>
+  </table>
+  <div class="k" style="margin-top:12px">
+    <div><b id="m_via">–</b><span>Ganho por viagem</span></div>
+    <div><b id="m_km">–</b><span>Ganho por km</span></div>
+  </div>
+  <button class="btn" id="salvar">Salvar o dia</button>
+  <div class="st" id="st"></div>
+</div>
+
+<div class="card">
+  <h2>Minhas médias</h2>
+  <div class="k">
+    <div><b id="a_dias">0</b><span>Dias lançados</span></div>
+    <div><b id="a_lucro">–</b><span>Lucro médio por dia</span></div>
+    <div><b id="a_bruto">–</b><span>Bruto médio por dia</span></div>
+    <div><b id="a_via">–</b><span>Viagens por dia</span></div>
+    <div><b id="a_comb">–</b><span>% do bruto no combustível</span></div>
+    <div><b id="a_7">–</b><span>Lucro últimos 7 dias</span></div>
+    <div><b id="a_mes">–</b><span>Lucro no mês</span></div>
+    <div><b id="a_meta">–</b><span>Bruto mínimo/dia p/ empatar</span></div>
+  </div>
+  <details style="margin-top:12px"><summary>Ver histórico</summary><table class="hist" id="hist"></table></details>
+</div>
+
+<div class="card">
+  <h2>Custos do carro (por mês)</h2>
+  <div class="g">
+    <div><label>Parcela</label><input type="number" id="c_parc" step="0.01"></div>
+    <div><label>Manutenção</label><input type="number" id="c_man" step="0.01"></div>
+    <div><label>Documentos (IPVA/12)</label><input type="number" id="c_doc" step="0.01"></div>
+    <div><label>Seguro</label><input type="number" id="c_seg" step="0.01"></div>
+    <div style="grid-column:1/-1"><label>Dias de trabalho no mês (recomendado: 26, com 1 folga por semana)</label><input type="number" id="c_dias"></div>
+  </div>
+  <a class="btn s" style="display:block;text-align:center;text-decoration:none" href="https://docs.google.com/spreadsheets/d/1xDDXgHOJBcoQDhE1AJcOtSvrTkK3votsfjgM66FfxiE/edit" target="_blank" rel="noopener">Abrir minha planilha</a>
+  <a class="btn s" style="display:block;text-align:center;text-decoration:none" href="nilta_consultoria.pdf" target="_blank">Ver consultoria (PDF)</a>
+</div>
+<p class="st">Seta Soluções · setasolucoes.com.br</p>
+</main>
+
+<script>
+const API='https://script.google.com/macros/s/AKfycbx8UFf2a4l9jsEFrVS2FSlm3PE8RuVYq_0SCxdw0RrpxjOBG9KtYFMzO-zVqXKHorYz8g/exec';
+const $=id=>document.getElementById(id);
+const R=v=>(isFinite(v)?v:0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const hoje=()=>{const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)};
+const DEF={parcela:3223.60,manut:250,docs:225,seguro:300,dias:26};
+let C=JSON.parse(localStorage.getItem('nilta_custos')||'null')||DEF;
+let H=JSON.parse(localStorage.getItem('nilta_hist')||'[]');
+let tipo='Gasolina';
+
+function diario(){const d=+C.dias||26;return{p:C.parcela/d,m:C.manut/d,dc:C.docs/d,s:C.seguro/d}}
+function lucroDe(x){const k=diario();return (+x.bruto||0)-(+x.combustivel||0)-(k.p+k.m+k.dc+k.s)}
+
+function calc(){
+  const b=+$('bruto').value||0,c=+$('comb').value||0,v=+$('viagens').value||0,km=+$('km').value||0,k=diario();
+  const fix=k.p+k.m+k.dc+k.s,l=b-c-fix;
+  $('r_bruto').textContent=R(b);$('r_comb').textContent=R(c);$('r_parc').textContent=R(k.p);$('r_man').textContent=R(k.m);$('r_doc').textContent=R(k.dc);$('r_seg').textContent=R(k.s);
+  $('r_lucro').textContent=R(l);$('r_lucro').className=l>=0?'pos':'neg';
+  $('m_via').textContent=v?R(b/v):'–';$('m_km').textContent=km?R(b/km):'–';
+  const t=Math.max(b,c+fix,1),w=x=>Math.max(0,x/t*100)+'%';
+  $('bar').innerHTML=`<div style="width:${w(c)};background:#c98a00"></div><div style="width:${w(fix)};background:#5d6b65"></div><div style="width:${w(Math.max(l,0))};background:#0b5d3b"></div>`;
+  return {data:$('data').value,bruto:b,combustivel:c,tipo,litros:+$('litros').value||0,viagens:v,km,lucro:l};
+}
+
+function medias(){
+  const n=H.length,s=f=>H.reduce((a,x)=>a+(+f(x)||0),0),k=diario(),fix=k.p+k.m+k.dc+k.s;
+  const ord=[...H].sort((a,b)=>b.data.localeCompare(a.data)),mes=hoje().slice(0,7);
+  $('a_dias').textContent=n;
+  $('a_lucro').textContent=n?R(s(lucroDe)/n):'–';
+  $('a_bruto').textContent=n?R(s(x=>x.bruto)/n):'–';
+  $('a_via').textContent=n?(s(x=>x.viagens)/n).toFixed(1):'–';
+  $('a_comb').textContent=s(x=>x.bruto)?Math.round(s(x=>x.combustivel)/s(x=>x.bruto)*100)+'%':'–';
+  $('a_7').textContent=n?R(ord.slice(0,7).reduce((a,x)=>a+lucroDe(x),0)):'–';
+  $('a_mes').textContent=R(H.filter(x=>x.data.startsWith(mes)).reduce((a,x)=>a+lucroDe(x),0));
+  $('a_meta').textContent=R(fix+(n?s(x=>x.combustivel)/n:0));
+  $('hist').innerHTML='<tr><td>Data</td><td>Bruto</td><td>Viagens</td><td>Lucro</td></tr>'+ord.map(x=>{const l=lucroDe(x);return `<tr><td>${x.data.split('-').reverse().join('/')}</td><td>${R(x.bruto)}</td><td>${x.viagens||0}</td><td class="${l>=0?'pos':'neg'}">${R(l)}</td></tr>`}).join('');
+  mensagem();
+}
+
+function mensagem(){
+  const n=H.length,ord=[...H].sort((a,b)=>b.data.localeCompare(a.data)),u=ord[0];
+  const media=n?H.reduce((a,x)=>a+lucroDe(x),0)/n:0,k=diario(),fix=k.p+k.m+k.dc+k.s;
+  const dia=new Date().getDay(),base=[
+    'Bom dia, Nilta! Cada viagem de hoje é um tijolo da sua casa. Primeiro o carro, depois a reserva, depois você.',
+    'Você já provou que aguenta. Agora é hora de provar que sabe guardar. Separe hoje o dinheiro do carro antes de gastar.',
+    'Dirigir descansada rende mais e evita multa e acidente. Seu corpo é a principal peça desse carro.',
+    'O carro agora é seu. Cada parcela paga é patrimônio, não aluguel. Siga firme.',
+    'Meta simples: lançar o dia, separar a parte do carro e fazer a reserva crescer um pouquinho.',
+    'Constância vence sorte. Dia fraco acontece; o que importa é a média da semana.',
+    'Hoje é um bom dia para pensar na sua folga. Descanso também é estratégia.'];
+  let t=base[dia];
+  if(u){const l=lucroDe(u);
+    if(l<0)t=`Ontem ficou ${R(l)}, mas calma: um dia não define o mês. Hoje mire pelo menos ${R(fix+(+u.combustivel||0))} de bruto para cobrir tudo. Você consegue!`;
+    else if(n>2&&l>media)t=`Mandou bem! Último dia: ${R(l)} de lucro, acima da sua média de ${R(media)}. Guarde uma parte na reserva hoje.`;
+    else t=`Último dia: ${R(l)} de lucro. ${base[dia]}`;}
+  $('msg').innerHTML='<b>Mensagem do dia</b><br>'+t;
+}
+
+function setCustos(){[['c_parc','parcela'],['c_man','manut'],['c_doc','docs'],['c_seg','seguro'],['c_dias','dias']].forEach(([i,k])=>{$(i).value=C[k];$(i).oninput=()=>{C[k]=+$(i).value||0;localStorage.setItem('nilta_custos',JSON.stringify(C));calc();medias()}})}
+
+function carregarDia(){const x=H.find(h=>h.data===$('data').value);
+  ['bruto','viagens','litros','km'].forEach(f=>$(f).value=x&&x[f]?x[f]:'');$('comb').value=x&&x.combustivel?x.combustivel:'';
+  if(x&&x.tipo)setTipo(x.tipo);calc()}
+function setTipo(v){tipo=v;document.querySelectorAll('#tipo button').forEach(b=>b.classList.toggle('on',b.dataset.v===v))}
+
+async function salvar(){
+  const d=calc();if(!d.data||!d.bruto){$('st').textContent='Preencha a data e o valor bruto.';return}
+  H=H.filter(x=>x.data!==d.data);H.push(d);localStorage.setItem('nilta_hist',JSON.stringify(H));medias();
+  $('st').textContent='Salvo no celular. Enviando para a planilha…';
+  try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({...d,mensagem:$('msg').innerText.replace('Mensagem do dia','').trim()})});
+    const j=await r.json();$('st').textContent=j.ok?'✔ Salvo na planilha!':'Salvo no celular. Planilha: '+j.erro}
+  catch(e){$('st').textContent='Salvo no celular. Sem internet: envie de novo depois.'}
+}
+
+async function sincronizar(){
+  try{const j=await (await fetch(API)).json();if(!j.ok)return;
+    if(j.custos&&j.custos.parcela){C=j.custos;localStorage.setItem('nilta_custos',JSON.stringify(C));setCustos()}
+    const m={};H.forEach(x=>m[x.data]=x);(j.historico||[]).forEach(x=>m[x.data]={...m[x.data],...x});
+    H=Object.values(m);localStorage.setItem('nilta_hist',JSON.stringify(H));medias();carregarDia()}catch(e){}
+}
+
+$('data').value=hoje();
+document.querySelectorAll('#tipo button').forEach(b=>b.onclick=()=>{setTipo(b.dataset.v);calc()});
+['bruto','comb','viagens','litros','km'].forEach(i=>$(i).oninput=calc);
+$('data').onchange=carregarDia;$('salvar').onclick=salvar;
+setCustos();carregarDia();medias();sincronizar();
+</script>
+</body>
+</html>
