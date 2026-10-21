@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="pt-PT">
+<html lang="pt-BR">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Nilta – O meu dia no volante | Seta Soluções</title>
+<title>Nilta – Meu dia no volante | Seta Soluções</title>
 <meta name="description" content="Lançamento diário de ganhos, combustível e lucro líquido da Nilta, com médias e mensagem do dia.">
 <meta name="theme-color" content="#0b5d3b">
 <style>
@@ -16,9 +16,8 @@ h2{font-size:16px;margin:0 0 12px;color:var(--v)}
 .g{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 label{font-size:13px;color:var(--m);display:block}
 input,select{width:100%;padding:12px;font-size:17px;border:1px solid var(--l);border-radius:10px;margin-top:4px;background:#fff}
-.checkbox-group{display:flex;gap:20px;margin-top:8px}
-.checkbox-label{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--t);cursor:pointer}
-.checkbox-label input{width:18px;height:18px;margin:0;cursor:pointer}
+.seg{display:flex;gap:6px;margin-top:4px}.seg button{flex:1;padding:12px;border:1px solid var(--l);background:#fff;border-radius:10px;font-size:15px}
+.seg button.on{background:var(--v);color:#fff;border-color:var(--v)}
 .btn{width:100%;padding:15px;font-size:17px;font-weight:700;border:0;border-radius:12px;background:var(--v);color:#fff;margin-top:12px;cursor:pointer}
 .btn.s{background:var(--v2);color:var(--v)}
 table{width:100%;border-collapse:collapse;font-size:15px}td{padding:7px 0;border-bottom:1px dashed var(--l)}td:last-child{text-align:right;font-weight:600}
@@ -33,10 +32,10 @@ table{width:100%;border-collapse:collapse;font-size:15px}td{padding:7px 0;border
 </style>
 </head>
 <body>
-<header><h1>O meu dia no volante – Nilta</h1><p>Registe o dia em 30 segundos. O sistema faz as contas.</p></header>
+<header><h1>Meu dia no volante – Nilta</h1><p>Lance o dia em 30 segundos. O resto a conta faz.</p></header>
 <main>
 
-<div class="card msg" id="msg">A carregar a mensagem do dia…</div>
+<div class="card msg" id="msg">Carregando sua mensagem do dia…</div>
 
 <div class="card">
   <h2>Lançamento do dia</h2>
@@ -46,14 +45,8 @@ table{width:100%;border-collapse:collapse;font-size:15px}td{padding:7px 0;border
     <div style="grid-column:1/-1"><label>Valor bruto do dia (R$)</label><input type="number" id="bruto" inputmode="decimal" step="0.01" placeholder="0,00"></div>
     <div><label>Abastecimento (R$)</label><input type="number" id="comb" inputmode="decimal" step="0.01" placeholder="0,00"></div>
     <div><label>Litros (opcional)</label><input type="number" id="litros" inputmode="decimal" step="0.01" placeholder="0"></div>
-    
     <div style="grid-column:1/-1"><label>Combustível</label>
-      <div class="checkbox-group" id="tipo">
-        <label class="checkbox-label"><input type="checkbox" data-v="Gasolina" checked> Gasolina</label>
-        <label class="checkbox-label"><input type="checkbox" data-v="Etanol"> Etanol</label>
-      </div>
-    </div>
-    
+      <div class="seg" id="tipo"><button type="button" class="on" data-v="Gasolina">Gasolina</button><button type="button" data-v="Etanol">Etanol</button></div></div>
     <div style="grid-column:1/-1"><label>Km rodados (opcional)</label><input type="number" id="km" inputmode="numeric" placeholder="0"></div>
   </div>
 </div>
@@ -80,14 +73,14 @@ table{width:100%;border-collapse:collapse;font-size:15px}td{padding:7px 0;border
 </div>
 
 <div class="card">
-  <h2>As minhas médias</h2>
+  <h2>Minhas médias</h2>
   <div class="k">
-    <div><b id="a_dias">0</b><span>Dias registados</span></div>
+    <div><b id="a_dias">0</b><span>Dias lançados</span></div>
     <div><b id="a_lucro">–</b><span>Lucro médio por dia</span></div>
     <div><b id="a_bruto">–</b><span>Bruto médio por dia</span></div>
     <div><b id="a_via">–</b><span>Viagens por dia</span></div>
     <div><b id="a_comb">–</b><span>% do bruto no combustível</span></div>
-    <div><b id="a_7">–</b><span>Lucro dos últimos 7 dias</span></div>
+    <div><b id="a_7">–</b><span>Lucro últimos 7 dias</span></div>
     <div><b id="a_mes">–</b><span>Lucro no mês</span></div>
     <div><b id="a_meta">–</b><span>Bruto mínimo/dia p/ empatar</span></div>
   </div>
@@ -103,7 +96,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}td{padding:7px 0;border
     <div><label>Seguro</label><input type="number" id="c_seg" step="0.01"></div>
     <div style="grid-column:1/-1"><label>Dias de trabalho no mês (recomendado: 26, com 1 folga por semana)</label><input type="number" id="c_dias"></div>
   </div>
-  <a class="btn s" style="display:block;text-align:center;text-decoration:none" href="https://docs.google.com/spreadsheets/d/1xDDXgHOJBcoQDhE1AJcOtSvrTkK3votsfjgM66FfxiE/edit" target="_blank" rel="noopener">Abrir a folha de cálculo</a>
+  <a class="btn s" style="display:block;text-align:center;text-decoration:none" href="https://docs.google.com/spreadsheets/d/1xDDXgHOJBcoQDhE1AJcOtSvrTkK3votsfjgM66FfxiE/edit" target="_blank" rel="noopener">Abrir minha planilha</a>
   <a class="btn s" style="display:block;text-align:center;text-decoration:none" href="nilta_consultoria.pdf" target="_blank">Ver consultoria (PDF)</a>
 </div>
 <p class="st">Seta Soluções · setasolucoes.com.br</p>
@@ -112,128 +105,89 @@ table{width:100%;border-collapse:collapse;font-size:15px}td{padding:7px 0;border
 <script>
 const API='https://script.google.com/macros/s/AKfycbx8UFf2a4l9jsEFrVS2FSlm3PE8RuVYq_0SCxdw0RrpxjOBG9KtYFMzO-zVqXKHorYz8g/exec';
 const $=id=>document.getElementById(id);
-const R=v=>(isFinite(v)?v:0).toLocaleString('pt-PT',{style:'currency',currency:'BRL'});
+const R=v=>(isFinite(v)?v:0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const hoje=()=>{const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)};
 const DEF={parcela:3223.60,manut:250,docs:225,seguro:300,dias:26};
-
-let C = DEF;
-try { const pc = JSON.parse(localStorage.getItem('nilta_custos')); if (pc && typeof pc === 'object') C = {...DEF, ...pc}; } catch(e){}
-let H = [];
-try { const ph = JSON.parse(localStorage.getItem('nilta_hist')); if (Array.isArray(ph)) H = ph; else localStorage.removeItem('nilta_hist'); } catch(e){ localStorage.removeItem('nilta_hist'); }
-
+let C=JSON.parse(localStorage.getItem('nilta_custos')||'null')||DEF;
+let H=JSON.parse(localStorage.getItem('nilta_hist')||'[]');
 let tipo='Gasolina';
 
-function diario(){const d=+C.dias||26;return{p:(C.parcela||0)/d,m:(C.manut||0)/d,dc:(C.docs||0)/d,s:(C.seguro||0)/d}}
+function diario(){const d=+C.dias||26;return{p:C.parcela/d,m:C.manut/d,dc:C.docs/d,s:C.seguro/d}}
 function lucroDe(x){const k=diario();return (+x.bruto||0)-(+x.combustivel||0)-(k.p+k.m+k.dc+k.s)}
 
 function calc(){
-  try {
-    const b=+$('bruto').value\vert{}\vert{}0,c=+$('comb').value||0,v=+$('viagens').value\vert{}\vert{}0,km=+$('km').value||0,k=diario();
-    const fix=k.p+k.m+k.dc+k.s,l=b-c-fix;
-    $('r_bruto').textContent=R(b);$('r_comb').textContent=R(c);$('r_parc').textContent=R(k.p);$('r_man').textContent=R(k.m);$('r_doc').textContent=R(k.dc);$('r_seg').textContent=R(k.s);
-    $('r_lucro').textContent=R(l);$('r_lucro').className=l>=0?'pos':'neg';
-    $('m_via').textContent=v?R(b/v):'–';$('m_km').textContent=km?R(b/km):'–';
-    const t=Math.max(b,c+fix,1),w=x=>Math.max(0,x/t*100)+'%';
-    $('bar').innerHTML=`<div style="width:${w(c)};background:#c98a00"></div><div style="width:${w(fix)};background:#5d6b65"></div><div style="width:${w(Math.max(l,0))};background:#0b5d3b"></div>`;
-    return {data:$('data').value,bruto:b,combustivel:c,tipo,litros:+$('litros').value||0,viagens:v,km,lucro:l};
-  } catch(e) { return {}; }
+  const b=+$('bruto').value||0,c=+$('comb').value||0,v=+$('viagens').value||0,km=+$('km').value||0,k=diario();
+  const fix=k.p+k.m+k.dc+k.s,l=b-c-fix;
+  $('r_bruto').textContent=R(b);$('r_comb').textContent=R(c);$('r_parc').textContent=R(k.p);$('r_man').textContent=R(k.m);$('r_doc').textContent=R(k.dc);$('r_seg').textContent=R(k.s);
+  $('r_lucro').textContent=R(l);$('r_lucro').className=l>=0?'pos':'neg';
+  $('m_via').textContent=v?R(b/v):'–';$('m_km').textContent=km?R(b/km):'–';
+  const t=Math.max(b,c+fix,1),w=x=>Math.max(0,x/t*100)+'%';
+  $('bar').innerHTML=`<div style="width:${w(c)};background:#c98a00"></div><div style="width:${w(fix)};background:#5d6b65"></div><div style="width:${w(Math.max(l,0))};background:#0b5d3b"></div>`;
+  return {data:$('data').value,bruto:b,combustivel:c,tipo,litros:+$('litros').value||0,viagens:v,km,lucro:l};
 }
 
 function medias(){
-  try {
-    const n=H.length,s=f=>H.reduce((a,x)=>a+(+f(x)||0),0),k=diario(),fix=k.p+k.m+k.dc+k.s;
-    const ord=[...H].sort((a,b)=>(b.data||'').localeCompare(a.data||'')),mes=hoje().slice(0,7);
-    $('a_dias').textContent=n;
-    $('a_lucro').textContent=n?R(s(lucroDe)/n):'–';
-    $('a_bruto').textContent=n?R(s(x=>x.bruto)/n):'–';
-    $('a_via').textContent=n?(s(x=>x.viagens)/n).toFixed(1):'–';
-    $('a_comb').textContent=s(x=>x.bruto)?Math.round(s(x=>x.combustivel)/s(x=>x.bruto)*100)+'\%':'–';$('a_7').textContent=n?R(ord.slice(0,7).reduce((a,x)=>a+lucroDe(x),0)):'–';
-    $('a_mes').textContent=R(H.filter(x=>(x.data\vert{}\vert{}'').startsWith(mes)).reduce((a,x)=>a+lucroDe(x),0));$('a_meta').textContent=R(fix+(n?s(x=>x.combustivel)/n:0));
-    $('hist').innerHTML='<tr><td>Data</td><td>Bruto</td><td>Viagens</td><td>Lucro</td></tr>'+ord.map(x=>{const l=lucroDe(x);return `<tr><td>${(x.data||'').split('-').reverse().join('/')}</td><td>${R(x.bruto)}</td><td>${x.viagens||0}</td><td class="${l>=0?'pos':'neg'}">${R(l)}</td></tr>`}).join('');
-    mensagem();
-  } catch(e) {}
+  const n=H.length,s=f=>H.reduce((a,x)=>a+(+f(x)||0),0),k=diario(),fix=k.p+k.m+k.dc+k.s;
+  const ord=[...H].sort((a,b)=>b.data.localeCompare(a.data)),mes=hoje().slice(0,7);
+  $('a_dias').textContent=n;
+  $('a_lucro').textContent=n?R(s(lucroDe)/n):'–';
+  $('a_bruto').textContent=n?R(s(x=>x.bruto)/n):'–';
+  $('a_via').textContent=n?(s(x=>x.viagens)/n).toFixed(1):'–';
+  $('a_comb').textContent=s(x=>x.bruto)?Math.round(s(x=>x.combustivel)/s(x=>x.bruto)*100)+'%':'–';
+  $('a_7').textContent=n?R(ord.slice(0,7).reduce((a,x)=>a+lucroDe(x),0)):'–';
+  $('a_mes').textContent=R(H.filter(x=>x.data.startsWith(mes)).reduce((a,x)=>a+lucroDe(x),0));
+  $('a_meta').textContent=R(fix+(n?s(x=>x.combustivel)/n:0));
+  $('hist').innerHTML='<tr><td>Data</td><td>Bruto</td><td>Viagens</td><td>Lucro</td></tr>'+ord.map(x=>{const l=lucroDe(x);return `<tr><td>${x.data.split('-').reverse().join('/')}</td><td>${R(x.bruto)}</td><td>${x.viagens||0}</td><td class="${l>=0?'pos':'neg'}">${R(l)}</td></tr>`}).join('');
+  mensagem();
 }
 
 function mensagem(){
-  try {
-    const n=H.length,ord=[...H].sort((a,b)=>(b.data||'').localeCompare(a.data||'')),u=ord[0];
-    const media=n?H.reduce((a,x)=>a+lucroDe(x),0)/n:0,k=diario(),fix=k.p+k.m+k.dc+k.s;
-    const dia=new Date().getDay(),base=[
-      'Bom dia, Nilta! Cada viagem de hoje é um tijolo da sua casa. Primeiro o carro, depois a reserva, depois você.',
-      'Você já provou que aguenta. Agora é hora de provar que sabe guardar. Separe hoje o dinheiro do carro antes de gastar.',
-      'Dirigir descansada rende mais e evita multa e acidente. O seu corpo é a principal peça deste carro.',
-      'O carro agora é seu. Cada parcela paga é património, não aluguer. Siga firme.',
-      'Meta simples: registar o dia, separar a parte do carro e fazer a reserva crescer um bocadinho.',
-      'A constância vence a sorte. Dias fracos acontecem; o que importa é a média da semana.',
-      'Hoje é um bom dia para pensar na sua folga. Descanso também é estratégia.'];
-    let t=base[dia];
-    if(u){const l=lucroDe(u);
-      if(l<0)t=`Ontem ficou ${R(l)}, mas calma: um dia não define o mês. Hoje mire pelo menos ${R(fix+(+(u.combustivel||0)))} de bruto para cobrir tudo. Você consegue!`;
-      else if(n>2&&l>media)t=`Excelente! Último dia: ${R(l)} de lucro, acima da sua média de ${R(media)}. Guarde uma parte na reserva hoje.`;
-      else t=`Último dia: ${R(l)} de lucro. ${base[dia]}`;}
-    $('msg').innerHTML='<b>Mensagem do dia</b><br>'+t;
-  } catch(e) {}
+  const n=H.length,ord=[...H].sort((a,b)=>b.data.localeCompare(a.data)),u=ord[0];
+  const media=n?H.reduce((a,x)=>a+lucroDe(x),0)/n:0,k=diario(),fix=k.p+k.m+k.dc+k.s;
+  const dia=new Date().getDay(),base=[
+    'Bom dia, Nilta! Cada viagem de hoje é um tijolo da sua casa. Primeiro o carro, depois a reserva, depois você.',
+    'Você já provou que aguenta. Agora é hora de provar que sabe guardar. Separe hoje o dinheiro do carro antes de gastar.',
+    'Dirigir descansada rende mais e evita multa e acidente. Seu corpo é a principal peça desse carro.',
+    'O carro agora é seu. Cada parcela paga é patrimônio, não aluguel. Siga firme.',
+    'Meta simples: lançar o dia, separar a parte do carro e fazer a reserva crescer um pouquinho.',
+    'Constância vence sorte. Dia fraco acontece; o que importa é a média da semana.',
+    'Hoje é um bom dia para pensar na sua folga. Descanso também é estratégia.'];
+  let t=base[dia];
+  if(u){const l=lucroDe(u);
+    if(l<0)t=`Ontem ficou ${R(l)}, mas calma: um dia não define o mês. Hoje mire pelo menos ${R(fix+(+u.combustivel||0))} de bruto para cobrir tudo. Você consegue!`;
+    else if(n>2&&l>media)t=`Mandou bem! Último dia: ${R(l)} de lucro, acima da sua média de ${R(media)}. Guarde uma parte na reserva hoje.`;
+    else t=`Último dia: ${R(l)} de lucro. ${base[dia]}`;}
+  $('msg').innerHTML='<b>Mensagem do dia</b><br>'+t;
 }
 
-function setCustos(){
-  try {
-    [['c_parc','parcela'],['c_man','manut'],['c_doc','docs'],['c_seg','seguro'],['c_dias','dias']].forEach(([i,k])=>{
-      if($(i)){$(i).value=C[k]||'';
-        $(i).oninput=()=>{C[k]=+$(i).value||0;localStorage.setItem('nilta_custos',JSON.stringify(C));calc();medias()}
-      }
-    });
-  } catch(e) {}
-}
+function setCustos(){[['c_parc','parcela'],['c_man','manut'],['c_doc','docs'],['c_seg','seguro'],['c_dias','dias']].forEach(([i,k])=>{$(i).value=C[k];$(i).oninput=()=>{C[k]=+$(i).value||0;localStorage.setItem('nilta_custos',JSON.stringify(C));calc();medias()}})}
 
-function carregarDia(){
-  try {
-    const x=H.find(h=>h.data===$('data').value);
-    ['bruto','viagens','litros','km'].forEach(f=>{if($(f))$(f).value=x&&x[f]?x[f]:''});
-    if($('comb'))$('comb').value=x&&x.combustivel?x.combustivel:'';
-    if(x&&x.tipo){setTipo(x.tipo)}else{setTipo('Gasolina')}
-    calc();
-  } catch(e) { calc(); }
-}
-
-function setTipo(v){
-  tipo=v;
-  document.querySelectorAll('#tipo input[type="checkbox"]').forEach(cb=>{
-    cb.checked = (cb.dataset.v === v);
-  });
-}
+function carregarDia(){const x=H.find(h=>h.data===$('data').value);
+  ['bruto','viagens','litros','km'].forEach(f=>$(f).value=x&&x[f]?x[f]:'');$('comb').value=x&&x.combustivel?x.combustivel:'';
+  if(x&&x.tipo)setTipo(x.tipo);calc()}
+function setTipo(v){tipo=v;document.querySelectorAll('#tipo button').forEach(b=>b.classList.toggle('on',b.dataset.v===v))}
 
 async function salvar(){
-  try {
-    const d=calc();if(!d.data||!d.bruto){$('st').textContent='Preencha a data e o valor bruto.';return}
-    H=H.filter(x=>x.data!==d.data);H.push(d);localStorage.setItem('nilta_hist',JSON.stringify(H));medias();
-    $('st').textContent='Salvo no telemóvel. A sincronizar com a folha de cálculo…';
-    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({...d,mensagem:$('msg').innerText.replace('Mensagem do dia','').trim()})});
-    const j=await r.json();$('st').textContent=j.ok?'✔ Salvo na folha de cálculo!':'Salvo localmente. Erro na folha de cálculo.';
-  }catch(e){$('st').textContent='Salvo no telemóvel. Sem internet para enviar.'}
+  const d=calc();if(!d.data||!d.bruto){$('st').textContent='Preencha a data e o valor bruto.';return}
+  H=H.filter(x=>x.data!==d.data);H.push(d);localStorage.setItem('nilta_hist',JSON.stringify(H));medias();
+  $('st').textContent='Salvo no celular. Enviando para a planilha…';
+  try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({...d,mensagem:$('msg').innerText.replace('Mensagem do dia','').trim()})});
+    const j=await r.json();$('st').textContent=j.ok?'✔ Salvo na planilha!':'Salvo no celular. Planilha: '+j.erro}
+  catch(e){$('st').textContent='Salvo no celular. Sem internet: envie de novo depois.'}
 }
 
 async function sincronizar(){
-  try{
-    const r=await fetch(API,{method:'GET',redirect:'follow'});
-    const j=await r.json();if(!j.ok)return;
-    if(j.custos&&j.custos.parcela){C={...DEF,...j.custos};localStorage.setItem('nilta_custos',JSON.stringify(C));setCustos()}
+  try{const j=await (await fetch(API)).json();if(!j.ok)return;
+    if(j.custos&&j.custos.parcela){C=j.custos;localStorage.setItem('nilta_custos',JSON.stringify(C));setCustos()}
     const m={};H.forEach(x=>m[x.data]=x);(j.historico||[]).forEach(x=>m[x.data]={...m[x.data],...x});
-    H=Object.values(m);localStorage.setItem('nilta_hist',JSON.stringify(H));medias();carregarDia();
-  }catch(e){}
+    H=Object.values(m);localStorage.setItem('nilta_hist',JSON.stringify(H));medias();carregarDia()}catch(e){}
 }
 
-try {
-  $('data').value=hoje();
-  document.querySelectorAll('#tipo input[type="checkbox"]').forEach(cb=>{
-    cb.onchange=(e)=>{
-      if(e.target.checked){ setTipo(e.target.dataset.v); } else { e.target.checked = true; }
-      calc();
-    }
-  });
-  ['bruto','comb','viagens','litros','km'].forEach(i=>{if($(i)) $(i).oninput=calc;});$('data').onchange=carregarDia;
-  $('salvar').onclick=salvar;
-  setCustos();carregarDia();medias();sincronizar();
-} catch(e) { console.error(e); }
+$('data').value=hoje();
+document.querySelectorAll('#tipo button').forEach(b=>b.onclick=()=>{setTipo(b.dataset.v);calc()});
+['bruto','comb','viagens','litros','km'].forEach(i=>$(i).oninput=calc);
+$('data').onchange=carregarDia;$('salvar').onclick=salvar;
+setCustos();carregarDia();medias();sincronizar();
 </script>
 </body>
 </html>
