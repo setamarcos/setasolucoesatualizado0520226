@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Preparatório 9º Ano - CEDAF / COLTEC / IF / CENTEC</title>
+<title>PREPARATÓRIO 9º ANO - CEDAF / COLTEC / IF / CENTEC</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 :root{ --azul:#1a73e8; --verde:#34a853; --laranja:#ff8c00; --vermelho:#d32f2f; --fundo:#fffaf0; }
@@ -13,19 +13,19 @@ h1{color:var(--azul);text-align:center;font-size:24px;margin-bottom:4px}
 .btn-topo{background:var(--azul);color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-size:14px;margin:4px}
 .btn-topo.ativo{background:var(--verde)}
 .btn-seta{background:var(--verde);color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-size:15px;margin:4px}
+.btn-seta.ativo{background:#1e7e34;box-shadow:inset 0 2px 4px rgba(0,0,0,0.3);border:2px solid #000}
 .btn-chute{background:var(--laranja);color:#fff}
+.btn-chute.ativo{background:#d35400;box-shadow:inset 0 2px 4px rgba(0,0,0,0.3);border:2px solid #000}
 .btn-alt{width:100%;text-align:left;background:#fff;border:2px solid #ddd;padding:10px 12px;margin:4px 0;border-radius:6px;cursor:pointer;font-size:15px}
-.btn-alt.selecionada{border-color:var(--azul);background:#e8f0fe}
-.btn-alt.travada{cursor:not-allowed;opacity:0.7}
+.btn-alt.selecionada{border-color:var(--azul);background:#e8f0fe;font-weight:bold}
 .card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 3px 8px rgba(0,0,0,0.1);margin:16px 0}
 .hint{font-size:13px;color:#5f6368;font-style:italic}
 .textarea-redacao{width:100%;height:180px;padding:12px;font-size:15px;border:2px solid var(--azul);border-radius:8px;margin:8px 0;box-sizing:border-box}
 #resultadoFinal,#areaAplicacao{display:none}
-.questao-travada{opacity:0.6}
 .tag-banca{display:inline-block;background:#e8f0fe;color:var(--azul);padding:2px 8px;border-radius:4px;font-size:12px;font-weight:bold;margin-bottom:6px}
 .tag-materia{display:inline-block;background:#e6f4ea;color:var(--verde);padding:2px 8px;border-radius:4px;font-size:12px;font-weight:bold;margin-bottom:6px}
+.header-data-hora{text-align:center;font-size:14px;font-weight:bold;color:#5f6368;margin-bottom:8px}
 
-/* Modal Login */
 #loginModal{background:#fff;padding:28px;border-radius:12px;box-shadow:0 4px 14px rgba(0,0,0,0.15);max-width:420px;margin:40px auto;text-align:center}
 #loginModal input{width:90%;padding:10px;margin:8px 0;border:1px solid #ccc;border-radius:6px;font-size:15px;box-sizing:border-box}
 .erro-msg{color:var(--vermelho);font-size:13px;font-weight:bold;display:none;margin-top:4px}
@@ -38,16 +38,16 @@ h1{color:var(--azul);text-align:center;font-size:24px;margin-bottom:4px}
 </head>
 <body>
 
-<!-- LOGIN COM VALIDAÇÃO DE TELEFONE -->
+<!-- LOGIN -->
 <div id="loginModal">
   <h2>Acesso do Aluno 🎯</h2>
-  <p class="hint">Informe seu nome e telefone celular para validação de acesso</p>
+  <p class="hint">Digite seu telefone e nome para acessar sua sequência de simulados.</p>
   
+  <input type="tel" id="inputTelefone" placeholder="(XX) 9XXXX-XXXX" maxlength="15" oninput="aoDigitarTelefone(this)">
   <input type="text" id="inputNome" placeholder="Nome Completo do Aluno">
-  <input type="tel" id="inputTelefone" placeholder="(XX) 9XXXX-XXXX" maxlength="15" oninput="aplicarMascaraTelefone(this)">
   
   <div class="badge-meta">🎯 Meta de Avaliação: 900 Pontos</div>
-  <div id="msgErro" class="erro-msg">⚠️ Insira um número de telefone celular válido no formato (XX) 9XXXX-XXXX</div>
+  <div id="msgErro" class="erro-msg"></div>
   
   <br><br>
   <button class="btn-topo" style="width:95%;padding:12px;font-size:16px" onclick="validarELogar()">🚀 Acessar Simulados</button>
@@ -55,11 +55,12 @@ h1{color:var(--azul);text-align:center;font-size:24px;margin-bottom:4px}
 
 <!-- ÁREA PRINCIPAL -->
 <div id="areaAplicacao">
+  <div class="header-data-hora" id="exibirDataHora">--/--/---- --:--:--</div>
   <h1>PREPARATÓRIO 9º ANO - CEDAF / COLTEC / IF / CENTEC 🎯</h1>
   <p class="subtitulo">
     Aluno: <span id="exibirNomeAluno">--</span> | 
     Contato: <span id="exibirTelefone">--</span> | 
-    Meta Fixa: <span id="exibirMeta">900</span> pts
+    <span style="color:var(--azul)" id="exibirIdentificadorProva">Prova 01</span>
   </p>
   
   <div style="text-align:center;margin:16px 0">
@@ -79,180 +80,260 @@ const META_FIXA = 900;
 let userLogin = '';
 let userTelefone = '';
 let tempoInicioApp = null;
+let numeroProvaAtual = 1;
 let temaRedacaoAtual = '';
+let textoRedacaoSalvo = '';
 
-// 20 TEMAS DE REDAÇÃO PARA O 9º ANO
+function atualizarDataHora(){
+  const agora = new Date();
+  const dataStr = agora.toLocaleDateString('pt-BR');
+  const horaStr = agora.toLocaleTimeString('pt-BR');
+  const el = document.getElementById('exibirDataHora');
+  if(el) el.textContent = `📅 ${dataStr}  |  ⏰ ${horaStr}`;
+}
+setInterval(atualizarDataHora, 1000);
+
 const bancoTemasRedacao = [
-  "Impactos da tecnologia e inteligência artificial na educação do século XXI",
-  "Desafios para a preservação do meio ambiente e sustentabilidade no Brasil",
-  "O combate ao bullying e ao ciberbullying no ambiente escolar",
-  "A importância da leitura na formação do pensamento crítico dos jovens",
-  "O papel do esporte na inclusão social e saúde mental de adolescentes",
-  "Caminhos para combater a má alimentação e a obesidade juvenil",
-  "O uso consciente da água e a gestão dos recursos hídricos",
-  "Impactos das redes sociais na autoestima e ansiedade dos jovens",
-  "A importância do consumo consciente e da educação financeira na juventude",
-  "Cidadania e engajamento comunitário: a força do jovem na sociedade",
-  "Valorização da diversidade cultural e combate ao preconceito no Brasil",
-  "Desafios para a erradicação do trabalho infantil na modernidade",
-  "O futuro do trabalho e a preparação dos jovens para novas profissões",
-  "A importância da ciência e do conhecimento científico para a sociedade",
-  "Lixo eletrônico: desafios para o descarte e reciclagem de e-lixo",
-  "A preservação do patrimônio histórico e cultural brasileiro",
-  "A cultura da empatia e o combate à violência nas escolas",
-  "Organização do tempo e saúde mental na rotina de estudos",
-  "Segurança no trânsito e o papel da educação para o trânsito",
-  "O acesso à cultura e ao lazer como direito fundamental dos jovens"
+  "1. Impactos da tecnologia e inteligência artificial na educação do século XXI",
+  "2. Desafios para a preservação do meio ambiente e sustentabilidade no Brasil",
+  "3. O combate ao bullying e ao ciberbullying no ambiente escolar",
+  "4. A importância da leitura na formação do pensamento crítico dos jovens",
+  "5. O papel do esporte na inclusão social e saúde mental de adolescentes",
+  "6. Caminhos para combater a má alimentação e a obesidade juvenil",
+  "7. O uso consciente da água e a gestão dos recursos hídricos",
+  "8. Impactos das redes sociais na autoestima e ansiedade dos jovens",
+  "9. A importância do consumo consciente e da educação financeira na juventude",
+  "10. Cidadania e engajamento comunitário: a força do jovem na sociedade",
+  "11. Valorização da diversidade cultural e combate ao preconceito no Brasil",
+  "12. Desafios para a erradicação do trabalho infantil na modernidade",
+  "13. O futuro do trabalho e a preparação dos jovens para novas profissões",
+  "14. A importância da ciência e do conhecimento científico para a sociedade",
+  "15. Lixo eletrônico: desafios para o descarte e reciclagem de e-lixo"
 ];
 
-// BANCO DE QUESTÕES DO 9º ANO (10 POR MATÉRIA = 50 QUESTÕES)
 const bancoQuestoes9Ano = [
-  // PORTUGUÊS (10)
+  // PORTUGUÊS (15)
   {materia:"Português", banca:"CEDAF", q:"Qual a função sintática do termo em destaque em 'O estudante *obteve a vaga*'?", ops:["Objeto Direto","Objeto Indireto","Sujeito","Predicativo do Sujeito"],"gab":"a"},
   {materia:"Português", banca:"COLTEC", q:"Qual alternativa contém uma figura de linguagem Metáfora?", ops:["Seus olhos são faróis na escuridão.","O sol sorria pela manhã.","Comprei dois quilos de carne.","Faltou com a verdade."],"gab":"a"},
-  {materia:"Português", banca:"IFET", q:"Assinale a opção com regência verbal adequada segundo a norma-padrão:", ops:["Assistimos ao filme indicado pelo professor.","Prefiro mais estudar do que jogar.","Chegamos na escola muito tarde.","Obedeceu o sinal de trânsito."],"gab":"a"},
-  {materia:"Português", banca:"CENTEC", q:"Em 'Ele respondeu *rapidamente*', a palavra destacada é um:", ops:["Advérbio de modo","Adjetivo","Substantivo","Pronome demonstrativo"],"gab":"a"},
-  {materia:"Português", banca:"CEDAF", q:"Assinale a oração na Voz Passiva Analítica:", ops:["A prova foi elaborada pela banca.","A banca elaborou a prova.","Elaborou-se a prova com cuidado.","O aluno preparou-se bem."],"gab":"a"},
+  {materia:"Português", banca:"IFET", q:"Assinale a opção com regência verbal adequada:", ops:["Assistimos ao filme indicado pelo professor.","Prefiro mais estudar do que jogar.","Chegamos na escola muito tarde.","Obedeceu o sinal."],"gab":"a"},
+  {materia:"Português", banca:"CENTEC", q:"Em 'Ele respondeu *rapidamente*', a palavra destacada é:", ops:["Advérbio de modo","Adjetivo","Substantivo","Pronome"],"gab":"a"},
+  {materia:"Português", banca:"CEDAF", q:"Assinale a oração na Voz Passiva Analítica:", ops:["A prova foi elaborada pela banca.","A banca elaborou a prova.","Elaborou-se a prova.","O aluno preparou-se."],"gab":"a"},
   {materia:"Português", banca:"COLTEC", q:"A conjunção 'portanto' estabelece relação de:", ops:["Conclusão","Oposição","Causa","Concessão"],"gab":"a"},
-  {materia:"Português", banca:"IFET", q:"Qual frase exige o uso da crase segundo a norma gramatical?", ops:["Entreguei o simulado à professora.","Fui a pé para a escola.","Ela começou a estudar cedo.","Falei a uma multidão."],"gab":"a"},
-  {materia:"Português", banca:"CENTEC", q:"Identifique a frase com concordância verbal correta:", ops:["Fazem dois anos que estudo aqui.","Havia muitos alunos na sala.","Sobrou muitas vagas no curso.","Existe muitos problemas a resolver."],"gab":"b"},
-  {materia:"Português", banca:"CEDAF", q:"A oração 'Espero *que você passe*' funciona sintaticamente como:", ops:["Substantiva Objetiva Direta","Substantiva Subjetiva","Adjetiva Explicativa","Adverbial Causal"],"gab":"a"},
-  {materia:"Português", banca:"COLTEC", q:"Qual elemento é indispensável num texto dissertativo-argumentativo?", ops:["Tese e argumentos","Linguagem conotativa","Diálogo entre personagens","Narrador em 1ª pessoa"],"gab":"a"},
+  {materia:"Português", banca:"IFET", q:"Qual frase exige o uso da crase?", ops:["Entreguei o simulado à professora.","Fui a pé.","Ela começou a estudar.","Falei a uma pessoa."],"gab":"a"},
+  {materia:"Português", banca:"CENTEC", q:"Identifique a frase com concordância verbal correta:", ops:["Havia muitos alunos na sala.","Fazem dois anos que estudo.","Sobrou muitas vagas.","Existe muitos problemas."],"gab":"a"},
+  {materia:"Português", banca:"CEDAF", q:"A oração 'Espero *que você passe*' é:", ops:["Substantiva Objetiva Direta","Substantiva Subjetiva","Adjetiva Explicativa","Adverbial Causal"],"gab":"a"},
+  {materia:"Português", banca:"COLTEC", q:"Qual elemento é indispensável num texto dissertativo?", ops:["Tese e argumentos","Linguagem conotativa","Diálogo entre personagens","Narrador em 1ª pessoa"],"gab":"a"},
+  {materia:"Português", banca:"IFET", q:"Qual das palavras abaixo é proparoxítona?", ops:["Lâmpada","Café","Mesa","Copo"],"gab":"a"},
+  {materia:"Português", banca:"CENTEC", q:"Em 'Menino *corajoso*', a palavra destacada é:", ops:["Adjetivo","Substantivo","Verbo","Advérbio"],"gab":"a"},
+  {materia:"Português", banca:"CEDAF", q:"Qual frase contém ambiguidade?", ops:["O pai falou com o filho no seu quarto.","O aluno estudou para a prova.","A professora explicou a matéria.","Comprei um livro novo."],"gab":"a"},
+  {materia:"Português", banca:"COLTEC", q:"Sinônimo da palavra 'efêmero':", ops:["Passageiro","Duradouro","Eterno","Forte"],"gab":"a"},
+  {materia:"Português", banca:"IFET", q:"Qual palavra está grafada corretamente segundo o Novo Acordo Ortográfico?", ops:["Heroico","Idéia","Jóia","Assembléia"],"gab":"a"},
 
-  // MATEMÁTICA (10)
+  // MATEMÁTICA (15)
   {materia:"Matemática", banca:"CEDAF", q:"Na equação x² - 5x + 6 = 0, quais são suas raízes reais?", ops:["2 e 3","-2 e -3","1 e 6","-1 e -6"],"gab":"a"},
-  {materia:"Matemática", banca:"COLTEC", q:"Um triângulo retângulo tem catetos medindo 6 cm e 8 cm. A hipotenusa mede:", ops:["10 cm","12 cm","14 cm","16 cm"],"gab":"a"},
-  {materia:"Matemática", banca:"IFET", q:"Se 12 operários realizam uma obra em 6 dias, em quantos dias 9 operários fariam a mesma obra?", ops:["8 dias","4 dias","9 dias","10 dias"],"gab":"a"},
+  {materia:"Matemática", banca:"COLTEC", q:"Um triângulo retângulo tem catetos de 6 cm e 8 cm. A hipotenusa mede:", ops:["10 cm","12 cm","14 cm","16 cm"],"gab":"a"},
+  {materia:"Matemática", banca:"IFET", q:"Se 12 operários realizam uma obra em 6 dias, em quantos dias 9 operários fariam?", ops:["8 dias","4 dias","9 dias","10 dias"],"gab":"a"},
   {materia:"Matemática", banca:"CENTEC", q:"Quanto é 15% de R$ 600,00?", ops:["R$ 90,00","R$ 80,00","R$ 60,00","R$ 100,00"],"gab":"a"},
-  {materia:"Matemática", banca:"CEDAF", q:"Qual é a área de um círculo cujo raio mede 3 cm? (Considere π = 3,14)", ops:["28,26 cm²","18,84 cm²","9,42 cm²","37,68 cm²"],"gab":"a"},
-  {materia:"Matemática", banca:"COLTEC", q:"O valor do sistema { x + y = 10 e x - y = 4 } é:", ops:["x = 7, y = 3","x = 6, y = 4","x = 8, y = 2","x = 5, y = 5"],"gab":"a"},
-  {materia:"Matemática", banca:"IFET", q:"Qual o resultado da simplificação da expressão √(50) + √(18)?", ops:["8√2","5√2","3√2","15√2"],"gab":"a"},
-  {materia:"Matemática", banca:"CENTEC", q:"Em um lançamento de um dado comum de 6 faces, qual a probabilidade de sair um número par?", ops:["50%","25%","33%","66%"],"gab":"a"},
-  {materia:"Matemática", banca:"CEDAF", q:"Qual é o percurso total de um quadrado com lado medindo 12 metros?", ops:["48 m","144 m","24 m","36 m"],"gab":"a"},
-  {materia:"Matemática", banca:"COLTEC", q:"A média aritmética das notas 6,0; 8,0 e 10,0 é igual a:", ops:["8,0","7,5","8,5","9,0"],"gab":"a"},
+  {materia:"Matemática", banca:"CEDAF", q:"Área de um círculo com raio de 3 cm (π = 3,14):", ops:["28,26 cm²","18,84 cm²","9,42 cm²","37,68 cm²"],"gab":"a"},
+  {materia:"Matemática", banca:"COLTEC", q:"Solução do sistema { x + y = 10 e x - y = 4 }:", ops:["x = 7, y = 3","x = 6, y = 4","x = 8, y = 2","x = 5, y = 5"],"gab":"a"},
+  {materia:"Matemática", banca:"IFET", q:"Simplificação de √(50) + √(18):", ops:["8√2","5√2","3√2","15√2"],"gab":"a"},
+  {materia:"Matemática", banca:"CENTEC", q:"Num dado de 6 faces, a probabilidade de sair número par é:", ops:["50%","25%","33%","66%"],"gab":"a"},
+  {materia:"Matemática", banca:"CEDAF", q:"Perímetro de um quadrado de lado 12 m:", ops:["48 m","144 m","24 m","36 m"],"gab":"a"},
+  {materia:"Matemática", banca:"COLTEC", q:"Média aritmética das notas 6,0; 8,0 e 10,0:", ops:["8,0","7,5","8,5","9,0"],"gab":"a"},
+  {materia:"Matemática", banca:"IFET", q:"Qual o valor numérico de 2⁴?", ops:["16","8","12","64"],"gab":"a"},
+  {materia:"Matemática", banca:"CENTEC", q:"Qual o valor do ângulo interno de um quadrado?", ops:["90°","45°","180°","60°"],"gab":"a"},
+  {materia:"Matemática", banca:"CEDAF", q:"Valor de x na equação 3x - 9 = 0:", ops:["3","9","-3","0"],"gab":"a"},
+  {materia:"Matemática", banca:"COLTEC", q:"Quantos segundos há em 1 hora?", ops:["3600","60","600","1200"],"gab":"a"},
+  {materia:"Matemática", banca:"IFET", q:"Fatoração do polinômio x² - 9:", ops:["(x-3)(x+3)","(x-3)²","(x+3)²","x(x-9)"],"gab":"a"},
 
-  // CIÊNCIAS (10)
-  {materia:"Ciências", banca:"CEDAF", q:"Qual organela celular é responsável pela produção de energia (ATP) na respiração celular?", ops:["Mitocôndria","Complexo de Golgi","Ribossomo","Lisossomo"],"gab":"a"},
-  {materia:"Ciências", banca:"COLTEC", q:"A mudança direta do estado sólido para o estado gasoso chama-se:", ops:["Sublimação","Fusão","Vaporização","Condensação"],"gab":"a"},
-  {materia:"Ciências", banca:"IFET", q:"A Primeira Lei de Mendel aborda o princípio de:", ops:["Segregação dos fatores/genes","Codominância","Linkage","Epistasia"],"gab":"a"},
-  {materia:"Ciências", banca:"CENTEC", q:"O número atômico (Z) de um elemento representa a quantidade de:", ops:["Prótons no núcleo","Nêutrons no núcleo","Elétrons na eletrosfera","Massa atômica"],"gab":"a"},
-  {materia:"Ciências", banca:"CEDAF", q:"Qual vaso sanguíneo transporta sangue rico em oxigênio do coração para o corpo?", ops:["Artéria Aorta","Veia Cava","Veia Pulmonar","Capilar Venoso"],"gab":"a"},
-  {materia:"Ciências", banca:"COLTEC", q:"Qual a velocidade da luz no vácuo aproximadamente?", ops:["300.000 km/s","150.000 km/s","30.000 km/s","3.000 km/s"],"gab":"a"},
-  {materia:"Ciências", banca:"IFET", q:"A Primeira Lei de Newton também é conhecida como Lei da:", ops:["Inércia","Ação e Reação","Gravitacional","Força Resultante"],"gab":"a"},
-  {materia:"Ciências", banca:"CENTEC", q:"O processo pelo qual plantas convertem luz solar em energia química é a:", ops:["Fotossíntese","Quimiossíntese","Respiração","Transpiração"],"gab":"a"},
-  {materia:"Ciências", banca:"CEDAF", q:"Qual gás é o mais abundante na atmosfera terrestre?", ops:["Nitrogênio","Oxigênio","Gás Carbônico","Argônio"],"gab":"a"},
-  {materia:"Ciências", banca:"COLTEC", q:"Qual fonte energética é classificada como RENOVAVEL?", ops:["Energia Eólica","Petróleo","Carvão Mineral","Gás Natural"],"gab":"a"},
+  // CIÊNCIAS (15)
+  {materia:"Ciências", banca:"CEDAF", q:"Organela celular responsável pela produção de energia (ATP):", ops:["Mitocôndria","Complexo de Golgi","Ribossomo","Lisossomo"],"gab":"a"},
+  {materia:"Ciências", banca:"COLTEC", q:"Passagem do estado sólido diretamente para o gasoso:", ops:["Sublimação","Fusão","Vaporização","Condensação"],"gab":"a"},
+  {materia:"Ciências", banca:"IFET", q:"A Primeira Lei de Mendel aborda o princípio da:", ops:["Segregação dos fatores/genes","Codominância","Linkage","Epistasia"],"gab":"a"},
+  {materia:"Ciências", banca:"CENTEC", q:"O número atômico (Z) de um elemento indica a quantidade de:", ops:["Prótons no núcleo","Nêutrons","Elétrons","Massa"],"gab":"a"},
+  {materia:"Ciências", banca:"CEDAF", q:"Vaso sanguíneo que leva sangue oxigenado do coração para o corpo:", ops:["Artéria Aorta","Veia Cava","Veia Pulmonar","Capilar"],"gab":"a"},
+  {materia:"Ciências", banca:"COLTEC", q:"Velocidade aproximada da luz no vácuo:", ops:["300.000 km/s","150.000 km/s","30.000 km/s","3.000 km/s"],"gab":"a"},
+  {materia:"Ciências", banca:"IFET", q:"A Primeira Lei de Newton também é conhecida como Lei da:", ops:["Inércia","Ação e Reação","Gravitacional","Força"],"gab":"a"},
+  {materia:"Ciências", banca:"CENTEC", q:"Processo em que plantas produzem alimento através da luz:", ops:["Fotossíntese","Quimiossíntese","Respiração","Transpiração"],"gab":"a"},
+  {materia:"Ciências", banca:"CEDAF", q:"Gás mais abundante na atmosfera terrestre:", ops:["Nitrogênio","Oxigênio","Gás Carbônico","Argônio"],"gab":"a"},
+  {materia:"Ciências", banca:"COLTEC", q:"Fonte de energia classificada como RENOVÁVEL:", ops:["Energia Eólica","Petróleo","Carvão Mineral","Gás Natural"],"gab":"a"},
+  {materia:"Ciências", banca:"IFET", q:"Qual o pH considerado neutro?", ops:["7","0","14","10"],"gab":"a"},
+  {materia:"Ciências", banca:"CENTEC", q:"Planeta mais próximo do Sol:", ops:["Mercúrio","Vênus","Terra","Marte"],"gab":"a"},
+  {materia:"Ciências", banca:"CEDAF", q:"Camada mais externa da Terra:", ops:["Crosta","Manto","Núcleo","Atmosfera"],"gab":"a"},
+  {materia:"Ciências", banca:"COLTEC", q:"Órgão do corpo humano responsável por filtrar o sangue:", ops:["Rins","Fígado","Coração","Pulmão"],"gab":"a"},
+  {materia:"Ciências", banca:"IFET", q:"Fórmula química do gás carbônico:", ops:["CO₂","H₂O","O₂","NaCl"],"gab":"a"},
 
-  // HISTÓRIA (10)
-  {materia:"História", banca:"CEDAF", q:"Qual foi o estopim imediato para o início da Primeira Guerra Mundial (1914)?", ops:["Atentado a Francisco Ferdinando","Invasão da Polônia","Crise de 1929","Revolução Russa"],"gab":"a"},
-  {materia:"História", banca:"COLTEC", q:"A Era Vargas (1930-1945) teve como marca trabalhista importante:", ops:["Criação da CLT","Fim da escravidão","Voto exclusivo para elite","Privatização de estatais"],"gab":"a"},
-  {materia:"História", banca:"IFET", q:"A Segunda Guerra Mundial encerrou-se em 1945 após:", ops:["Rendição do Japão e bombas atômicas","Tratado de Versalhes","Queda do Muro de Berlim","Revolução Cubana"],"gab":"a"},
-  {materia:"História", banca:"CENTEC", q:"O período de disputa ideológica entre EUA e URSS sem conflito direto chamou-se:", ops:["Guerra Fria","Guerra dos Cem Anos","Grande Depressão","Paz Armada"],"gab":"a"},
-  {materia:"História", banca:"CEDAF", q:"A política do 'Café com Leite' na República Velha envolvia os estados de:", ops:["São Paulo e Minas Gerais","Rio de Janeiro e Bahia","RS e Santa Catarina","Pernambuco e Ceará"],"gab":"a"},
-  {materia:"História", banca:"COLTEC", q:"A Revolução Industrial teve seu berço inicial em qual país?", ops:["Inglaterra","França","Alemanha","Estados Unidos"],"gab":"a"},
-  {materia:"História", banca:"IFET", q:"O regime militar no Brasil perdurou no intervalo dos anos de:", ops:["1964 a 1985","1930 a 1945","1950 a 1960","1988 a 2000"],"gab":"a"},
-  {materia:"História", banca:"CENTEC", q:"A Independência do Brasil foi proclamada no ano de:", ops:["1822","1500","1889","1808"],"gab":"a"},
-  {materia:"História", banca:"CEDAF", q:"A Lei Áurea decretou a abolição da escravidão no ano de:", ops:["1888","1822","1850","1871"],"gab":"a"},
-  {materia:"História", banca:"COLTEC", q:"A Constituição Federal brasileira atualmente em vigor foi promulgada em:", ops:["1988","1964","1934","1946"],"gab":"a"},
+  // HISTÓRIA (15)
+  {materia:"História", banca:"CEDAF", q:"Estopim para o início da Primeira Guerra Mundial (1914):", ops:["Atentado a Francisco Ferdinando","Invasão da Polônia","Crise de 1929","Revolução Russa"],"gab":"a"},
+  {materia:"História", banca:"COLTEC", q:"Marca trabalhista marcante da Era Vargas (1930-1945):", ops:["Criação da CLT","Fim da escravidão","Voto exclusivo","Privatização"],"gab":"a"},
+  {materia:"História", banca:"IFET", q:"A Segunda Guerra Mundial encerrou-se em 1945 após:", ops:["Rendição do Japão","Tratado de Versalhes","Queda do Muro","Revolução Cubana"],"gab":"a"},
+  {materia:"História", banca:"CENTEC", q:"Disputa ideológica entre EUA e URSS sem guerra direta:", ops:["Guerra Fria","Guerra dos 100 Anos","Grande Depressão","Paz Armada"],"gab":"a"},
+  {materia:"História", banca:"CEDAF", q:"A 'Política do Café com Leite' envolveu:", ops:["São Paulo e Minas Gerais","Rio de Janeiro e Bahia","RS e Santa Catarina","Ceará e Pernambuco"],"gab":"a"},
+  {materia:"História", banca:"COLTEC", q:"A Revolução Industrial teve seu berço em qual país?", ops:["Inglaterra","França","Alemanha","EUA"],"gab":"a"},
+  {materia:"História", banca:"IFET", q:"O Regime Militar no Brasil ocorreu entre:", ops:["1964 e 1985","1930 e 1945","1950 e 1960","1988 e 2000"],"gab":"a"},
+  {materia:"História", banca:"CENTEC", q:"Ano da Proclamação da Independência do Brasil:", ops:["1822","1500","1889","1808"],"gab":"a"},
+  {materia:"História", banca:"CEDAF", q:"Ano da assinatura da Lei Áurea:", ops:["1888","1822","1850","1871"],"gab":"a"},
+  {materia:"História", banca:"COLTEC", q:"Ano da promulgação da atual Constituição Brasileira:", ops:["1988","1964","1934","1946"],"gab":"a"},
+  {materia:"História", banca:"IFET", q:"Quem proclamou a República no Brasil em 1889?", ops:["Marechal Deodoro da Fonseca","Dom Pedro II","Getúlio Vargas","Juscelino Kubitschek"],"gab":"a"},
+  {materia:"História", banca:"CENTEC", q:"Civilização antiga criadora da Democracia:", ops:["Grega","Romana","Egípcia","Chinesa"],"gab":"a"},
+  {materia:"História", banca:"CEDAF", q:"Período da História antes da invenção da escrita:", ops:["Pré-História","Idade Média","Idade Moderna","Idade Contemporânea"],"gab":"a"},
+  {materia:"História", banca:"COLTEC", q:"Presidente que construiu Brasília:", ops:["Juscelino Kubitschek","Getúlio Vargas","Jânio Quadros","Tancredo Neves"],"gab":"a"},
+  {materia:"História", banca:"IFET", q:"O Muro de Berlim dividia a cidade entre:", ops:["Capitalista e Socialista","Norte e Sul","Inglesa e Francesa","Rica e Pobre"],"gab":"a"},
 
-  // GEOGRAFIA (10)
-  {materia:"Geografia", banca:"CEDAF", q:"Qual bioma brasileiro é caracterizado como savana e ocupa o Centro-Oeste?", ops:["Cerrado","Caatinga","Mata Atlântica","Pampa"],"gab":"a"},
-  {materia:"Geografia", banca:"COLTEC", q:"O deslocamento diário de trabalhadores entre cidades vizinhas chama-se:", ops:["Migração Pendular","Éxodo Rural","Transumância","Diáspora"],"gab":"a"},
-  {materia:"Geografia", banca:"IFET", q:"A linha imaginária principal que divide a Terra em Hemisfério Norte e Sul é:", ops:["Equador","Meridiano de Greenwich","Trópico de Câncer","Trópico de Capricórnio"],"gab":"a"},
-  {materia:"Geografia", banca:"CENTEC", q:"Qual o clima predominantemente caracterizado pela seca no Sertão Nordestino?", ops:["Semiárido","Equatorial","Subtropical","Tropical de Altitude"],"gab":"a"},
-  {materia:"Geografia", banca:"CEDAF", q:"O processo de expansão desordenada das cidades gera o fenômeno da:", ops:["Conurbação","Gentrificação","Megalópole","Metropolização"],"gab":"a"},
-  {materia:"Geografia", banca:"COLTEC", q:"Qual a maior bacia hidrográfica totalmente brasileira em extensão?", ops:["Bacia do Tocantins-Araguaia","Bacia do São Francisco","Bacia do Paraná","Bacia do Amazonas"],"gab":"a"},
-  {materia:"Geografia", banca:"IFET", q:"A pirâmide etária com base larga e topo estreito indica alta taxa de:", ops:["Natalidade","Expectativa de Vida","Mortalidade Infantil","Mão de obra idosa"],"gab":"a"},
-  {materia:"Geografia", banca:"CENTEC", q:"Qual bloco econômico o Brasil integra juntamente com Argentina e Uruguai?", ops:["Mercosul","Pacto Andino","União Europeia","USMCA"],"gab":"a"},
-  {materia:"Geografia", banca:"CEDAF", q:"O fenômeno de retenção de calor na atmosfera potencializado por emissões é o:", ops:["Efeito Estufa","Inversão Térmica","Ilha de Calor","Chuva Ácida"],"gab":"a"},
-  {materia:"Geografia", banca:"COLTEC", q:"O Estado brasileiro localizado no extremo Sul do país é o:", ops:["Rio Grande do Sul","Paraná","Santa Catarina","São Paulo"],"gab":"a"}
+  // GEOGRAFIA (15)
+  {materia:"Geografia", banca:"CEDAF", q:"Bioma caracterizado como savana no Centro-Oeste:", ops:["Cerrado","Caatinga","Mata Atlântica","Pampa"],"gab":"a"},
+  {materia:"Geografia", banca:"COLTEC", q:"Deslocamento diário de trabalhadores entre cidades vizinhas:", ops:["Migração Pendular","Éxodo Rural","Transumância","Diáspora"],"gab":"a"},
+  {materia:"Geografia", banca:"IFET", q:"Linha imaginária que divide a Terra em Norte e Sul:", ops:["Equador","Meridiano de Greenwich","Trópico de Câncer","Trópico de Capricórnio"],"gab":"a"},
+  {materia:"Geografia", banca:"CENTEC", q:"Clima seco do Sertão Nordestino:", ops:["Semiárido","Equatorial","Subtropical","Tropical"],"gab":"a"},
+  {materia:"Geografia", banca:"CEDAF", q:"União física de duas ou mais cidades vizinhas:", ops:["Conurbação","Gentrificação","Megalópole","Metropolização"],"gab":"a"},
+  {materia:"Geografia", banca:"COLTEC", q:"Maior bacia hidrográfica totalmente brasileira:", ops:["Tocantins-Araguaia","São Francisco","Paraná","Amazonas"],"gab":"a"},
+  {materia:"Geografia", banca:"IFET", q:"Pirâmide etária com base larga indica alta taxa de:", ops:["Natalidade","Expectativa de Vida","Mortalidade Infantil","Idosos"],"gab":"a"},
+  {materia:"Geografia", banca:"CENTEC", q:"Bloco econômico fundado por Brasil, Argentina, Paraguai e Uruguai:", ops:["Mercosul","Pacto Andino","União Europeia","USMCA"],"gab":"a"},
+  {materia:"Geografia", banca:"CEDAF", q:"Fenômeno de retenção de calor na atmosfera:", ops:["Efeito Estufa","Inversão Térmica","Ilha de Calor","Chuva Ácida"],"gab":"a"},
+  {materia:"Geografia", banca:"COLTEC", q:"Estado localizado no extremo Sul do Brasil:", ops:["Rio Grande do Sul","Paraná","Santa Catarina","São Paulo"],"gab":"a"},
+  {materia:"Geografia", banca:"IFET", q:"Oceano que banha toda a costa brasileira:", ops:["Atlântico","Pacífico","Índico","Glacial Ártico"],"gab":"a"},
+  {materia:"Geografia", banca:"CENTEC", q:"Capital do Brasil fundada em 1960:", ops:["Brasília","Rio de Janeiro","São Paulo","Salvador"],"gab":"a"},
+  {materia:"Geografia", banca:"CEDAF", q:"Região mais populosa e industrializada do Brasil:", ops:["Sudeste","Sul","Nordeste","Norte"],"gab":"a"},
+  {materia:"Geografia", banca:"COLTEC", q:"Fenômeno de derretimento das geleiras está associado ao:", ops:["Aquecimento Global","Efeito Lora","El Niño","Efeito Coriólis"],"gab":"a"},
+  {materia:"Geografia", banca:"IFET", q:"Escala cartográfica que mostra mais detalhes:", ops:["1:10.000","1:100.000","1:1.000.000","1:10.000.000"],"gab":"a"}
 ];
 
-let modoAtual='ambos';
-let questoesSelecionadas=[];
-let respostas=[];
-let resultadoRedacaoHTML='';
-let notaRedacao=0;
+let modoAtual = 'ambos';
+let questoesSelecionadas = [];
+let respostas = [];
+let resultadoRedacaoHTML = '';
+let notaRedacao = 0;
 
-function aplicarMascaraTelefone(input){
+function aoDigitarTelefone(input){
   let v = input.value.replace(/\D/g, "");
   if(v.length > 11) v = v.slice(0, 11);
-  if(v.length > 2){
-    v = "(" + v.substring(0,2) + ") " + v.substring(2);
-  }
-  if(v.length > 9){
-    v = v.substring(0,10) + "-" + v.substring(10);
-  }
+  if(v.length > 2) v = "(" + v.substring(0,2) + ") " + v.substring(2);
+  if(v.length > 9) v = v.substring(0,10) + "-" + v.substring(10);
   input.value = v;
-}
 
-function validarTelefoneBR(tel){
-  const regex = /^\(\d{2}\)\s9\d{4}-\d{4}$/;
-  return regex.test(tel);
+  const telClean = v.replace(/\D/g, "");
+  if(telClean.length === 11){
+    const alunosSalvos = JSON.parse(localStorage.getItem('alunos_registrados') || '{}');
+    if(alunosSalvos[telClean]){
+      document.getElementById('inputNome').value = alunosSalvos[telClean];
+      document.getElementById('inputNome').readOnly = true;
+    } else {
+      document.getElementById('inputNome').readOnly = false;
+    }
+  }
 }
 
 function validarELogar(){
-  const nome = document.getElementById('inputNome').value.trim();
-  const tel = document.getElementById('inputTelefone').value.trim();
+  const nomeInput = document.getElementById('inputNome').value.trim();
+  const telInput = document.getElementById('inputTelefone').value.trim();
+  const telClean = telInput.replace(/\D/g, "");
   const errBox = document.getElementById('msgErro');
 
-  if(!nome || nome.length < 3){
-    alert("Informe o nome completo do aluno.");
+  if(telClean.length !== 11){
+    errBox.style.display = 'block';
+    errBox.textContent = "⚠️ Insira um número de telefone celular válido com DDD.";
     return;
   }
 
-  if(!validarTelefoneBR(tel)){
+  if(!nomeInput || nomeInput.length < 3){
     errBox.style.display = 'block';
+    errBox.textContent = "⚠️ Por favor, preencha o nome do aluno.";
     return;
   }
+
+  const alunosSalvos = JSON.parse(localStorage.getItem('alunos_registrados') || '{}');
+  if(alunosSalvos[telClean] && alunosSalvos[telClean].toLowerCase() !== nomeInput.toLowerCase()){
+    errBox.style.display = 'block';
+    errBox.textContent = `⚠️ Este telefone já pertence ao aluno "${alunosSalvos[telClean]}".`;
+    return;
+  }
+
+  alunosSalvos[telClean] = nomeInput;
+  localStorage.setItem('alunos_registrados', JSON.stringify(alunosSalvos));
 
   errBox.style.display = 'none';
-  userLogin = nome;
-  userTelefone = tel;
+  userLogin = nomeInput;
+  userTelefone = telInput;
   tempoInicioApp = new Date();
 
-  // Seleciona 1 tema de redação aleatório
-  temaRedacaoAtual = bancoTemasRedacao[Math.floor(Math.random() * bancoTemasRedacao.length)];
+  const progressoAlunos = JSON.parse(localStorage.getItem('progresso_provas') || '{}');
+  let qtdFeitas = progressoAlunos[telClean] || 0;
+  numeroProvaAtual = (qtdFeitas % 15) + 1;
 
   document.getElementById('loginModal').style.display = 'none';
   document.getElementById('areaAplicacao').style.display = 'block';
 
   document.getElementById('exibirNomeAluno').textContent = userLogin;
   document.getElementById('exibirTelefone').textContent = userTelefone;
+  document.getElementById('exibirIdentificadorProva').textContent = `Prova ${String(numeroProvaAtual).padStart(2, '0')}`;
 
-  gerarProvaEquilibrada();
+  atualizarDataHora();
+  gerarProvaSequencial();
 }
 
 function modo(m){
+  salvarTextoRedacao();
   modoAtual=m;
   document.querySelectorAll('.btn-topo').forEach(b=>b.classList.remove('ativo'));
   document.getElementById(`btn${m.charAt(0).toUpperCase()+m.slice(1)}`).classList.add('ativo');
   montarProva();
 }
 
-function gerarProvaEquilibrada(){
-  // Seleciona 2 questões de cada matéria para compor as 10 questões da prova
+// ITEM 1: AUTOSAVE DE REDAÇÃO NO LOCALSTORAGE
+function salvarTextoRedacao(){
+  const el = document.getElementById('textoRedacao');
+  if(el){
+    textoRedacaoSalvo = el.value;
+    const chave = `rascunho_redacao_PROVA_${String(numeroProvaAtual).padStart(2, '0')}`;
+    localStorage.setItem(chave, textoRedacaoSalvo);
+  }
+}
+
+function carregarRascunhoRedacao(){
+  const chave = `rascunho_redacao_PROVA_${String(numeroProvaAtual).padStart(2, '0')}`;
+  const rascunhoSalvo = localStorage.getItem(chave);
+  if(rascunhoSalvo !== null){
+    textoRedacaoSalvo = rascunhoSalvo;
+  }
+}
+
+function limparRascunhoRedacao(){
+  const chave = `rascunho_redacao_PROVA_${String(numeroProvaAtual).padStart(2, '0')}`;
+  localStorage.removeItem(chave);
+  textoRedacaoSalvo = '';
+}
+
+function gerarProvaSequencial(){
+  carregarRascunhoRedacao();
+  temaRedacaoAtual = bancoTemasRedacao[numeroProvaAtual - 1];
+
   const materias = ["Português", "Matemática", "Ciências", "História", "Geografia"];
   questoesSelecionadas = [];
 
   materias.forEach(mat => {
     const daMateria = bancoQuestoes9Ano.filter(q => q.materia === mat);
-    const sorteadas = [...daMateria].sort(() => Math.random() - 0.5).slice(0, 2);
-    questoesSelecionadas.push(...sorteadas);
+    const offset = ((numeroProvaAtual - 1) * 2) % daMateria.length;
+    const q1 = daMateria[offset];
+    const q2 = daMateria[(offset + 1) % daMateria.length];
+    questoesSelecionadas.push(q1, q2);
   });
 
-  questoesSelecionadas.sort(() => Math.random() - 0.5);
   respostas = Array(10).fill(null);
+  resultadoRedacaoHTML = '';
+  notaRedacao = 0;
   montarProva();
 }
 
 function montarProva(){
+  salvarTextoRedacao();
   let html='';
+
   if(modoAtual==='texto'||modoAtual==='ambos'){
     html+=`
-      <h3>📝 Redação - Tema: ${temaRedacaoAtual}</h3>
-      <p><strong>Instruções:</strong> Redija um texto dissertativo-argumentativo apresentando tese e proposta de intervenção.</p>
-      <textarea id="textoRedacao" class="textarea-redacao" placeholder="Desenvolva sua redação aqui..."></textarea>
+      <h3>📝 Redação - Prova ${String(numeroProvaAtual).padStart(2, '0')}</h3>
+      <p style="font-weight:bold;color:var(--azul)">Tema: ${temaRedacaoAtual}</p>
+      <p class="hint">Instruções: Seu rascunho é salvo automaticamente. Mesmo que a aba seja fechada, o texto estará preservado.</p>
+      <textarea id="textoRedacao" class="textarea-redacao" placeholder="Desenvolva sua redação aqui..." oninput="salvarTextoRedacao()"></textarea>
       <button class="btn-seta" onclick="corrigirRedacao()">📊 Avaliar Redação</button>
       <div id="resultadoRedacao" style="display:none;margin-top:12px"></div>
       <hr>
@@ -260,8 +341,11 @@ function montarProva(){
   }
   
   if(modoAtual==='prova'||modoAtual==='ambos'){
-    html+=`<h3>❓ Prova Objetiva 9º Ano (10 Questões)</h3>`;
+    html+=`<h3>❓ Prova Objetiva - Prova ${String(numeroProvaAtual).padStart(2, '0')} (Exatamente 10 Questões)</h3>`;
     questoesSelecionadas.forEach((q,i)=>{
+      const respAtual = respostas[i] ? respostas[i].letra : '';
+      const tipoAtual = respostas[i] ? respostas[i].tipo : 'estudado';
+
       html+=`
         <div class="questao" id="q${i}">
           <div>
@@ -272,73 +356,111 @@ function montarProva(){
       `;
       q.ops.forEach((op,idx)=>{
         const letra=['a','b','c','d'][idx];
-        html+=`<button class="btn-alt" id="alt${i}${letra}" onclick="selecionar(${i},'${letra}')">${letra}) ${op}</button>`;
+        const classeSel = (respAtual === letra) ? 'selecionada' : '';
+        html+=`<button class="btn-alt ${classeSel}" id="alt${i}${letra}" onclick="selecionar(${i},'${letra}')">${letra}) ${op}</button>`;
       });
+      
+      const estiloAcoes = respAtual ? 'block' : 'none';
       html+=`
-        <div style="margin-top:8px;display:none" id="acoes${i}">
-          <button class="btn-seta" onclick="confirmar(${i},'estudado')">Já estudei</button>
-          <button class="btn-seta btn-chute" onclick="confirmar(${i},'chute')">Chute</button>
+        <div style="margin-top:8px;display:${estiloAcoes}" id="acoes${i}">
+          <button class="btn-seta ${tipoAtual==='estudado'?'ativo':''}" id="btnEstudado${i}" onclick="confirmarTipo(${i},'estudado')">Já estudei</button>
+          <button class="btn-seta btn-chute ${tipoAtual==='chute'?'ativo':''}" id="btnChute${i}" onclick="confirmarTipo(${i},'chute')">Chute</button>
         </div>
         </div><hr>
       `;
     });
-    html+=`<button class="btn-seta" onclick="finalizar()" style="font-size:18px;width:100%">🚀 Finalizar Prova e Enviar Dados</button>`;
+    html+=`<button class="btn-seta" onclick="finalizar()" style="font-size:18px;width:100%">🚀 Finalizar Prova ${String(numeroProvaAtual).padStart(2, '0')} e Enviar Dados</button>`;
   }
   
-  document.getElementById('areaProva').innerHTML=html;
+  document.getElementById('areaProva').innerHTML = html;
+
+  // Restaura o texto da redação do localStorage / variável global
+  const elTextarea = document.getElementById('textoRedacao');
+  if(elTextarea && textoRedacaoSalvo){
+    elTextarea.value = textoRedacaoSalvo;
+  }
+
+  if(resultadoRedacaoHTML){
+    const elRes = document.getElementById('resultadoRedacao');
+    if(elRes){
+      elRes.innerHTML = resultadoRedacaoHTML;
+      elRes.style.display = 'block';
+    }
+  }
 }
 
-function selecionar(idx,letra){
-  if(respostas[idx]&&respostas[idx].confirmado)return;
-  document.querySelectorAll(`#q${idx} .btn-alt`).forEach(b=>b.classList.remove('selecionada'));
-  document.getElementById(`alt${idx}${letra}`).classList.add('selecionada');
-  respostas[idx]={letra,tipo:null,confirmado:false};
-  document.getElementById(`acoes${idx}`).style.display='block';
+// SELEÇÃO DE QUESTÕES E BOTÕES "JÁ ESTUDEI" E "CHUTE" CORRIGIDOS E REATIVADOS
+function selecionar(idx, letra){
+  const tipoAnterior = (respostas[idx] && respostas[idx].tipo) ? respostas[idx].tipo : 'estudado';
+  respostas[idx] = { letra: letra, tipo: tipoAnterior, confirmado: true };
+  
+  document.querySelectorAll(`#q${idx} .btn-alt`).forEach(b => b.classList.remove('selecionada'));
+  const btnSel = document.getElementById(`alt${idx}${letra}`);
+  if(btnSel) btnSel.classList.add('selecionada');
+
+  const acoesEl = document.getElementById(`acoes${idx}`);
+  if(acoesEl) acoesEl.style.display = 'block';
+
+  confirmarTipo(idx, tipoAnterior);
 }
 
-function confirmar(idx,tipo){
-  if(!respostas[idx]||!respostas[idx].letra)return alert('Marque uma alternativa!');
-  respostas[idx].tipo=tipo;
-  respostas[idx].confirmado=true;
-  document.getElementById(`acoes${idx}`).style.display='none';
-  document.querySelectorAll(`#q${idx} .btn-alt`).forEach(b=>b.classList.add('travada'));
-  document.getElementById(`q${idx}`).classList.add('questao-travada');
+// ITEM 2: LÓGICA DE TROCA E ATIVAÇÃO DOS BOTÕES "JÁ ESTUDEI" E "CHUTE"
+function confirmarTipo(idx, tipo){
+  if(!respostas[idx] || !respostas[idx].letra) return alert('Selecione uma alternativa primeiro!');
+  respostas[idx].tipo = tipo;
+
+  const btnEstudado = document.getElementById(`btnEstudado${idx}`);
+  const btnChute = document.getElementById(`btnChute${idx}`);
+
+  if(btnEstudado && btnChute){
+    btnEstudado.classList.remove('ativo');
+    btnChute.classList.remove('ativo');
+
+    if(tipo === 'estudado'){
+      btnEstudado.classList.add('ativo');
+    } else if(tipo === 'chute'){
+      btnChute.classList.add('ativo');
+    }
+  }
 }
 
 function corrigirRedacao(){
-  const texto=document.getElementById('textoRedacao').value;
-  if(texto.trim().length<20)return alert('A redação precisa ter no mínimo 20 caracteres.');
+  salvarTextoRedacao();
+  if(textoRedacaoSalvo.trim().length < 10) return alert('A redação precisa ter no mínimo 10 caracteres.');
   
-  const palavras=texto.trim().split(/\s+/).length;
-  notaRedacao = Math.min(1000, Math.max(450, palavras * 7.5));
+  const palavras = textoRedacaoSalvo.trim().split(/\s+/).length;
+  notaRedacao = Math.min(1000, Math.max(400, palavras * 10));
   
-  resultadoRedacaoHTML=`
+  resultadoRedacaoHTML = `
     <h4>Nota da Redação: ${notaRedacao}/1000</h4>
-    <p class="hint">Volume textual: ${palavras} palavras</p>
+    <p class="hint">Volume textual: ${palavras} palavras | Avaliação preliminar concluída.</p>
   `;
-  document.getElementById('resultadoRedacao').innerHTML=resultadoRedacaoHTML;
-  document.getElementById('resultadoRedacao').style.display='block';
+  const elRes = document.getElementById('resultadoRedacao');
+  if(elRes){
+    elRes.innerHTML = resultadoRedacaoHTML;
+    elRes.style.display = 'block';
+  }
 }
 
 function finalizar(){
-  let acertosTotal=0;
-  let respondidas=0;
+  salvarTextoRedacao();
+  let acertosTotal = 0;
+  let respondidas = 0;
 
-  respostas.forEach((r,i)=>{
-    if(r && r.confirmado){
+  respostas.forEach((r,i) => {
+    if(r && r.letra){
       respondidas++;
       if(r.letra === questoesSelecionadas[i].gab) acertosTotal++;
     }
   });
 
-  if(modoAtual !== 'texto' && respondidas === 0){
-    return alert('Responda e confirme ao menos uma questão antes de finalizar!');
+  if(modoAtual !== 'texto' && respondidas < 10){
+    return alert(`Responda todas as 10 questões antes de finalizar! (Respondidas: ${respondidas}/10)`);
   }
 
-  const notaQ = Math.round((acertosTotal/10)*1000);
+  const notaQ = Math.round((acertosTotal / 10) * 1000);
   const notaFinalGeral = Math.round((notaQ + notaRedacao) / 2);
   
-  // CHANCE DE SUCESSO NA REVISÃO FINAL (MÉDIA CRAVADA EM 900)
   const percentualMeta = Math.min(100, Math.round((notaFinalGeral / META_FIXA) * 100));
   let classeChance = "chance-baixa";
   let statusChance = "Risco Alto - Necessita reforço imediato";
@@ -352,7 +474,7 @@ function finalizar(){
   }
 
   let htmlResultado = `
-    <h3>📊 Relatório Final do Simulado</h3>
+    <h3>📊 Relatório Final - Prova ${String(numeroProvaAtual).padStart(2, '0')}</h3>
     <h2>Nota Média Final: ${notaFinalGeral} / 1000 pts (Meta Fixa: ${META_FIXA})</h2>
     <p><strong>Nota Objetiva:</strong> ${notaQ}/1000 (${acertosTotal}/10 acertos)</p>
     <p><strong>Nota Redação:</strong> ${notaRedacao}/1000</p>
@@ -367,30 +489,56 @@ function finalizar(){
     htmlResultado += `<hr>${resultadoRedacaoHTML}`;
   }
 
-  htmlResultado += `<div id="statusEnvio" style="font-weight:bold;color:var(--verde)">⏳ Enviando automaticamente para o sistema...</div>`;
+  htmlResultado += `
+    <div id="statusEnvio" style="font-weight:bold;color:var(--verde);margin-bottom:16px">⏳ Enviando dados para a planilha CEDAF...</div>
+    <button class="btn-seta" style="font-size:16px;width:100%;padding:14px;background:var(--azul)" onclick="avancarParaProximaProva()">🎲 Fazer Próxima Prova (Prova ${String((numeroProvaAtual % 15) + 1).padStart(2, '0')})</button>
+  `;
   
   document.getElementById('resultadoFinal').innerHTML = htmlResultado;
   document.getElementById('resultadoFinal').style.display = 'block';
   document.getElementById('areaProva').style.display = 'none';
 
+  const telClean = userTelefone.replace(/\D/g, "");
+  const progressoAlunos = JSON.parse(localStorage.getItem('progresso_provas') || '{}');
+  progressoAlunos[telClean] = (progressoAlunos[telClean] || 0) + 1;
+  localStorage.setItem('progresso_provas', JSON.stringify(progressoAlunos));
+
   enviarDadosAutomatico(notaQ, acertosTotal);
+}
+
+function avancarParaProximaProva(){
+  const telClean = userTelefone.replace(/\D/g, "");
+  const progressoAlunos = JSON.parse(localStorage.getItem('progresso_provas') || '{}');
+  let qtdFeitas = progressoAlunos[telClean] || 0;
+  numeroProvaAtual = (qtdFeitas % 15) + 1;
+
+  document.getElementById('exibirIdentificadorProva').textContent = `Prova ${String(numeroProvaAtual).padStart(2, '0')}`;
+  document.getElementById('resultadoFinal').style.display = 'none';
+  document.getElementById('areaProva').style.display = 'block';
+
+  gerarProvaSequencial();
 }
 
 function enviarDadosAutomatico(notaQ, acertosTotal){
   const agora = new Date();
   const tempoTotalMinutos = Math.max(1, Math.round((agora - tempoInicioApp) / 60000));
+  const telClean = userTelefone.replace(/\D/g, "");
+  const textoEscrito = textoRedacaoSalvo || "Redação não realizada nesta tentativa.";
   
+  const chaveUnicaAluno = userLogin + "_" + telClean;
+
   const payload = {
-    login: userLogin + "_" + userTelefone.replace(/\D/g, ""),
+    login: chaveUnicaAluno,
     data: agora.toLocaleDateString('pt-BR'),
     hora: agora.toLocaleTimeString('pt-BR'),
-    prova: "Simulado_9Ano_2026",
+    prova: `Prova ${String(numeroProvaAtual).padStart(2, '0')}`,
     tema: temaRedacaoAtual,
     notaProva: notaQ,
     notaRedacao: notaRedacao,
     acertos: acertosTotal,
     tempoMinutos: tempoTotalMinutos,
-    objetivoMeta: META_FIXA
+    objetivoMeta: META_FIXA,
+    textoRedacao: textoEscrito
   };
 
   fetch(URL_CEDAF, {
@@ -399,7 +547,9 @@ function enviarDadosAutomatico(notaQ, acertosTotal){
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(payload)
   }).then(() => {
-    document.getElementById('statusEnvio').innerHTML = "✅ Dados registrados com sucesso na planilha CEDAF!";
+    document.getElementById('statusEnvio').innerHTML = "✅ Dados e redação registrados com sucesso na planilha CEDAF!";
+    // LIMPA O RASCUNHO DO LOCALSTORAGE APÓS O ENVIO COM SUCESSO
+    limparRascunhoRedacao();
   }).catch(err => {
     document.getElementById('statusEnvio').innerHTML = "❌ Erro ao registrar dados. Tente novamente.";
   });
