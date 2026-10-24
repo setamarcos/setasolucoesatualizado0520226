@@ -31,29 +31,29 @@ h1{color:var(--azul);text-align:center;font-size:24px;margin-bottom:4px}
 
 .box-gabarito{background:#f8f9fa;border-left:4px solid var(--azul);padding:12px;margin:10px 0;border-radius:4px;font-size:14px}
 .box-gabarito.acerto{border-left-color:var(--verde);background:#e6f4ea}
-.box-gabarito.erro{border-left-color:var(--vermelho);background:#ffebee}
-.box-estudo{background:#fff3e0;border:1px solid var(--laranja);padding:14px;border-radius:8px;margin:16px 0}
-.box-estudo h4{margin-top:0;color:#d35400}
+.box-gabarito.erro{border-left-color:var(--laranja);background:#fff3e0}
+.box-estudo{background:#e8f0fe;border:1px solid var(--azul);padding:14px;border-radius:8px;margin:16px 0}
+.box-estudo h4{margin-top:0;color:var(--azul)}
 
 #loginModal{background:#fff;padding:28px;border-radius:12px;box-shadow:0 4px 14px rgba(0,0,0,0.15);max-width:420px;margin:40px auto;text-align:center}
 #loginModal input{width:90%;padding:10px;margin:8px 0;border:1px solid #ccc;border-radius:6px;font-size:15px;box-sizing:border-box}
 .erro-msg{color:var(--vermelho);font-size:13px;font-weight:bold;display:none;margin-top:4px}
 .badge-meta{background:#fff3e0;color:var(--laranja);padding:6px 12px;border-radius:20px;font-weight:bold;display:inline-block;margin:8px 0}
-.chance-box{padding:16px;border-radius:8px;text-align:center;font-size:18px;font-weight:bold;margin:16px 0}
+.chance-box{padding:16px;border-radius:8px;text-align:center;font-size:17px;font-weight:bold;margin:16px 0;line-height:1.5}
 .chance-alta{background:#e6f4ea;color:var(--verde);border:2px solid var(--verde)}
-.chance-baixa{background:#ffebee;color:var(--vermelho);border:2px solid var(--vermelho)}
+.chance-construcao{background:#fff3e0;color:#d35400;border:2px solid var(--laranja)}
 </style>
 </head>
 <body>
 
 <div id="loginModal">
   <h2>Acesso do Aluno 🎯</h2>
-  <p class="hint">Digite seu telefone e nome para acessar seus simulados.</p>
+  <p class="hint">Digite seu telefone e nome para iniciar os simulados de treino.</p>
   
   <input type="tel" id="inputTelefone" placeholder="(XX) 9XXXX-XXXX" maxlength="15" oninput="aoDigitarTelefone(this)">
   <input type="text" id="inputNome" placeholder="Nome Completo do Aluno">
   
-  <div class="badge-meta">🎯 Meta de Avaliação: 900 Pontos</div>
+  <div class="badge-meta">🎯 Meta de Treino: 900 Pontos</div>
   <div id="msgErro" class="erro-msg"></div>
   
   <br><br>
@@ -90,6 +90,8 @@ let numeroProvaAtual = 1;
 let temaRedacaoAtual = '';
 let textoRedacaoSalvo = '';
 let relatorioWhatsAppTexto = '';
+let notaRedacao = 0;
+let detalhesRedacaoPontos = [];
 
 function atualizarDataHora(){
   const agora = new Date();
@@ -118,23 +120,22 @@ const bancoTemasRedacao = [
   "15. Lixo eletrônico: desafios para o descarte e reciclagem de e-lixo"
 ];
 
-// PALAVRAS-CHAVE PARA VALIDAÇÃO DE PERTINÊNCIA TEMÁTICA (ANTI-FUGA AO TEMA)
 const palavrasChaveTemas = [
-  ["tecnologia", "inteligência", "artificial", "educação", "escola", "digital", "ia"],
-  ["meio", "ambiente", "sustentabilidade", "preservação", "natureza", "planeta", "ecologia"],
-  ["bullying", "ciberbullying", "escola", "violência", "respeito", "virtual", "redes"],
-  ["leitura", "pensamento", "crítico", "livros", "jovens", "literatura", "ler"],
-  ["esporte", "inclusão", "social", "saúde", "mental", "exercício", "físico"],
-  ["alimentação", "obesidade", "juvenil", "saudável", "nutrição", "comida"],
-  ["água", "recursos", "hídricos", "consciente", "gestão", "preservação", "hidrico"],
-  ["redes", "sociais", "autoestima", "ansiedade", "jovens", "internet", "mídia"],
-  ["consumo", "financeira", "educação", "dinheiro", "jovens", "gastos", "economia"],
-  ["cidadania", "engajamento", "comunitário", "jovem", "sociedade", "direitos"],
-  ["diversidade", "preconceito", "cultural", "respeito", "diferenças", "inclusão"],
-  ["trabalho", "infantil", "erradicação", "crianças", "direitos", "exploração"],
-  ["futuro", "trabalho", "profissões", "tecnologia", "carreira", "jovens"],
-  ["ciência", "científico", "conhecimento", "pesquisa", "tecnologia", "sociedade"],
-  ["lixo", "eletrônico", "reciclagem", "descarte", "e-lixo", "tecnologia", "ambiente"]
+  ["inteligência", "artificial", "tecnologia", "educação"],
+  ["preservação", "meio ambiente", "sustentabilidade", "ecologia"],
+  ["bullying", "ciberbullying", "violência escolar", "agressão"],
+  ["leitura", "pensamento crítico", "livros", "literatura"],
+  ["esporte", "saúde mental", "inclusão social", "exercício"],
+  ["alimentação", "obesidade", "nutrição", "saudável"],
+  ["água", "recursos hídricos", "gestão hídrica", "consumo consciente"],
+  ["redes sociais", "autoestima", "ansiedade", "jovens"],
+  ["educação financeira", "consumo consciente", "dinheiro", "economia"],
+  ["cidadania", "engajamento comunitário", "sociedade", "jovem"],
+  ["diversidade cultural", "preconceito", "discriminação", "respeito"],
+  ["trabalho infantil", "erradicação", "crianças", "direitos"],
+  ["futuro do trabalho", "profissões", "carreira", "tecnologia"],
+  ["ciência", "conhecimento científico", "pesquisa", "inovação"],
+  ["lixo eletrônico", "reciclagem", "descarte", "e-lixo"]
 ];
 
 const bancoQuestoes9Ano = [
@@ -228,7 +229,6 @@ let modoAtual = 'ambos';
 let questoesSelecionadas = [];
 let respostas = [];
 let resultadoRedacaoHTML = '';
-let notaRedacao = 0;
 
 function aoDigitarTelefone(input){
   let v = input.value.replace(/\D/g, "");
@@ -320,7 +320,7 @@ function carregarRascunhoRedacao(){
   if(rascunhoSalvo !== null){
     textoRedacaoSalvo = rascunhoSalvo;
   } else {
-    textoRedacaoSalvo = ''; // LIMPEZA GARANTIDA PARA NOVA PROVA
+    textoRedacaoSalvo = '';
   }
 }
 
@@ -348,6 +348,7 @@ function gerarProvaSequencial(){
   respostas = Array(questoesSelecionadas.length).fill(null);
   resultadoRedacaoHTML = '';
   notaRedacao = 0;
+  detalhesRedacaoPontos = [];
   montarProva();
 }
 
@@ -359,8 +360,9 @@ function montarProva(){
     html+=`
       <h3>📝 Redação - Prova ${String(numeroProvaAtual).padStart(2, '0')}</h3>
       <p style="font-weight:bold;color:var(--azul)">Tema: ${temaRedacaoAtual}</p>
-      <p class="hint">Regras: Título na 1ª linha | Estrutura de 4 parágrafos | Texto focado e pertinente ao tema proposto.</p>
+      <p class="hint">Regras: Título na 1ª linha | Estrutura de 4 parágrafos | Texto focado no tema proposto.</p>
       <textarea id="textoRedacao" class="textarea-redacao" placeholder="Digite seu título na primeira linha e pule uma linha para o 1º parágrafo..." oninput="salvarTextoRedacao()"></textarea>
+      
       <button class="btn-seta" onclick="corrigirRedacao()">📊 Avaliar Estrutura e Pertinência do Texto</button>
       <div id="resultadoRedacao" style="display:none;margin-top:12px"></div>
       <hr>
@@ -397,7 +399,7 @@ function montarProva(){
         </div><hr>
       `;
     });
-    html+=`<button class="btn-seta" onclick="finalizar()" style="font-size:18px;width:100%">🚀 Finalizar Prova e Gerar Relatório</button>`;
+    html+=`<button class="btn-seta" onclick="finalizar()" style="font-size:18px;width:100%">🚀 Finalizar Prova e Gerar Diagnóstico</button>`;
   }
   
   document.getElementById('areaProva').innerHTML = html;
@@ -446,26 +448,17 @@ function confirmarTipo(idx, tipo){
   }
 }
 
-// CORREÇÃO LÓGICA DE REDAÇÃO (COM VALIDAÇÃO ANTI-FUGA AO TEMA E ANTI-LIXO)
+// CORREÇÃO E AVALIAÇÃO DA REDAÇÃO COM BLOQUEIO DE CÓDIGO HTML E FORMATO LIMPO
 function corrigirRedacao(){
   salvarTextoRedacao();
-  const texto = textoRedacaoSalvo.trim();
-  if(texto.length < 20) return alert('A redação precisa ter no mínimo 20 caracteres para avaliação.');
+  const textoOriginal = textoRedacaoSalvo.trim();
+  detalhesRedacaoPontos = [];
   
-  const palavrasChave = palavrasChaveTemas[(numeroProvaAtual - 1) % 15];
-  const textoLower = texto.toLowerCase();
-
-  // VALIDAÇÃO 1: DETECÇÃO DE FUGA AO TEMA OU TEXTO COPIADO/LIXO
-  const possuiPalavraChave = palavrasChave.some(p => textoLower.includes(p));
-  const ehTextoPrompt = textoLower.includes("me ajuda com isso") || textoLower.includes("copiar prompt") || textoLower.includes("gerar pdf");
-
-  if(!possuiPalavraChave || ehTextoPrompt){
+  if(textoOriginal.length < 20){
     notaRedacao = 0;
     resultadoRedacaoHTML = `
-      <div style="background:#ffebee;border:2px solid var(--vermelho);padding:14px;border-radius:8px">
-        <h4 style="color:var(--vermelho);margin-top:0">❌ REDAÇÃO REPROVADA: NOTA 0 / 1000 PTS</h4>
-        <p style="color:var(--vermelho);font-weight:bold;margin-bottom:0">Fuga ao Tema ou Texto Incompatível!</p>
-        <p style="font-size:13px;color:#333;margin-top:6px">O texto digitado não apresenta nenhuma relação com o tema proposto (<strong>"${temaRedacaoAtual}"</strong>) ou contém comandos/rascunhos desconexos. Escreva uma redação original focada no assunto sugerido.</p>
+      <div style="background:#fff3e0;border:1px solid var(--laranja);padding:12px;border-radius:6px">
+        ⚠️ Escreva um texto de pelo menos 20 caracteres para obter o diagnóstico da redação.
       </div>
     `;
     const elRes = document.getElementById('resultadoRedacao');
@@ -476,55 +469,102 @@ function corrigirRedacao(){
     return;
   }
 
-  // VALIDAÇÃO 2: ESTRUTURA FORMAL (QUANDO O TEMA É VÁLIDO)
+  // DETEÇÃO E REJEIÇÃO DE CÓDIGO HTML / SCRIPT / MARCAÇÃO
+  const ehCodigoHTML = /<!DOCTYPE|<html|<style|<script|var\s+--|\{font-family/i.test(textoOriginal);
+  if(ehCodigoHTML){
+    notaRedacao = 0;
+    detalhesRedacaoPontos.push("📌 <strong>Ponto de Atenção:</strong> Código fonte detetado. Por favor, escreva apenas o texto da sua redação.");
+    
+    resultadoRedacaoHTML = `
+      <div style="background:#ffebee;border:2px solid var(--vermelho);padding:14px;border-radius:8px">
+        <h4 style="color:var(--vermelho);margin-top:0">❌ REDAÇÃO REPROVADA: NOTA 0 / 1000 PTS</h4>
+        <p style="color:var(--vermelho);font-weight:bold;margin-bottom:0">Formato Inválido (Código Fonte Detetado)!</p>
+        <p style="font-size:13px;color:#333;margin-top:6px">Foi detetada a colagem de código fonte HTML no campo de texto. Por favor, redija um texto em linguagem natural sobre o tema proposto.</p>
+      </div>
+    `;
+    const elRes = document.getElementById('resultadoRedacao');
+    if(elRes){
+      elRes.innerHTML = resultadoRedacaoHTML;
+      elRes.style.display = 'block';
+    }
+    return;
+  }
+  
+  const texto = textoOriginal.replace(/<[^>]*>?/gm, '');
+  const palavrasChave = palavrasChaveTemas[(numeroProvaAtual - 1) % 15];
+  const textoLower = texto.toLowerCase();
+  
+  // VALIDAÇÃO RIGOROSA: Exige pelo menos 2 palavras-chave do tema específico
+  const coincidencias = palavrasChave.filter(p => textoLower.includes(p));
+  const possuiPertinencia = coincidencias.length >= 2;
+
+  if(!possuiPertinencia){
+    notaRedacao = 0;
+    detalhesRedacaoPontos.push(`📌 <strong>Ponto de Atenção:</strong> Fuga ao Tema. O tema da Prova ${String(numeroProvaAtual).padStart(2, '0')} é "${temaRedacaoAtual}". O texto submetido não desenvolve os conceitos principais deste assunto.`);
+    
+    resultadoRedacaoHTML = `
+      <div style="background:#ffebee;border:2px solid var(--vermelho);padding:14px;border-radius:8px">
+        <h4 style="color:var(--vermelho);margin-top:0">❌ REDAÇÃO REPROVADA: NOTA 0 / 1000 PTS</h4>
+        <p style="color:var(--vermelho);font-weight:bold;margin-bottom:0">Fuga ao Tema Proposto!</p>
+        <p style="font-size:13px;color:#333;margin-top:6px">O texto digitado não aborda o assunto desta prova (<strong>"${temaRedacaoAtual}"</strong>). Redija um texto focado neste tema para obter pontuação.</p>
+      </div>
+    `;
+    const elRes = document.getElementById('resultadoRedacao');
+    if(elRes){
+      elRes.innerHTML = resultadoRedacaoHTML;
+      elRes.style.display = 'block';
+    }
+    return;
+  }
+
   const linhas = texto.split('\n').filter(l => l.trim().length > 0);
   const palavras = texto.split(/\s+/).length;
   const paragrafos = texto.split(/\n\s*\n/).filter(p => p.trim().length > 0);
-  const conectivos = (texto.match(/portanto|assim|além disso|contudo|porém|em suma|logo|dessa forma/gi) || []).length;
+  const conectivos = (texto.match(/portanto|assim|além disso|contudo|porém|em suma|logo|dessa forma|desse modo|diante disso|em primeiro lugar/gi) || []).length;
   
   let nota = 0;
-  let detalhes = [];
 
   if(linhas.length > 1 && linhas[0].length < 70){
     nota += 200;
-    detalhes.push("✅ Título destacado na 1ª linha alinhado ao tema.");
+    detalhesRedacaoPontos.push("🌟 <strong>Muito bom:</strong> Título destacado na primeira linha!");
   } else {
-    detalhes.push("⚠️ Faltou um título curto na primeira linha.");
+    detalhesRedacaoPontos.push("📌 <strong>Dica:</strong> Crie um título curto na 1ª linha para valorizar a apresentação.");
   }
 
   if(paragrafos.length >= 4){
     nota += 300;
-    detalhes.push("✅ Estrutura completa de 4 parágrafos (Introdução, D1, D2, Conclusão).");
+    detalhesRedacaoPontos.push("🌟 <strong>Parabéns:</strong> Estrutura completa em 4 parágrafos (Introdução, D1, D2 e Conclusão).");
   } else {
     nota += paragrafos.length * 60;
-    detalhes.push(`⚠️ Encontrados ${paragrafos.length} parágrafos. A estrutura padrão exige 4.`);
+    detalhesRedacaoPontos.push(`📌 <strong>Dica:</strong> Organize o texto em 4 parágrafos para encorpar suas ideias.`);
   }
 
   if(palavras >= 150 && palavras <= 300){
     nota += 300;
-    detalhes.push(`✅ Extensão adequada (${palavras} palavras). Média de 4 a 5 linhas por parágrafo.`);
+    detalhesRedacaoPontos.push(`🌟 <strong>Excelente extensão:</strong> ${palavras} palavras (média de 4 a 5 linhas por parágrafo).`);
   } else if(palavras < 150){
     nota += Math.round((palavras / 150) * 200);
-    detalhes.push(`⚠️ Texto curto (${palavras} palavras). O mínimo recomendado é de 150 palavras.`);
+    detalhesRedacaoPontos.push(`📌 <strong>Dica:</strong> Escreva um pouco mais (mínimo de 150 palavras) para aprofundar os argumentos.`);
   } else {
     nota += 200;
-    detalhes.push(`⚠️ Texto longo (${palavras} palavras). Mantenha o limite de 300 palavras.`);
+    detalhesRedacaoPontos.push(`📌 <strong>Dica:</strong> Mantenha o texto dentro do limite de 300 palavras.`);
   }
 
   if(conectivos >= 3){
     nota += 200;
-    detalhes.push(`✅ Uso de conectivos de coesão (${conectivos} encontrados).`);
+    detalhesRedacaoPontos.push(`🌟 <strong>Ótima coesão:</strong> Boa ligação entre as frases e parágrafos.`);
   } else {
     nota += conectivos * 60;
-    detalhes.push("⚠️ Poucos conectivos identificados ('portanto', 'além disso', 'dessa forma').");
+    detalhesRedacaoPontos.push("📌 <strong>Dica de Ouro:</strong> Use palavras de transição como 'portanto', 'além disso', 'dessa forma'.");
   }
 
   notaRedacao = Math.min(1000, nota);
 
   resultadoRedacaoHTML = `
     <h4>📊 Nota Estrutural da Redação: ${notaRedacao} / 1000 pts</h4>
-    <div style="font-size:14px;line-height:1.6">${detalhes.join('<br>')}</div>
+    <div style="font-size:14px;line-height:1.6">${detalhesRedacaoPontos.map(d => `<p style="margin:4px 0">${d}</p>`).join('')}</div>
   `;
+
   const elRes = document.getElementById('resultadoRedacao');
   if(elRes){
     elRes.innerHTML = resultadoRedacaoHTML;
@@ -534,12 +574,14 @@ function corrigirRedacao(){
 
 function finalizar(){
   salvarTextoRedacao();
+  corrigirRedacao();
+
   let acertosTotal = 0;
   let acertosConhecimento = 0;
   let acertosChute = 0;
   let respondidas = 0;
   let errosMapeados = [];
-  let htmlGabaritoComentado = `<h3>💡 Gabarito Comentado e Correção</h3>`;
+  let htmlGabaritoComentado = `<h3>💡 Gabarito Comentado e Dicas do Professor</h3>`;
 
   respostas.forEach((r, i) => {
     const q = questoesSelecionadas[i];
@@ -551,18 +593,18 @@ function finalizar(){
         if(r.tipo === 'chute') acertosChute++;
         else acertosConhecimento++;
       } else {
-        errosMapeados.push({ num: i + 1, materia: q.materia, topico: q.topico, serie: q.serie, tipo: r.tipo });
+        errosMapeados.push({ num: i + 1, materia: q.materia, topico: q.topico, serie: q.serie });
       }
 
       const classeBox = acertou ? "acerto" : "erro";
-      const icone = acertou ? (r.tipo === 'chute' ? "🍀 ACERTOU NO CHUTE" : "✅ ACERTOU") : "❌ ERROU";
+      const icone = acertou ? (r.tipo === 'chute' ? "🍀 ACERTOU NO CHUTE" : "✅ ACERTOU") : "💡 PONTO DE ATENÇÃO";
 
       htmlGabaritoComentado += `
         <div class="box-gabarito ${classeBox}">
           <strong>Questão ${i+1} (${q.materia} - ${q.serie}):</strong> ${icone}<br>
-          <em>Conteúdo:</em> ${q.topico}<br>
+          <em>Assunto:</em> ${q.topico}<br>
           <em>Sua resposta:</em> Opção ${r.letra.toUpperCase()} (${r.tipo === 'chute' ? 'Marcado como Chute' : 'Já Estudado'}) | <em>Gabarito:</em> Opção ${q.gab.toUpperCase()}<br>
-          <div style="margin-top:6px"><strong>Explicação:</strong> ${q.explicacao}</div>
+          <div style="margin-top:6px"><strong>Explicação Construtiva:</strong> ${q.explicacao}</div>
         </div>
       `;
     }
@@ -576,51 +618,67 @@ function finalizar(){
   const notaFinalGeral = Math.round((notaQ + notaRedacao) / 2);
   const percentualMeta = Math.min(100, Math.round((notaFinalGeral / META_FIXA) * 100));
 
-  let htmlPlanoEstudo = '';
-  if(errosMapeados.length > 0 || acertosChute > 0){
-    htmlPlanoEstudo = `
-      <div class="box-estudo">
-        <h4>📌 Diagnóstico Pedagógico de Desempenho:</h4>
-        <p><strong>Domínio Real:</strong> ${acertosConhecimento} acertos por conhecimento pleno | <strong>Sorte:</strong> ${acertosChute} acertos por chute.</p>
-        <ul>
-    `;
+  let htmlPlanoEstudo = `
+    <div class="box-estudo">
+      <h4>🌱 Caminho para o Próximo Nível (Apoio aos Pais e Aluno):</h4>
+      <p><strong>Nossa Meta:</strong> O objetivo deste treino é identificar o que já dominamos e o que podemos melhorar juntos!</p>
+      <ul>
+  `;
+  
+  if(errosMapeados.length > 0){
     errosMapeados.forEach(e => {
-      htmlPlanoEstudo += `<li>❌ <strong>Erro na Questão ${e.num} (${e.materia}):</strong> Assunto <em>${e.topico}</em> (Estudado na ${e.serie} do EF).</li>`;
+      htmlPlanoEstudo += `<li>📘 <strong>${e.materia} (${e.serie}):</strong> Vale a pena dar uma olhada em <em>${e.topico}</em>.</li>`;
     });
-    if(acertosChute > 0){
-      htmlPlanoEstudo += `<li style="color:#d35400">⚠️ <strong>Atenção para Acertos por Chute:</strong> Você acertou ${acertosChute} questão(ões) no chute. Revise esses tópicos no gabarito comentado abaixo!</li>`;
-    }
-    htmlPlanoEstudo += `</ul></div>`;
   } else {
-    htmlPlanoEstudo = `<div class="box-estudo" style="border-color:var(--verde)">🎉 Excelente! Você gabaritou todas as questões com total domínio do conteúdo!</div>`;
+    htmlPlanoEstudo += `<li>🎉 <strong>Incrível!</strong> Você mandou muito bem nas questões objetivas deste simulado.</li>`;
   }
 
-  // FORMATANDO O RELATÓRIO DO WHATSAPP COM AUDITORIA DE "JÁ ESTUDEI" E "CHUTE"
-  relatorioWhatsAppTexto = `*SIMULADO PREPARATÓRIO CEDAF / COLTEC / IF*\n` +
-    `*Aluno:* ${userLogin}\n` +
-    `*Prova:* Prova ${String(numeroProvaAtual).padStart(2, '0')}\n` +
-    `*Nota Final Média:* ${notaFinalGeral}/1000 pts\n` +
-    `*Nota Objetiva:* ${notaQ}/1000 (${acertosTotal}/${questoesSelecionadas.length} acertos)\n` +
-    `  • Acertos por Conhecimento: ${acertosConhecimento}\n` +
-    `  • Acertos por Chute (Sorte): ${acertosChute}\n` +
-    `*Nota Redação:* ${notaRedacao}/1000\n` +
-    `*Chance de Sucesso:* ${percentualMeta}%\n\n`;
+  if(acertosChute > 0){
+    htmlPlanoEstudo += `<li>🍀 <strong>Dica Amiga:</strong> Você acertou ${acertosChute} questão(ões) no chute. Revise a explicação para transformar sorte em certeza!</li>`;
+  }
+  htmlPlanoEstudo += `</ul></div>`;
+
+  relatorioWhatsAppTexto = `*RELATÓRIO DE EVOLUÇÃO E TREINO - PREPARATÓRIO*\n` +
+    `*Aluno(a):* ${userLogin}\n` +
+    `*Simulado:* Prova ${String(numeroProvaAtual).padStart(2, '0')}\n` +
+    `*Desempenho Atual:* ${percentualMeta}% da Meta (${notaFinalGeral}/1000 pts)\n\n` +
+    `*Resumo do Treino:*\n` +
+    `• Questões Objetivas: ${notaQ}/1000 (${acertosTotal}/${questoesSelecionadas.length} acertos)\n` +
+    `  - Domínio Pleno: ${acertosConhecimento} acerto(s)\n` +
+    `  - Chutes Certo: ${acertosChute} acerto(s)\n` +
+    `• Redação: ${notaRedacao}/1000 pts\n\n` +
+    `*Pontos de Destaque e Aprendizado:*\n`;
+
+  detalhesRedacaoPontos.forEach(d => {
+    const textoLimpo = d.replace(/<[^>]*>/g, '');
+    relatorioWhatsAppTexto += `${textoLimpo}\n`;
+  });
 
   if(errosMapeados.length > 0){
-    relatorioWhatsAppTexto += `*Assuntos para Reforço e Estudo:*\n`;
+    relatorioWhatsAppTexto += `\n*Assuntos para Repassar em Casa:*\n`;
     errosMapeados.forEach(e => {
       relatorioWhatsAppTexto += `• ${e.materia} (${e.serie}): ${e.topico}\n`;
     });
   }
 
+  relatorioWhatsAppTexto += `\n🚀 _Estamos juntos nessa jornada de treino! Fale com seus pais e vamos continuar evoluindo!_`;
+
   let htmlResultado = `
-    <h3>📊 Relatório Final - Prova ${String(numeroProvaAtual).padStart(2, '0')}</h3>
-    <h2>Nota Média Final: ${notaFinalGeral} / 1000 pts (Meta Fixa: ${META_FIXA})</h2>
-    <p><strong>Nota Objetiva:</strong> ${notaQ}/1000 (${acertosTotal}/${questoesSelecionadas.length} acertos)</p>
-    <p><strong>Nota Redação:</strong> ${notaRedacao}/1000</p>
+    <h3>📊 Relatório Construtivo - Prova ${String(numeroProvaAtual).padStart(2, '0')}</h3>
+    <h2>Aproveitamento Atual: ${notaFinalGeral} / 1000 pts (Meta Fixa: ${META_FIXA})</h2>
+    <p><strong>Desempenho Objetiva:</strong> ${notaQ}/1000 (${acertosTotal}/${questoesSelecionadas.length} acertos)</p>
+    <p><strong>Aproveitamento Redação:</strong> ${notaRedacao}/1000 pts</p>
     
-    <div class="chance-box ${percentualMeta >= 80 ? 'chance-alta' : 'chance-baixa'}">
-      🎯 CHANCE DE SUCESSO NA REVISÃO FINAL: ${percentualMeta}%
+    <div class="chance-box ${percentualMeta >= 80 ? 'chance-alta' : 'chance-construcao'}">
+      🚀 EVOLUÇÃO NO SIMULADO: ${percentualMeta}% da Meta Concluída!<br>
+      <span style="font-size:14px;font-weight:normal;color:#333">
+        ${percentualMeta >= 80 ? 'Excelente ritmo! Você está muito próximo do padrão oficial!' : 'Você está no caminho! Cada simulado é uma oportunidade para aprender. Vamos juntos com seus pais melhorar no próximo!'}
+      </span>
+    </div>
+
+    <div class="card" style="background:#f8f9fa;border:1px solid #ddd">
+      <h4>📝 Feedback Orientativo da Redação:</h4>
+      <div style="font-size:14px;line-height:1.6">${detalhesRedacaoPontos.map(d => `<p style="margin:4px 0">${d}</p>`).join('')}</div>
     </div>
 
     ${htmlPlanoEstudo}
@@ -630,11 +688,11 @@ function finalizar(){
 
   htmlResultado += `
     <hr>
-    <div id="statusEnvio" style="font-weight:bold;color:var(--verde);margin-bottom:16px">⏳ Enviando dados para a planilha CEDAF...</div>
+    <div id="statusEnvio" style="font-weight:bold;color:var(--verde);margin-bottom:16px">⏳ Salvando treino na planilha...</div>
     
-    <button class="btn-whats" onclick="enviarWhatsApp()">📱 Enviar Relatório via WhatsApp para Liberar Próxima Prova</button>
+    <button class="btn-whats" onclick="enviarWhatsApp()">📱 Compartilhar Relatório no WhatsApp com os Pais e Liberar Próxima Prova</button>
     
-    <button id="btnProximaProva" class="btn-seta" style="font-size:16px;width:100%;padding:14px;background:var(--azul)" disabled onclick="avancarParaProximaProva()">🔒 Envie o Relatório via WhatsApp para Liberar a Próxima Prova</button>
+    <button id="btnProximaProva" class="btn-seta" style="font-size:16px;width:100%;padding:14px;background:var(--azul)" disabled onclick="avancarParaProximaProva()">🔒 Compartilhe no WhatsApp para Liberar a Próxima Prova</button>
   `;
   
   document.getElementById('resultadoFinal').innerHTML = htmlResultado;
@@ -667,7 +725,6 @@ function avancarParaProximaProva(){
   let qtdFeitas = progressoAlunos[telClean] || 0;
   numeroProvaAtual = (qtdFeitas % 15) + 1;
 
-  // LIMPEZA GARANTIDA DO CAMPO DE REDAÇÃO PARA A NOVA PROVA
   textoRedacaoSalvo = '';
   limparRascunhoRedacao();
 
@@ -706,10 +763,10 @@ function enviarDadosAutomatico(notaQ, acertosTotal){
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(payload)
   }).then(() => {
-    document.getElementById('statusEnvio').innerHTML = "✅ Dados e redação registrados com sucesso na planilha CEDAF!";
+    document.getElementById('statusEnvio').innerHTML = "✅ Treino registrado com sucesso!";
     limparRascunhoRedacao();
   }).catch(err => {
-    document.getElementById('statusEnvio').innerHTML = "❌ Erro ao registrar dados. Tente novamente.";
+    document.getElementById('statusEnvio').innerHTML = "❌ Erro ao salvar dados. Tente novamente.";
   });
 }
 </script>
