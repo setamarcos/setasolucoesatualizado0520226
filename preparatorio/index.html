@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SETA PREPARATÓRIO ENSINO MÉDIO - COLTEC / CEDAF / IFET / CENTEC</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{ --azul:#1a73e8; --verde:#34a853; --laranja:#ff8c00; --vermelho:#d32f2f; --fundo:#fffaf0; --cinza-escuro:#1e293b; }
+body{font-family:'Segoe UI',Arial,sans-serif;max-width:980px;margin:0 auto;padding:16px;background:var(--fundo);color:#333}
+h1{color:var(--azul);text-align:center;font-size:24px;margin-bottom:4px}
+.subtitulo{color:var(--verde);text-align:center;font-weight:bold;margin-top:0}
+.header-data-hora{text-align:center;font-size:14px;font-weight:bold;color:#5f6368;margin-bottom:8px}
+
+.banner-rotina{background:var(--cinza-escuro);color:#fff;padding:12px;border-radius:10px;text-align:center;font-weight:bold;margin:12px 0;box-shadow:0 3px 6px rgba(0,0,0,0.15)}
+.timer-box{background:#fff3e0;border:2px solid var(--laranja);color:#d35400;padding:8px 16px;border-radius:20px;font-weight:bold;display:inline-block;margin:8px 0;font-size:15px}
+
+.btn-topo{background:var(--azul);color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-size:14px;margin:4px}
+.btn-topo.ativo{background:var(--verde)}
+.btn-seta{background:var(--verde);color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-size:15px;margin:4px}
+.btn-seta.ativo{background:#1e7e34;box-shadow:inset 0 2px 4px rgba(0,0,0,0.3);border:2px solid #000}
+.btn-seta:disabled{background:#ccc !important;cursor:not-allowed !important;border:none !important;box-shadow:none !important;color:#666 !important;opacity:0.6}
+.btn-chute{background:var(--laranja);color:#fff}
+.btn-chute.ativo{background:#d35400;box-shadow:inset 0 2px 4px rgba(0,0,0,0.3);border:2px solid #000}
+.btn-whats{background:#25d366;color:#fff;font-weight:bold;padding:14px 18px;border-radius:8px;border:none;cursor:pointer;font-size:16px;margin:12px 0;width:100%;box-shadow:0 3px 6px rgba(0,0,0,0.15)}
+.btn-alt{width:100%;text-align:left;background:#fff;border:2px solid #ddd;padding:10px 12px;margin:4px 0;border-radius:6px;cursor:pointer;font-size:15px}
+.btn-alt.selecionada{border-color:var(--azul);background:#e8f0fe;font-weight:bold}
+
+.card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 3px 8px rgba(0,0,0,0.1);margin:16px 0}
+.box-orientacao{background:#e8f0fe;border-left:5px solid var(--azul);padding:14px;border-radius:6px;margin:12px 0}
+.box-quiz{background:#f8fafc;border:2px dashed var(--azul);padding:14px;border-radius:8px;margin:12px 0}
+.box-modelo{background:#f1f8e9;border:1px solid var(--verde);padding:12px;border-radius:8px;margin:10px 0;font-size:14px;line-height:1.5}
+.box-titulos{background:#fff8e1;border:1px solid var(--laranja);padding:12px;border-radius:8px;margin:10px 0}
+
+.hint{font-size:13px;color:#5f6368;font-style:italic}
+.textarea-redacao{width:100%;height:220px;padding:12px;font-size:15px;border:2px solid var(--azul);border-radius:8px;margin:8px 0;box-sizing:border-box}
+#resultadoFinal,#areaAplicacao{display:none}
+
+.tag-banca{display:inline-block;background:#e8f0fe;color:var(--azul);padding:2px 8px;border-radius:4px;font-size:12px;font-weight:bold;margin-bottom:6px}
+.tag-materia{display:inline-block;background:#e6f4ea;color:var(--verde);padding:2px 8px;border-radius:4px;font-size:12px;font-weight:bold;margin-bottom:6px}
+.tag-serie{display:inline-block;background:#fff3e0;color:var(--laranja);padding:2px 8px;border-radius:4px;font-size:12px;font-weight:bold;margin-bottom:6px}
+
+.box-gabarito{background:#f8f9fa;border-left:4px solid var(--azul);padding:12px;margin:10px 0;border-radius:4px;font-size:14px}
+.box-gabarito.acerto{border-left-color:var(--verde);background:#e6f4ea}
+.box-gabarito.erro{border-left-color:var(--laranja);background:#fff3e0}
+.box-estudo{background:#e8f0fe;border:1px solid var(--azul);padding:14px;border-radius:8px;margin:16px 0}
+
+#loginModal{background:#fff;padding:28px;border-radius:12px;box-shadow:0 4px 14px rgba(0,0,0,0.15);max-width:440px;margin:40px auto;text-align:center}
+#loginModal input{width:90%;padding:10px;margin:8px 0;border:1px solid #ccc;border-radius:6px;font-size:15px;box-sizing:border-box}
+.erro-msg{color:var(--vermelho);font-size:13px;font-weight:bold;display:none;margin-top:4px}
+.badge-meta{background:#fff3e0;color:var(--laranja);padding:6px 12px;border-radius:20px;font-weight:bold;display:inline-block;margin:8px 0}
+.chance-box{padding:16px;border-radius:8px;text-align:center;font-size:17px;font-weight:bold;margin:16px 0;line-height:1.5}
+.chance-alta{background:#e6f4ea;color:var(--verde);border:2px solid var(--verde)}
+.chance-construcao{background:#fff3e0;color:#d35400;border:2px solid var(--laranja)}
+
+.btn-pdf{background:#8e44ad;color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:14px;margin:6px 0;display:inline-block;text-decoration:none}
+</style>
+</head>
+<body>
+
+<div id="loginModal">
+  <!-- LOGO NA TELA DE LOGIN -->
+  <div style="text-align:center; margin-bottom:12px;">
+    <img src="https://raw.githubusercontent.com/setamarcos/setasolucoesatualizado0520226/main/img/logo2.png" alt="Seta Soluções" style="max-width:200px; height:auto;">
+  </div>
+
+  <h2>Acesso do Aluno 🎯</h2>
+  <p style="color:var(--azul);font-weight:bold;margin:4px 0">SETA PREPARATÓRIO ENSINO MÉDIO</p>
+  <p class="hint">Digite seu telefone e nome para iniciar seu treino diário.</p>
+  
+  <input type="tel" id="inputTelefone" placeholder="(XX) 9XXXX-XXXX" maxlength="15" oninput="aoDigitarTelefone(this)">
+  <input type="text" id="inputNome" placeholder="Nome Completo do Aluno">
+  
+  <div class="badge-meta">🎯 Meta de Treino: 900 Pontos</div>
+  <div id="msgErro" class="erro-msg"></div>
+  
+  <br><br>
+  <button class="btn-topo" style="width:95%;padding:12px;font-size:16px" onclick="validarELogar()">🚀 Iniciar Treino do Dia</button>
+</div>
+
+<div id="areaAplicacao">
+  <!-- LOGO NO TOPO DA APLICAÇÃO -->
+  <div style="text-align:center; margin-top:10px; margin-bottom:10px;">
+    <img src="https://raw.githubusercontent.com/setamarcos/setasolucoesatualizado0520226/main/img/logo2.png" alt="Seta Soluções" style="max-width:240px; height:auto;">
+  </div>
+
+  <!-- RELÓGIO E DATA DO TOPO -->
+  <div class="header-data-hora" id="exibirDataHora">📅 --/--/----  |  ⏰ --:--:--</div>
+
+  <!-- CRONÔMETRO DE TREINO DE 1 HORA -->
+  <div style="text-align:center; margin:8px 0;">
+    <div class="timer-box" id="caixaTimer">⏳ Tempo de Treino: 60:00</div>
+  </div>
+
+  <!-- TÍTULO PRINCIPAL E DADOS DO ALUNO -->
+  <h1>SETA PREPARATÓRIO ENSINO MÉDIO 🎯</h1>
+  <p class="subtitulo">
+    Aluno: <span id="exibirNomeAluno">--</span> | 
+    Contato: <span id="exibirTelefone">--</span> | 
+    <span style="color:var(--azul)" id="exibirIdentificadorProva">Prova 01</span>
+  </p>
+
+  <!-- BANNER DA TRAVA DE ROTINA SEMANAL -->
+  <div class="banner-rotina" id="bannerRotina">
+    📅 MODO DE TREINO DIÁRIO
+  </div>
+  
+  <div style="text-align:center;margin:16px 0;display:none" id="controlesModoFimSemana">
+    <button class="btn-topo" id="btnTexto" onclick="modo('texto')">📝 Só Redação</button>
+    <button class="btn-topo" id="btnProva" onclick="modo('prova')">❓ Só Questões</button>
+    <button class="btn-topo ativo" id="btnAmbos" onclick="modo('ambos')">📝+❓ Os Dois</button>
+  </div>
+  
+  <div id="areaProva" class="card"></div>
+  <div id="resultadoFinal" class="card"></div>
+</div>
+
+<script>
+const URL_CEDAF = "https://script.google.com/macros/s/AKfycbz9ohwuCV_wuE9QPK93lyA946U70MtQfuMQSXUHc_th6_IjQu5V8_Q1WoKJk1y6LyqcrA/exec";
+const META_FIXA = 900;
+
+let userLogin = '';
+let userTelefone = '';
+let tempoInicioApp = null;
+let numeroProvaAtual = 1;
+let temaRedacaoAtual = '';
+let textoRedacaoSalvo = '';
+let relatorioWhatsAppTexto = '';
+let notaRedacao = 0;
+let detalhesRedacaoPontos = [];
+let tempoRestanteSegundos = 3600;
+let timerInterval = null;
+let modoDiaSemana = 'ambos';
+let modoAtual = 'ambos';
+
+function atualizarDataHora(){
+  const agora = new Date();
+  const dataStr = agora.toLocaleDateString('pt-BR');
+  const horaStr = agora.toLocaleTimeString('pt-BR');
+  const el = document.getElementById('exibirDataHora');
+  if(el) el.textContent = `📅 ${dataStr}  |  ⏰ ${horaStr}`;
+}
+setInterval(atualizarDataHora, 1000);
+
+function iniciarTimerTreino(){
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    tempoRestanteSegundos--;
+    const min = Math.floor(tempoRestanteSegundos / 60);
+    const seg = tempoRestanteSegundos % 60;
+    const txtMin = String(min).padStart(2, '0');
+    const txtSeg = String(seg).padStart(2, '0');
+    
+    const elTimer = document.getElementById('caixaTimer');
+    if(elTimer) elTimer.textContent = `⏳ Tempo de Treino: ${txtMin}:${txtSeg}`;
+
+    if(tempoRestanteSegundos <= 0){
+      clearInterval(timerInterval);
+      alert("⏱️ Tempo limite de treino atingido (1 hora). Sua sessão foi encerrada para descansar a mente!");
+      location.reload();
+    }
+  }, 1000);
+}
+
+function verificarTravaRotina(){
+  const hoje = new Date();
+  const diaSemana = hoje.getDay();
+  const banner = document.getElementById('bannerRotina');
+  const ctrlFimSemana = document.getElementById('controlesModoFimSemana');
+
+  if(diaSemana === 1 || diaSemana === 3 || diaSemana === 5){
+    modoDiaSemana = 'prova';
+    modoAtual = 'prova';
+    if(banner) banner.innerHTML = `📝 ROTINA DIÁRIA: Hoje é Dia de PROVA OBJETIVA (10 Questões)<br><small style="font-weight:normal">Foco em fixar conteúdos e raciocínio lógico.</small>`;
+    if(ctrlFimSemana) ctrlFimSemana.style.display = 'none';
+  } else if(diaSemana === 2 || diaSemana === 4){
+    modoDiaSemana = 'texto';
+    modoAtual = 'texto';
+    if(banner) banner.innerHTML = `✍️ ROTINA DIÁRIA: Hoje é Dia de REDAÇÃO GUIADA & REPERTÓRIO<br><small style="font-weight:normal">Foco em construir ideias e treinar na Folha Pautada A4.</small>`;
+    if(ctrlFimSemana) ctrlFimSemana.style.display = 'none';
+  } else {
+    modoDiaSemana = 'ambos';
+    modoAtual = 'ambos';
+    if(banner) banner.innerHTML = `🎯 FIM DE SEMANA: Modo Treino Livre Habilitado`;
+    if(ctrlFimSemana) ctrlFimSemana.style.display = 'block';
+  }
+}
+
+const bancoTemasRedacao = [
+  "1. Impactos da tecnologia e inteligência artificial na educação do século XXI",
+  "2. Desafios para a preservação do meio ambiente e sustentabilidade no Brasil",
+  "3. O combate ao bullying e ao ciberbullying no ambiente escolar",
+  "4. A importância da leitura na formação do pensamento crítico dos jovens",
+  "5. O papel do esporte na inclusão social e saúde mental de adolescentes",
+  "6. Caminhos para combater a má alimentação e a obesidade juvenil",
+  "7. O uso consciente da água e a gestão dos recursos hídricos",
+  "8. Impactos das redes sociais na autoestima e ansiedade dos jovens",
+  "9. A importância do consumo consciente e da educação financeira na juventude",
+  "10. Cidadania e engajamento comunitário: a força do jovem na sociedade",
+  "11. Valorização da diversidade cultural e combate ao preconceito no Brasil",
+  "12. Desafios para a erradicação do trabalho infantil na modernidade",
+  "13. O futuro do trabalho e a preparação dos jovens para novas profissões",
+  "14. A importância da ciência e do conhecimento científico para a sociedade",
+  "15. Lixo eletrônico: desafios para o descarte e reciclagem de e-lixo"
+];
+
+const palavrasChaveTemas = [
+  ["inteligência", "artificial", "tecnologia", "educação"],
+  ["preservação", "meio ambiente", "sustentabilidade", "ecologia"],
+  ["bullying", "ciberbullying", "violência escolar", "agressão"],
+  ["leitura", "pensamento crítico", "livros", "literatura"],
+  ["esporte", "saúde mental", "inclusão social", "exercício"],
+  ["alimentação", "obesidade", "nutrição", "saudável"],
+  ["água", "recursos hídricos", "gestão hídrica", "consumo consciente"],
+  ["redes sociais", "autoestima", "ansiedade", "jovens"],
+  ["educação financeira", "consumo consciente", "dinheiro", "economia"],
+  ["cidadania", "engajamento comunitário", "sociedade", "jovem"],
+  ["diversidade cultural", "preconceito", "discriminação", "respeito"],
+  ["trabalho infantil", "erradicação", "crianças", "direitos"],
+  ["futuro do trabalho", "profissões", "carreira", "tecnologia"],
+  ["ciência", "conhecimento científico", "pesquisa", "inovação"],
+  ["lixo eletrônico", "reciclagem", "descarte", "e-lixo"]
+];
+
+const conteudoPedagogicoTemas = [
+  {
+    explicacao: "Como a tecnologia e os computadores inteligentes ajudam ou atrapalham o aprendizado nas escolas de hoje.",
+    perguntasQuiz: [
+      {q: "Qual a principal vantagem da tecnologia na escola?", ops: ["Pesquisar assuntos rapidamente","Jogar durante a aula","Substituir os professores","Não precisar estudar"]},
+      {q: "O que devemos evitar ao usar IA nos estudos?", ops: ["Copiar respostas sem entender nada","Usar para tirar dúvidas","Aprender palavras novas","Ler resumos de livros"]},
+      {q: "Como a escola pode ser melhor com a tecnologia?", ops: ["Unindo computadores com a explicação do professor","Proibindo qualquer uso de celular","Usando só livros antigos","Deixando os alunos sem tarefas"]}
+    ],
+    titulosSugestoes: ["A Tecnologia a Serviço do Conhecimento", "Inteligência Artificial: Aliada ou Vilã da Escola?", "O Futuro da Educação na Era Digital", "Aprender Mais e Melhor com a Tecnologia", "Computadores e Professores: Uma Parceria Necessária"],
+    modeloNivel1: "A tecnologia na escola é muito boa para os alunos pesquisarem matérias na internet. Hoje em dia todo mundo usa o celular para estudar.\n\nPorém, alguns estudantes usam para jogar durante a aula e não prestam atenção no professor.",
+    modeloNivel2: "A tecnologia e a inteligência artificial estão mudando a forma como aprendemos nas escolas brasileiras. Elas ajudam a encontrar dados rapidamente.\n\nContudo, o uso sem controle faz os alunos copiarem trabalhos sem pensar.\n\nPortanto, os professores devem ensinar a usar a internet com responsabilidade.",
+    modeloNivel3: "A transformação digital na educação do século XXI\n\nA tecnologia e a inteligência artificial representam ferramentas poderosas para modernizar o ensino nas escolas. O acesso rápido às informações amplia as oportunidades de aprendizado.\n\nEm primeiro lugar, o uso de recursos digitais torna as aulas mais dinâmicas e atrativas. No entanto, é preciso evitar a dependência excessiva de respostas automáticas.\n\nAlém disso, a presença do professor continua sendo indispensável para orientar os estudantes a desenvolverem o pensamento crítico.\n\nPortanto, a união entre inovação tecnológica e mediação pedagógica é o caminho para formar cidadãos preparados para o futuro."
+  },
+  {
+    explicacao: "Como proteger nossas florestas, rios e animais para garantir um futuro saudável no Brasil.",
+    perguntasQuiz: [
+      {q: "Qual o maior desafio ambiental do Brasil hoje?", ops: ["O desmatamento e as queimadas","O excesso de chuva nas praias","A falta de árvores nas praças","O frio intenso no inverno"]},
+      {q: "O que é sustentabilidade na prática?", ops: ["Usar os recursos sem destruir o futuro","Gastar toda a água do planeta","Comprar coisas sem necessidade","Queimar o lixo no quintal"]},
+      {q: "Como os jovens podem ajudar o meio ambiente?", ops: ["Economizando água e reciclando o lixo","Jogando plástico nas ruas","Usando sacolas plásticas descartáveis","Derrubando árvores"]}
+    ],
+    titulosSugestoes: ["Preservar Hoje para Existir Amanhã", "Sustentabilidade: Um Dever de Todos", "O Futuro do Brasil Depende da Natureza", "Pequenas Atitudes, Grandes Transformações Ambientais", "Cuidando do Nosso Planeta Vivo"],
+    modeloNivel1: "A preservação do meio ambiente é muito importante para o Brasil. Precisamos cuidar das árvores e dos rios para não faltar água.\n\nAs pessoas jogam muito lixo na rua e isso polui a natureza todo dia.",
+    modeloNivel2: "Os desafios ambientais no Brasil exigem a atenção de toda a sociedade. A poluição e o desmatamento estão destruindo nossos biomas.\n\nAlém disso, o consumo exagerado gasta recursos naturais de forma irresponsável.\n\nPortanto, precisamos reciclar o lixo e proteger nossas florestas.",
+    modeloNivel3: "Sustentabilidade e conscientização ambiental no Brasil\n\nA preservação do meio ambiente no Brasil é uma pauta urgente que exige ações imediatas de toda a sociedade. A riqueza de nossa biodiversidade precisa ser protegida para as próximas gerações.\n\nEm primeiro lugar, o aumento das queimadas e do desmatamento ameaça os ecossistemas naturais. A perda da vegetação afeta o clima e a disponibilidade de água potável.\n\nOutrossim, a falta de reciclagem e o descarte incorreto do lixo urbano poluem os rios e o solo nas grandes cidades.\n\nPortanto, o Governo e as escolas devem promover campanhas educativas para garantir o desenvolvimento sustentável em nosso país."
+  },
+  {
+    explicacao: "O combate ao bullying e ciberbullying para garantir que a escola seja um local seguro para todos os estudantes.",
+    perguntasQuiz: [
+      {q: "O que caracteriza o bullying escolar?", ops: ["Agressões e piadas ofensivas repetidas","Uma discussão pontual de futebol","Tirar nota baixa na prova","Fazer perguntas ao professor"]},
+      {q: "O que diferencia o ciberbullying?", ops: ["Ocorre na internet e nas redes sociais","Acontece apenas na quadra esportiva","É feito por carta escrita","Só ocorre nos fins de semana"]},
+      {q: "Como a escola deve combater esse problema?", ops: ["Criando canais seguros de denúncia e apoio","Proibindo os alunos de conversar","Fingindo que o problema não existe","Expulsando todos os estudantes"]}
+    ],
+    titulosSugestoes: ["Escola: Lugar de Respeito e Amizade", "Dizendo Não ao Bullying na Sala e na Tela", "A Força da União Contra a Violência Escolar", "Palavras que Ajudam, Atitudes que Protegem", "Construindo um Ambiente Seguro para Estudar"],
+    modeloNivel1: "O bullying na escola é muito ruim porque magoa os colegas. O ciberbullying acontece na internet e deixa a pessoa triste.\n\nOs professores devem punir quem faz brincadeiras de mau gosto.",
+    modeloNivel2: "O combate ao bullying e ao ciberbullying é essencial para manter a paz no colégio. As agressões virtuais perseguem a vítima até dentro de casa.\n\nContudo, muitos estudantes têm medo de denunciar os agressores.\n\nPortanto, a escola deve criar palestras e apoiar quem precisa.",
+    modeloNivel3: "Caminhos para combater a agressão e o preconceito escolar\n\nO combate ao bullying e ao ciberbullying no ambiente escolar é uma prioridade para garantir a saúde mental e a segurança dos estudantes. A violência, seja física ou virtual, compromete o aprendizado.\n\nEm primeiro lugar, as agressões nos corredores muitas vezes se desdobram nas redes sociais através de mensagens ofensivas. Isso gera ansiedade e isolamento nas vítimas.\n\nAlém disso, a omissão da comunidade escolar permite que piadas preconceituosas sejam vistas como normais, perpetuando o sofrimento.\n\nPortanto, a união entre família e gestão escolar é a solução para promover palestras conscientizadoras e transformar a escola em um espaço de acolhimento."
+  }
+];
+
+const bancoQuestoes9Ano = [
+  // PORTUGUÊS (15)
+  {materia:"Português", banca:"CEDAF", serie:"8º Ano", topico:"Sintaxe - Função dos Termos", q:"Qual a função sintática do termo em destaque em 'O estudante *obteve a vaga*'?", ops:["Objeto Direto","Objeto Indireto","Sujeito","Predicativo do Sujeito"],"gab":"a", explicacao:"'Obter' é transitivo direto. 'A vaga' completa seu sentido sem preposição obrigatória (Objeto Direto)."},
+  {materia:"Português", banca:"COLTEC", serie:"7º Ano", topico:"Figuras de Linguagem", q:"Qual alternativa contém uma figura de linguagem Metáfora?", ops:["Seus olhos são faróis na escuridão.","O sol sorria pela manhã.","Comprei dois quilos de carne.","Faltou com a verdade."],"gab":"a", explicacao:"'Seus olhos são faróis' é uma comparação direta implícita sem conectivo comparativo."},
+  {materia:"Português", banca:"IFET", serie:"9º Ano", topico:"Sintaxe - Regência Verbal", q:"Assinale a opção com regência verbal adequada segundo a norma-padrão:", ops:["Assistimos ao filme indicado pelo professor.","Prefiro mais estudar do que jogar.","Chegamos na escola muito tarde.","Obedeceu o sinal."],"gab":"a", explicacao:"'Assistir' no sentido de ver exige a preposição 'a' (Assistir AO filme)."},
+  {materia:"Português", banca:"CENTEC", serie:"6º Ano", topico:"Morfologia - Classes de Palavras", q:"Em 'Ele respondeu *rapidamente*', a palavra destacada é:", ops:["Advérbio de modo","Adjetivo","Substantivo","Pronome"],"gab":"a", explicacao:"Sufixo '-mente' derivado de adjetivo indica a circunstância da ação (Advérbio de Modo)."},
+  {materia:"Português", banca:"CEDAF", serie:"8º Ano", topico:"Sintaxe - Vozes Verbais", q:"Assinale a oração na Voz Passiva Analítica:", ops:["A prova foi elaborada pela banca.","A banca elaborou a prova.","Elaborou-se a prova.","O aluno preparou-se."],"gab":"a", explicacao:"Voz passiva analítica é constituída por Verbo Auxiliar + Particípio (foi elaborada)."},
+  {materia:"Português", banca:"COLTEC", serie:"9º Ano", topico:"Coesão - Conjunções", q:"A conjunção 'portanto' estabelece relação de:", ops:["Conclusão","Oposição","Causa","Concessão"],"gab":"a", explicacao:"'Portanto' introduz uma conclusão em relação às premissas anteriores."},
+  {materia:"Português", banca:"IFET", serie:"8º Ano", topico:"Ortografia - Uso da Crase", q:"Qual frase exige o uso da crase?", ops:["Entreguei o simulado à professora.","Fui a pé para a aula.","Ela começou a estudar.","Falei a uma pessoa."],"gab":"a", explicacao:"Fusão da preposição 'a' com o artigo feminino 'a' antes de 'professora' (à professora)."},
+  {materia:"Português", banca:"CENTEC", serie:"7º Ano", topico:"Sintaxe - Concordância Verbal", q:"Identifique a frase com concordância verbal correta:", ops:["Havia muitos alunos na sala.","Fazem dois anos que estudo.","Sobrou muitas vagas.","Existe muitos problemas."],"gab":"a", explicacao:"'Haver' no sentido de existir é impessoal e fica no singular (Havia muitos alunos)."},
+  {materia:"Português", banca:"CEDAF", serie:"9º Ano", topico:"Sintaxe - Orações Substantivas", q:"A oração 'Espero *que você passe*' é:", ops:["Substantiva Objetiva Direta","Substantiva Subjetiva","Adjetiva Explicativa","Adverbial Causal"],"gab":"a", explicacao:"Completa o sentido do verbo transitivo direto 'Espero' (Espero isto = Objetiva Direta)."},
+  {materia:"Português", banca:"COLTEC", serie:"9º Ano", topico:"Redação - Texto Dissertativo", q:"Qual elemento é indispensável num texto dissertativo-argumentativo?", ops:["Tese e argumentos","Linguagem conotativa","Diálogo de personagens","Narrador em 1ª pessoa"],"gab":"a", explicacao:"A dissertação-argumentativa exige a defesa de um ponto de vista (tese) por meio de argumentos."},
+  {materia:"Português", banca:"IFET", serie:"6º Ano", topico:"Acentuação - Proparoxítonas", q:"Qual das palavras abaixo é proparoxítona?", ops:["Lâmpada","Café","Mesa","Copo"],"gab":"a", explicacao:"Sílaba tônica na antepenúltima posição (LÂM-pa-da). Todas as proparoxítonas são acentuadas."},
+  {materia:"Português", banca:"CENTEC", serie:"6º Ano", topico:"Morfologia - Adjetivo", q:"Em 'Menino *corajoso*', a palavra destacada é:", ops:["Adjetivo","Substantivo","Verbo","Advérbio"],"gab":"a", explicacao:"Caracteriza e atribui uma qualidade ao substantivo 'menino' (Adjetivo)."},
+  {materia:"Português", banca:"CEDAF", serie:"8º Ano", topico:"Semântica - Ambiguidade", q:"Qual frase contém ambiguidade na interpretação?", ops:["O pai falou com o filho no seu quarto.","O aluno estudou para a prova.","A professora explicou a matéria.","Comprei um livro novo."],"gab":"a", explicacao:"'Seu quarto' deixa dúvida se o quarto pertence ao pai ou ao filho."},
+  {materia:"Português", banca:"COLTEC", serie:"7º Ano", topico:"Semântica - Sinonímia", q:"Qual é o sinônimo da palavra 'efêmero'?", ops:["Passageiro","Duradouro","Eterno","Forte"],"gab":"a", explicacao:"Efêmero refere-se a algo de curta duração, passageiro ou transitório."},
+  {materia:"Português", banca:"IFET", serie:"9º Ano", topico:"Ortografia - Acordo Ortográfico", q:"Qual palavra perdeu o acento com o Novo Acordo Ortográfico?", ops:["Heroico","Café","Tênis","Árvore"],"gab":"a", explicacao:"Ditongos abertos 'ei' e 'oi' em palavras paroxítonas perderam o acento (Heroico, Ideia)."},
+
+  // MATEMÁTICA (15)
+  {materia:"Matemática", banca:"CEDAF", serie:"9º Ano", topico:"Álgebra - Equação do 2º Grau", q:"Na equação x² - 5x + 6 = 0, quais são suas raízes reais?", ops:["2 e 3","-2 e -3","1 e 6","-1 e -6"],"gab":"a", explicacao:"Pela relação de Soma (5) e Produto (6), as raízes reais são 2 e 3."},
+  {materia:"Matemática", banca:"COLTEC", serie:"8º Ano", topico:"Geometria - Teorema de Pitágoras", q:"Um triângulo retângulo tem catetos de 6 cm e 8 cm. A hipotenusa mede:", ops:["10 cm","12 cm","14 cm","16 cm"],"gab":"a", explicacao:"h² = 6² + 8² = 36 + 64 = 100 => h = √100 = 10 cm."},
+  {materia:"Matemática", banca:"IFET", serie:"7º Ano", topico:"Aritmética - Regra de Três Inversa", q:"Se 12 operários realizam uma obra em 6 dias, em quantos dias 9 operários fariam?", ops:["8 dias","4 dias","9 dias","10 dias"],"gab":"a", explicacao:"Grandezas inversas: 12 * 6 = 9 * x => 72 = 9x => x = 8 dias."},
+  {materia:"Matemática", banca:"CENTEC", serie:"6º Ano", topico:"Porcentagem", q:"Quanto é 15% de R$ 600,00?", ops:["R$ 90,00","R$ 80,00","R$ 60,00","R$ 100,00"],"gab":"a", explicacao:"(15 / 100) * 600 = 15 * 6 = R$ 90,00."},
+  {materia:"Matemática", banca:"CEDAF", serie:"8º Ano", topico:"Geometria - Área do Círculo", q:"Qual é a área de um círculo com raio de 3 cm? (Considere π = 3,14)", ops:["28,26 cm²","18,84 cm²","9,42 cm²","37,68 cm²"],"gab":"a", explicacao:"Área = π * r² = 3,14 * 3² = 3,14 * 9 = 28,26 cm²."},
+  {materia:"Matemática", banca:"COLTEC", serie:"8º Ano", topico:"Álgebra - Sistema de Equações", q:"Qual a solução do sistema { x + y = 10 e x - y = 4 }?", ops:["x = 7, y = 3","x = 6, y = 4","x = 8, y = 2","x = 5, y = 5"],"gab":"a", explicacao:"Somando as equações: 2x = 14 => x = 7. Substituindo: 7 + y = 10 => y = 3."},
+  {materia:"Matemática", banca:"IFET", serie:"9º Ano", topico:"Álgebra - Radiciação", q:"Qual é a simplificação da expressão √(50) + √(18)?", ops:["8√2","5√2","3√2","15√2"],"gab":"a", explicacao:"√(50) = 5√2 e √(18) = 3√2. Logo, 5√2 + 3√2 = 8√2."},
+  {materia:"Matemática", banca:"CENTEC", serie:"7º Ano", topico:"Estatística - Probabilidade", q:"Em um dado de 6 faces, qual a probabilidade de sair um número par?", ops:["50%","25%","33%","66%"],"gab":"a", explicacao:"Faces pares (2, 4, 6) = 3 de 6 = 3/6 = 50%."},
+  {materia:"Matemática", banca:"CEDAF", serie:"6º Ano", topico:"Geometria - Perímetro", q:"Qual o perímetro de um quadrado com lado medindo 12 m?", ops:["48 m","144 m","24 m","36 m"],"gab":"a", explicacao:"Perímetro = 4 * Lado = 4 * 12 m = 48 m."},
+  {materia:"Matemática", banca:"COLTEC", serie:"7º Ano", topico:"Estatística - Média Aritmética", q:"Qual a média aritmética das notas 6,0; 8,0 e 10,0?", ops:["8,0","7,5","8,5","9,0"],"gab":"a", explicacao:"Média = (6 + 8 + 10) / 3 = 24 / 3 = 8,0."},
+  {materia:"Matemática", banca:"IFET", serie:"6º Ano", topico:"Aritmética - Potenciação", q:"Qual o valor numérico da potência 2⁴?", ops:["16","8","12","64"],"gab":"a", explicacao:"2⁴ = 2 * 2 * 2 * 2 = 16."},
+  {materia:"Matemática", banca:"CENTEC", serie:"7º Ano", topico:"Geometria - Ângulos", q:"Qual o valor do ângulo interno de um quadrado?", ops:["90°","45°","180°","60°"],"gab":"a", explicacao:"O quadrado é um quadrilátero regular com 4 ângulos retos de 90°."},
+  {materia:"Matemática", banca:"CEDAF", serie:"7º Ano", topico:"Álgebra - Equação do 1º Grau", q:"Qual o valor de x na equação 3x - 9 = 0?", ops:["3","9","-3","0"],"gab":"a", explicacao:"3x = 9 => x = 9 / 3 => x = 3."},
+  {materia:"Matemática", banca:"COLTEC", serie:"6º Ano", topico:"Grandezas e Medidas", q:"Quantos segundos há em 1 hora completa?", ops:["3600 s","60 s","600 s","1200 s"],"gab":"a", explicacao:"1 hora = 60 minutos * 60 segundos = 3600 segundos."},
+  {materia:"Matemática", banca:"IFET", serie:"9º Ano", topico:"Álgebra - Produtos Notáveis", q:"Qual é a fatoração do polinômio x² - 9?", ops:["(x-3)(x+3)","(x-3)²","(x+3)²","x(x-9)"],"gab":"a", explicacao:"Diferença de dois quadrados: a² - b² = (a - b)(a + b). Logo, x² - 3² = (x - 3)(x + 3)."},
+
+  // CIÊNCIAS (15)
+  {materia:"Ciências", banca:"CEDAF", serie:"8º Ano", topico:"Citologia - Organelas Celulares", q:"Organela celular responsável pela produção de energia (ATP):", ops:["Mitocôndria","Complexo de Golgi","Ribossomo","Lisossomo"],"gab":"a", explicacao:"A mitocôndria realiza a respiração celular aeróbica e sintetiza ATP."},
+  {materia:"Ciências", banca:"COLTEC", serie:"6º Ano", topico:"Física/Química - Mudanças de Estado", q:"Passagem do estado sólido diretamente para o gasoso:", ops:["Sublimação","Fusão","Vaporização","Condensação"],"gab":"a", explicacao:"Sublimação é a transição direta do sólido para o estado gasoso."},
+  {materia:"Ciências", banca:"IFET", serie:"9º Ano", topico:"Genética - Leis de Mendel", q:"A Primeira Lei de Mendel aborda o princípio da:", ops:["Segregação dos fatores/genes","Codominância","Linkage","Epistasia"],"gab":"a", explicacao:"Cada caráter é determinado por um par de fatores que se separam na formação dos gametas."},
+  {materia:"Ciências", banca:"CENTEC", serie:"9º Ano", topico:"Química - Estrutura Atômica", q:"O número atômico (Z) de um elemento indica a quantidade de:", ops:["Prótons no núcleo","Nêutrons","Elétrons na camada exterior","Massa atômica"],"gab":"a", explicacao:"O número atômico (Z) define o elemento e equivale ao número de prótons no núcleo."},
+  {materia:"Ciências", banca:"CEDAF", serie:"8º Ano", topico:"Anatomia - Sistema Circulatório", q:"Vaso sanguíneo que leva sangue oxigenado do coração para o corpo:", ops:["Artéria Aorta","Veia Cava","Veia Pulmonar","Capilar Venoso"],"gab":"a", explicacao:"A Artéria Aorta sai do ventrículo esquerdo distribuindo sangue oxigenado para o organismo."},
+  {materia:"Ciências", banca:"COLTEC", serie:"9º Ano", topico:"Física - Óptica e Ondas", q:"Qual a velocidade aproximada da luz no vácuo?", ops:["300.000 km/s","150.000 km/s","30.000 km/s","3.000 km/s"],"gab":"a", explicacao:"A constante c no vácuo é de aproximadamente 3 * 10⁵ km/s."},
+  {materia:"Ciências", banca:"IFET", serie:"9º Ano", topico:"Física - Leis de Newton", q:"A Primeira Lei de Newton também é conhecida como Lei da:", ops:["Inércia","Ação e Reação","Gravitação","Força Resultante"],"gab":"a", explicacao:"Princípio da Inércia: um corpo permanece em repouso ou M.R.U. a menos que atue uma força resultante."},
+  {materia:"Ciências", banca:"CENTEC", serie:"7º Ano", topico:"Biologia - Fotossíntese", q:"Processo em que plantas produzem glicose e oxigênio através da luz:", ops:["Fotossíntese","Quimiossíntese","Respiração Celular","Transpiração"],"gab":"a", explicacao:"A fotossíntese converte CO₂ e H₂O em glicose e O₂ utilizando energia luminosa."},
+  {materia:"Ciências", banca:"CEDAF", serie:"6º Ano", topico:"Astronomia e Atmosfera", q:"Gás mais abundante na atmosfera terrestre:", ops:["Nitrogênio","Oxigênio","Gás Carbônico","Argônio"],"gab":"a", explicacao:"O gás Nitrogênio (N₂) compõe cerca de 78% do ar atmosférico terrestre."},
+  {materia:"Ciências", banca:"COLTEC", serie:"7º Ano", topico:"Ecologia - Fontes de Energia", q:"Fonte de energia classificada como RENOVÁVEL:", ops:["Energia Eólica","Petróleo","Carvão Mineral","Gás Natural"],"gab":"a", explicacao:"A energia eólica provém do vento, uma fonte inesgotável e limpa."},
+  {materia:"Ciências", banca:"IFET", serie:"9º Ano", topico:"Química - Escala de pH", q:"Qual valor de pH é considerado perfeitamente neutro?", ops:["7","0","14","10"],"gab":"a", explicacao:"Na escala de 0 a 14, pH igual a 7 indica neutralidade (pH < 7 ácido, pH > 7 básico)."},
+  {materia:"Ciências", banca:"CENTEC", serie:"6º Ano", topico:"Astronomia - Sistema Solar", q:"Qual o planeta mais próximo do Sol no Sistema Solar?", ops:["Mercúrio","Vênus","Terra","Marte"],"gab":"a", explicacao:"Mercúrio é o primeiro planeta a partir do Sol."},
+  {materia:"Ciências", banca:"CEDAF", serie:"6º Ano", topico:"Geologia - Camadas da Terra", q:"A camada mais externa e sólida da Terra chama-se:", ops:["Crosta Terrestre","Manto","Núcleo Externo","Núcleo Interno"],"gab":"a", explicacao:"A Crosta Terrestre é a camada rochosa exterior da Terra."},
+  {materia:"Ciências", banca:"COLTEC", serie:"8º Ano", topico:"Anatomia - Sistema Excretor", q:"Órgão do corpo humano responsável por filtrar o sangue:", ops:["Rins","Fígado","Coração","Pulmão"],"gab":"a", explicacao:"Os rins filtram as impurezas do sangue e produzem a urina."},
+  {materia:"Ciências", banca:"IFET", serie:"9º Ano", topico:"Química - Fórmulas Químicas", q:"Qual é a fórmula química do gás carbônico?", ops:["CO₂","H₂O","O₂","NaCl"],"gab":"a", explicacao:"O dióxido de carbono é composto por 1 átomo de Carbono e 2 de Oxigênio (CO₂)."},
+
+  // HISTÓRIA (15)
+  {materia:"História", banca:"CEDAF", serie:"9º Ano", topico:"História Geral - Primeira Guerra Mundial", q:"Estopim para o início da Primeira Guerra Mundial (1914):", ops:["Atentado a Francisco Ferdinando","Invasão da Polônia","Crise de 1929","Revolução Russa"],"gab":"a", explicacao:"O assassinato do arquiduque Francisco Ferdinando acionou as alianças europeias em 1914."},
+  {materia:"História", banca:"COLTEC", serie:"9º Ano", topico:"História do Brasil - Era Vargas", q:"Marca trabalhista marcante da Era Vargas (1930-1945):", ops:["Criação da CLT","Fim da escravidão","Voto exclusivo da elite","Privatizações"],"gab":"a", explicacao:"Getúlio Vargas unificou as leis trabalhistas brasileiras ao criar a CLT em 1943."},
+  {materia:"História", banca:"IFET", serie:"9º Ano", topico:"História Geral - Segunda Guerra Mundial", q:"A Segunda Guerra Mundial encerrou-se em 1945 após:", ops:["Rendição do Japão com as bombas atômicas","Tratado de Versalhes","Queda do Muro de Berlim","Revolução Cubana"],"gab":"a", explicacao:"A rendição japonesa ocorreu em agosto de 1945 após os ataques em Hiroshima e Nagasaki."},
+  {materia:"História", banca:"CENTEC", serie:"9º Ano", topico:"História Geral - Guerra Fria", q:"Disputa ideológica entre EUA e URSS sem conflito direto:", ops:["Guerra Fria","Guerra dos 100 Anos","Grande Depressão","Paz Armada"],"gab":"a", explicacao:"Guerra Fria (1947-1991) dividiu o mundo entre os blocos Capitalista e Socialista."},
+  {materia:"História", banca:"CEDAF", serie:"9º Ano", topico:"História do Brasil - República Velha", q:"A 'Política do Café com Leite' envolveu a hegemonia de:", ops:["São Paulo e Minas Gerais","Rio de Janeiro e Bahia","RS e Santa Catarina","Ceará e Pernambuco"],"gab":"a", explicacao:"Onde São Paulo (café) e Minas Gerais (leite) alternavam a presidência na República Velha."},
+  {materia:"História", banca:"COLTEC", serie:"8º Ano", topico:"História Geral - Revolução Industrial", q:"A Revolução Industrial teve seu berço pioneiro em qual país?", ops:["Inglaterra","França","Alemanha","Estados Unidos"],"gab":"a", explicacao:"A Inglaterra foi pioneira devido ao acúmulo de capital, minas de carvão e cercamentos."},
+  {materia:"História", banca:"IFET", serie:"9º Ano", topico:"História do Brasil - Ditadura Militar", q:"O Regime Militar no Brasil perdurou entre os anos de:", ops:["1964 e 1985","1930 e 1945","1950 e 1960","1988 e 2000"],"gab":"a", explicacao:"Iniciado pelo golpe de 31 de março de 1964 e encerrado com a posse de José Sarney em 1985."},
+  {materia:"História", banca:"CENTEC", serie:"8º Ano", topico:"História do Brasil - Independência", q:"Ano da Proclamação da Independência do Brasil:", ops:["1822","1500","1889","1808"],"gab":"a", explicacao:"Dom Pedro I proclamou a independência do Brasil em 7 de setembro de 1822."},
+  {materia:"História", banca:"CEDAF", serie:"8º Ano", topico:"História do Brasil - Abolição", q:"Ano da assinatura da Lei Áurea que extinguiu a escravidão:", ops:["1888","1822","1850","1871"],"gab":"a", explicacao:"A Princesa Isabel assinou a Lei Áurea em 13 de maio de 1888."},
+  {materia:"História", banca:"COLTEC", serie:"9º Ano", topico:"História do Brasil - Redemocratização", q:"Ano da promulgação da atual Constituição Brasileira (Constituição Cidadã):", ops:["1988","1964","1934","1946"],"gab":"a", explicacao:"A Constituição vigente foi頒布gated em 5 de outubro de 1988."},
+  {materia:"História", banca:"IFET", serie:"8º Ano", topico:"História do Brasil - Proclamação da República", q:"Quem proclamou a República no Brasil em 15 de novembro de 1889?", ops:["Marechal Deodoro da Fonseca","Dom Pedro II","Getúlio Vargas","Juscelino Kubitschek"],"gab":"a", explicacao:"O Marechal Deodoro da Fonseca liderou o golpe militar que derrubou a monarquia."},
+  {materia:"História", banca:"CENTEC", serie:"6º Ano", topico:"História Antiga - Grécia", q:"Civilização antiga criadora do conceito de Democracia:", ops:["Grega","Romana","Egípcia","Chinesa"],"gab":"a", explicacao:"A democracia direta desenvolveu-se na cidade-estado de Atenas na Grécia Antiga."},
+  {materia:"História", banca:"CEDAF", serie:"6º Ano", topico:"Pré-História", q:"O período da História antes da invenção da escrita chama-se:", ops:["Pré-História","Idade Média","Idade Moderna","Idade Contemporânea"],"gab":"a", explicacao:"A escrita (c. 4000 a.C.) marca tradicionalmente a transição da Pré-História para a História."},
+  {materia:"História", banca:"COLTEC", serie:"9º Ano", topico:"História do Brasil - Juscelino Kubitschek", q:"Qual presidente brasileiro construiu a cidade de Brasília?", ops:["Juscelino Kubitschek","Getúlio Vargas","Jânio Quadros","Tancredo Neves"],"gab":"a", explicacao:"JK construiu Brasília dentro do Plano de Metas ('50 anos em 5'), inaugurada em 1960."},
+  {materia:"História", banca:"IFET", serie:"9º Ano", topico:"História Geral - Muro de Berlim", q:"O Muro de Berlim dividia a cidade alemã entre os setores:", ops:["Capitalista e Socialista","Norte e Sul","Inglês e Francês","Rico e Pobre"],"gab":"a", explicacao:"Símbolo da Guerra Fria, separava Berlim Ocidental (Capitalista) e Berlim Oriental (Socialista)."},
+
+  // GEOGRAFIA (15)
+  {materia:"Geografia", banca:"CEDAF", serie:"7º Ano", topico:"Geografia do Brasil - Biomas", q:"Bioma caracterizado como savana e predominante no Centro-Oeste:", ops:["Cerrado","Caatinga","Mata Atlântica","Pampa"],"gab":"a", explicacao:"O Cerrado é a savana brasileira com vegetação adaptada à seca sazonal."},
+  {materia:"Geografia", banca:"COLTEC", serie:"8º Ano", topico:"Geografia Urbana - Demografia", q:"O deslocamento diário de trabalhadores entre cidades vizinhas chama-se:", ops:["Migração Pendular","Éxodo Rural","Transumância","Diáspora"],"gab":"a", explicacao:"Movimento diário de ir e vir entre a cidade onde reside e onde trabalha/estuda."},
+  {materia:"Geografia", banca:"IFET", serie:"6º Ano", topico:"Cartografia - Linhas Imaginárias", q:"Qual linha imaginária divide a Terra em Hemisfério Norte e Sul?", ops:["Equador","Meridiano de Greenwich","Trópico de Câncer","Trópico de Capricórnio"],"gab":"a", explicacao:"A linha do Equador é o paralelo 0° que divide os hemisférios Norte e Sul."},
+  {materia:"Geografia", banca:"CENTEC", serie:"7º Ano", topico:"Geografia do Brasil - Clima", q:"Qual o clima predominantemente seco do Sertão Nordestino?", ops:["Semiárido","Equatorial","Subtropical","Tropical de Altitude"],"gab":"a", explicacao:"O clima Semiárido possui baixas precipitações e chuvas irregulares."},
+  {materia:"Geografia", banca:"CEDAF", serie:"8º Ano", topico:"Geografia Urbana - Cidades", q:"A união física contínua da área urbana de duas ou mais cidades chama-se:", ops:["Conurbação","Gentrificação","Megalópole","Metropolização"],"gab":"a", explicacao:"Conurbação ocorre quando o crescimento urbano faz cidades vizinhas se encontrarem."},
+  {materia:"Geografia", banca:"COLTEC", serie:"7º Ano", topico:"Geografia do Brasil - Hidrografia", q:"Qual a maior bacia hidrográfica totalmente brasileira?", ops:["Tocantins-Araguaia","São Francisco","Paraná","Amazonas"],"gab":"a", explicacao:"A bacia do Tocantins-Araguaia é a maior bacia hidrográfica 100% em território nacional."},
+  {materia:"Geografia", banca:"IFET", serie:"8º Ano", topico:"Demografia - Pirâmide Etária", q:"Uma pirâmide etária com a base muito larga indica alta taxa de:", ops:["Natalidade","Expectativa de Vida","Mortalidade Infantil","Idosos"],"gab":"a", explicacao:"Base larga representa proporção elevada de jovens e crianças (alta natalidade)."},
+  {materia:"Geografia", banca:"CENTEC", serie:"9º Ano", topico:"Geopolítica - Blocos Econômicos", q:"Bloco econômico fundado por Brasil, Argentina, Paraguai e Uruguai:", ops:["Mercosul","Pacto Andino","União Europeia","USMCA"],"gab":"a", explicacao:"O Mercado Comum do Sul (Mercosul) foi criado pelo Tratado de Assunção em 1991."},
+  {materia:"Geografia", banca:"CEDAF", serie:"6º Ano", topico:"Meio Ambiente - Impactos Ambientais", q:"O fenômeno natural de retenção de calor intensificado pela poluição é o:", ops:["Efeito Estufa","Inversão Térmica","Ilha de Calor","Chuva Ácida"],"gab":"a", explicacao:"O efeito estufa retém o calor do Sol; a emissão excessiva de gases intensifica o processo."},
+  {materia:"Geografia", banca:"COLTEC", serie:"7º Ano", topico:"Geografia do Brasil - Regiões", q:"Qual Estado brasileiro localiza-se no extremo Sul do país?", ops:["Rio Grande do Sul","Paraná","Santa Catarina","São Paulo"],"gab":"a", explicacao:"O Rio Grande do Sul é o estado mais meridional do Brasil."},
+  {materia:"Geografia", banca:"IFET", serie:"6º Ano", topico:"Geografia Física - Oceanos", q:"Qual oceano banha toda a costa leste do território brasileiro?", ops:["Atlântico","Pacífico","Índico","Glacial Ártico"],"gab":"a", explicacao:"O Brasil possui seu litoral inteiramente banhado pelo Oceano Atlântico."},
+  {materia:"Geografia", banca:"CENTEC", serie:"7º Ano", topico:"Geografia do Brasil - Capital", q:"Qual a atual capital federal do Brasil inaugurada em 1960?", ops:["Brasília","Rio de Janeiro","São Paulo","Salvador"],"gab":"a", explicacao:"Brasília, construída no Distrito Federal (Centro-Oeste), é a capital do país desde 1960."},
+  {materia:"Geografia", banca:"CEDAF", serie:"7º Ano", topico:"Geografia do Brasil - Industrialização", q:"Qual a Região mais populosa e industrializada do Brasil?", ops:["Sudeste","Sul","Nordeste","Norte"],"gab":"a", explicacao:"A Região Sudeste concentra a maior parcela da população e do PIB industrial brasileiro."},
+  {materia:"Geografia", banca:"COLTEC", serie:"6º Ano", topico:"Climatologia - Aquecimento Global", q:"O derretimento de calotas polares está associado diretamente ao:", ops:["Aquecimento Global","El Niño","Efeito Coriólis","La Niña"],"gab":"a", explicacao:"O aumento das temperaturas médias globais acelera o derretimento do gelo polar."},
+  {materia:"Geografia", banca:"IFET", serie:"6º Ano", topico:"Cartografia - Escalas", q:"Qual escala cartográfica apresenta MAIOR detalhamento da realidade?", ops:["1:10.000","1:100.000","1:1.000.000","1:10.000.000"],"gab":"a", explicacao:"Escalas com denominadores menores são grandes escalas, representando mais detalhes da área."}
+];
+
+let questoesSelecionadas = [];
+let respostas = [];
+let resultadoRedacaoHTML = '';
+
+function aoDigitarTelefone(input){
+  let v = input.value.replace(/\D/g, "");
+  if(v.length > 11) v = v.slice(0, 11);
+  if(v.length > 2) v = "(" + v.substring(0,2) + ") " + v.substring(2);
+  if(v.length > 9) v = v.substring(0,10) + "-" + v.substring(10);
+  input.value = v;
+
+  const telClean = v.replace(/\D/g, "");
+  if(telClean.length === 11){
+    const alunosSalvos = JSON.parse(localStorage.getItem('alunos_registrados') || '{}');
+    if(alunosSalvos[telClean]){
+      document.getElementById('inputNome').value = alunosSalvos[telClean];
+      document.getElementById('inputNome').readOnly = true;
+    } else {
+      document.getElementById('inputNome').readOnly = false;
+    }
+  }
+}
+
+function validarELogar(){
+  const nomeInput = document.getElementById('inputNome').value.trim();
+  const telInput = document.getElementById('inputTelefone').value.trim();
+  const telClean = telInput.replace(/\D/g, "");
+  const errBox = document.getElementById('msgErro');
+
+  if(telClean.length !== 11){
+    errBox.style.display = 'block';
+    errBox.textContent = "⚠️ Insira um número de telefone celular válido com DDD.";
+    return;
+  }
+
+  if(!nomeInput || nomeInput.length < 3){
+    errBox.style.display = 'block';
+    errBox.textContent = "⚠️ Por favor, preencha o nome do aluno.";
+    return;
+  }
+
+  const alunosSalvos = JSON.parse(localStorage.getItem('alunos_registrados') || '{}');
+  if(alunosSalvos[telClean] && alunosSalvos[telClean].toLowerCase() !== nomeInput.toLowerCase()){
+    errBox.style.display = 'block';
+    errBox.textContent = `⚠️ Este telefone já pertence ao aluno "${alunosSalvos[telClean]}".`;
+    return;
+  }
+
+  alunosSalvos[telClean] = nomeInput;
+  localStorage.setItem('alunos_registrados', JSON.stringify(alunosSalvos));
+
+  errBox.style.display = 'none';
+  userLogin = nomeInput;
+  userTelefone = telInput;
+  tempoInicioApp = new Date();
+
+  const progressoAlunos = JSON.parse(localStorage.getItem('progresso_provas') || '{}');
+  let qtdFeitas = progressoAlunos[telClean] || 0;
+  numeroProvaAtual = (qtdFeitas % 15) + 1;
+
+  document.getElementById('loginModal').style.display = 'none';
+  document.getElementById('areaAplicacao').style.display = 'block';
+
+  document.getElementById('exibirNomeAluno').textContent = userLogin;
+  document.getElementById('exibirTelefone').textContent = userTelefone;
+  document.getElementById('exibirIdentificadorProva').textContent = `Prova ${String(numeroProvaAtual).padStart(2, '0')}`;
+
+  verificarTravaRotina();
+  iniciarTimerTreino();
+  atualizarDataHora();
+  gerarProvaSequencial();
+}
+
+function modo(m){
+  salvarTextoRedacao();
+  modoAtual=m;
+  document.querySelectorAll('.btn-topo').forEach(b=>b.classList.remove('ativo'));
+  const btnAlvo = document.getElementById(`btn${m.charAt(0).toUpperCase()+m.slice(1)}`);
+  if(btnAlvo) btnAlvo.classList.add('ativo');
+  montarProva();
+}
+
+function salvarTextoRedacao(){
+  const el = document.getElementById('textoRedacao');
+  if(el){
+    textoRedacaoSalvo = el.value;
+    const chave = `rascunho_redacao_PROVA_${String(numeroProvaAtual).padStart(2, '0')}`;
+    localStorage.setItem(chave, textoRedacaoSalvo);
+  }
+}
+
+function carregarRascunhoRedacao(){
+  const chave = `rascunho_redacao_PROVA_${String(numeroProvaAtual).padStart(2, '0')}`;
+  const rascunhoSalvo = localStorage.getItem(chave);
+  if(rascunhoSalvo !== null){
+    textoRedacaoSalvo = rascunhoSalvo;
+  } else {
+    textoRedacaoSalvo = '';
+  }
+}
+
+function limparRascunhoRedacao(){
+  const chave = `rascunho_redacao_PROVA_${String(numeroProvaAtual).padStart(2, '0')}`;
+  localStorage.removeItem(chave);
+  textoRedacaoSalvo = '';
+}
+
+function gerarProvaSequencial(){
+  carregarRascunhoRedacao();
+  temaRedacaoAtual = bancoTemasRedacao[numeroProvaAtual - 1];
+
+  const materias = ["Português", "Matemática", "Ciências", "História", "Geografia"];
+  questoesSelecionadas = [];
+
+  materias.forEach(mat => {
+    const daMateria = bancoQuestoes9Ano.filter(q => q.materia === mat);
+    const offset = ((numeroProvaAtual - 1) * 2) % daMateria.length;
+    const q1 = daMateria[offset];
+    const q2 = daMateria[(offset + 1) % daMateria.length];
+    questoesSelecionadas.push(q1, q2);
+  });
+
+  respostas = Array(questoesSelecionadas.length).fill(null);
+  resultadoRedacaoHTML = '';
+  notaRedacao = 0;
+  detalhesRedacaoPontos = [];
+  montarProva();
+}
+
+function montarProva(){
+  salvarTextoRedacao();
+  let html='';
+  const idxPedagogico = (numeroProvaAtual - 1) % conteudoPedagogicoTemas.length;
+  const infoPedagogica = conteudoPedagogicoTemas[idxPedagogico] || conteudoPedagogicoTemas[0];
+
+  if(modoAtual==='texto'||modoAtual==='ambos'){
+    html+=`
+      <h3>📝 Redação Guiada - Prova ${String(numeroProvaAtual).padStart(2, '0')}</h3>
+      <p style="font-weight:bold;color:var(--azul);font-size:16px">Tema: ${temaRedacaoAtual}</p>
+      
+      <!-- PASSO 1: ENTENDENDO O TEMA -->
+      <div class="box-orientacao">
+        <h4 style="margin-top:0;color:var(--azul)">📘 PASSO 1: Entendendo o Assunto (Guia de Estudo)</h4>
+        <p style="margin-bottom:0">${infoPedagogica.explicacao}</p>
+      </div>
+
+      <!-- PASSO 2: QUIZ DE IDEIAS (ENCONTRANDO O CAMINHO) -->
+      <div class="box-quiz">
+        <h4 style="margin-top:0;color:var(--azul)">💡 PASSO 2: Organize suas Ideias antes de Escrever</h4>
+        ${infoPedagogica.perguntasQuiz.map((pq, pidx) => `
+          <div style="margin-bottom:10px">
+            <p style="font-weight:bold;margin:4px 0">${pidx+1}. ${pq.q}</p>
+            ${pq.ops.map((o, oidx) => `
+              <label style="display:block;font-size:13px;margin:2px 0">
+                <input type="radio" name="quizP${pidx}" value="${oidx}"> ${['A','B','C','D'][oidx]}) ${o}
+              </label>
+            `).join('')}
+          </div>
+        `).join('')}
+      </div>
+
+      <!-- PASSO 3: TEXTOS MODELO DE REFERÊNCIA -->
+      <div style="margin:14px 0">
+        <h4 style="color:var(--verde)">🌟 PASSO 3: Leia os Textos Modelo de Exemplo</h4>
+        <div class="box-modelo">
+          <strong>🟢 Modelo Básico (Estrutura Inicial):</strong><br>
+          <div style="white-space:pre-line">${infoPedagogica.modeloNivel1}</div>
+        </div>
+        <div class="box-modelo" style="background:#e8f5e9">
+          <strong>🏆 Modelo Ouro / Aprovação (Padrão COLTEC/IFET):</strong><br>
+          <div style="white-space:pre-line">${infoPedagogica.modeloNivel3}</div>
+        </div>
+      </div>
+
+      <!-- SUGESTÕES DE TÍTULOS -->
+      <div class="box-titulos">
+        <strong>💡 5 Sugestões de Títulos Incríveis para usar na 1ª Linha:</strong>
+        <ul style="margin:4px 0;padding-left:20px;font-size:13.5px">
+          ${infoPedagogica.titulosSugestoes.map(t => `<li><em>${t}</em></li>`).join('')}
+        </ul>
+      </div>
+
+      <!-- DOWNLOAD DA FOLHA A4 -->
+      <div style="text-align:center;margin:12px 0">
+        <a href="folha_redacao_pautada.html" target="_blank" class="btn-pdf">📄 Imprimir Folha Oficial de Redação A4 (30 Linhas)</a>
+      </div>
+
+      <p class="hint">Escreva à caneta na Folha Pautada A4 e depois digite o seu rascunho abaixo para obter o diagnóstico imediato:</p>
+      <textarea id="textoRedacao" class="textarea-redacao" placeholder="Digite seu título na primeira linha e pule uma linha para o 1º parágrafo..." oninput="salvarTextoRedacao()"></textarea>
+      
+      <button class="btn-seta" onclick="corrigirRedacao()">📊 Avaliar Estrutura e Pertinência do Texto</button>
+      <div id="resultadoRedacao" style="display:none;margin-top:12px"></div>
+      <hr>
+    `;
+  }
+  
+  if(modoAtual==='prova'||modoAtual==='ambos'){
+    html+=`<h3>❓ Prova Objetiva - Prova ${String(numeroProvaAtual).padStart(2, '0')}</h3>`;
+    questoesSelecionadas.forEach((q,i)=>{
+      const respAtual = respostas[i] ? respostas[i].letra : '';
+      const tipoAtual = respostas[i] ? respostas[i].tipo : 'estudado';
+
+      html+=`
+        <div class="questao" id="q${i}">
+          <div>
+            <span class="tag-banca">${q.banca}</span>
+            <span class="tag-materia">${q.materia}</span>
+            <span class="tag-serie">${q.serie}</span>
+          </div>
+          <p><strong>${i+1}. ${q.q}</strong></p>
+      `;
+      q.ops.forEach((op,idx)=>{
+        const letra=['a','b','c','d'][idx];
+        const classeSel = (respAtual === letra) ? 'selecionada' : '';
+        html+=`<button class="btn-alt ${classeSel}" id="alt${i}${letra}" onclick="selecionar(${i},'${letra}')">${letra.toUpperCase()}) ${op}</button>`;
+      });
+      
+      const estiloAcoes = respAtual ? 'block' : 'none';
+      html+=`
+        <div style="margin-top:8px;display:${estiloAcoes}" id="acoes${i}">
+          <button class="btn-seta ${tipoAtual==='estudado'?'ativo':''}" id="btnEstudado${i}" onclick="confirmarTipo(${i},'estudado')">Já estudei</button>
+          <button class="btn-seta btn-chute ${tipoAtual==='chute'?'ativo':''}" id="btnChute${i}" onclick="confirmarTipo(${i},'chute')">Chute</button>
+        </div>
+        </div><hr>
+      `;
+    });
+    html+=`<button class="btn-seta" onclick="finalizar()" style="font-size:18px;width:100%">🚀 Finalizar Prova e Gerar Diagnóstico</button>`;
+  }
+  
+  document.getElementById('areaProva').innerHTML = html;
+
+  const elTextarea = document.getElementById('textoRedacao');
+  if(elTextarea){
+    elTextarea.value = textoRedacaoSalvo;
+  }
+
+  if(resultadoRedacaoHTML){
+    const elRes = document.getElementById('resultadoRedacao');
+    if(elRes){
+      elRes.innerHTML = resultadoRedacaoHTML;
+      elRes.style.display = 'block';
+    }
+  }
+}
+
+function selecionar(idx, letra){
+  const tipoAnterior = (respostas[idx] && respostas[idx].tipo) ? respostas[idx].tipo : 'estudado';
+  respostas[idx] = { letra: letra, tipo: tipoAnterior, confirmado: true };
+  
+  document.querySelectorAll(`#q${idx} .btn-alt`).forEach(b => b.classList.remove('selecionada'));
+  const btnSel = document.getElementById(`alt${idx}${letra}`);
+  if(btnSel) btnSel.classList.add('selecionada');
+
+  const acoesEl = document.getElementById(`acoes${idx}`);
+  if(acoesEl) acoesEl.style.display = 'block';
+
+  confirmarTipo(idx, tipoAnterior);
+}
+
+function confirmarTipo(idx, tipo){
+  if(!respostas[idx] || !respostas[idx].letra) return alert('Selecione uma alternativa primeiro!');
+  respostas[idx].tipo = tipo;
+
+  const btnEstudado = document.getElementById(`btnEstudado${idx}`);
+  const btnChute = document.getElementById(`btnChute${idx}`);
+
+  if(btnEstudado && btnChute){
+    btnEstudado.classList.remove('ativo');
+    btnChute.classList.remove('ativo');
+
+    if(tipo === 'estudado') btnEstudado.classList.add('ativo');
+    if(tipo === 'chute') btnChute.classList.add('ativo');
+  }
+}
+
+function corrigirRedacao(){
+  salvarTextoRedacao();
+  const textoOriginal = textoRedacaoSalvo.trim();
+  detalhesRedacaoPontos = [];
+  
+  if(textoOriginal.length < 20){
+    notaRedacao = 0;
+    resultadoRedacaoHTML = `
+      <div style="background:#fff3e0;border:1px solid var(--laranja);padding:12px;border-radius:6px">
+        ⚠️ Escreva um texto de pelo menos 20 caracteres para obter o diagnóstico da redação.
+      </div>
+    `;
+    const elRes = document.getElementById('resultadoRedacao');
+    if(elRes){
+      elRes.innerHTML = resultadoRedacaoHTML;
+      elRes.style.display = 'block';
+    }
+    return;
+  }
+
+  const ehCodigoHTML = /<!DOCTYPE|<html|<style|<script|var\s+--|\{font-family/i.test(textoOriginal);
+  if(ehCodigoHTML){
+    notaRedacao = 0;
+    detalhesRedacaoPontos.push("📌 <strong>Ponto de Atenção:</strong> Código fonte detetado. Escreva apenas o texto da sua redação.");
+    
+    resultadoRedacaoHTML = `
+      <div style="background:#ffebee;border:2px solid var(--vermelho);padding:14px;border-radius:8px">
+        <h4 style="color:var(--vermelho);margin-top:0">❌ REDAÇÃO REPROVADA: NOTA 0 / 1000 PTS</h4>
+        <p style="color:var(--vermelho);font-weight:bold;margin-bottom:0">Formato Inválido (Código Fonte Detetado)!</p>
+      </div>
+    `;
+    const elRes = document.getElementById('resultadoRedacao');
+    if(elRes){
+      elRes.innerHTML = resultadoRedacaoHTML;
+      elRes.style.display = 'block';
+    }
+    return;
+  }
+  
+  const texto = textoOriginal.replace(/<[^>]*>?/gm, '');
+  const palavrasChave = palavrasChaveTemas[(numeroProvaAtual - 1) % 15];
+  const textoLower = texto.toLowerCase();
+  
+  const coincidencias = palavrasChave.filter(p => textoLower.includes(p));
+  const possuiPertinencia = coincidencias.length >= 2;
+
+  if(!possuiPertinencia){
+    notaRedacao = 0;
+    detalhesRedacaoPontos.push(`📌 <strong>Ponto de Atenção:</strong> Fuga ao Tema. O tema da Prova ${String(numeroProvaAtual).padStart(2, '0')} trata de "${temaRedacaoAtual}". O texto não usou os conceitos principais.`);
+    
+    resultadoRedacaoHTML = `
+      <div style="background:#ffebee;border:2px solid var(--vermelho);padding:14px;border-radius:8px">
+        <h4 style="color:var(--vermelho);margin-top:0">❌ REDAÇÃO REPROVADA: NOTA 0 / 1000 PTS</h4>
+        <p style="color:var(--vermelho);font-weight:bold;margin-bottom:0">Fuga ao Tema Proposto!</p>
+        <p style="font-size:13px;color:#333;margin-top:6px">Redija um texto focado em <strong>"${temaRedacaoAtual}"</strong> para obter pontuação.</p>
+      </div>
+    `;
+    const elRes = document.getElementById('resultadoRedacao');
+    if(elRes){
+      elRes.innerHTML = resultadoRedacaoHTML;
+      elRes.style.display = 'block';
+    }
+    return;
+  }
+
+  const linhas = texto.split('\n').filter(l => l.trim().length > 0);
+  const palavras = texto.split(/\s+/).length;
+  const paragrafos = texto.split(/\n\s*\n/).filter(p => p.trim().length > 0);
+  const conectivos = (texto.match(/portanto|assim|além disso|contudo|porém|em suma|logo|dessa forma|desse modo|diante disso|em primeiro lugar/gi) || []).length;
+  
+  let nota = 0;
+
+  if(linhas.length > 1 && linhas[0].length < 70){
+    nota += 200;
+    detalhesRedacaoPontos.push("🌟 <strong>Muito bom:</strong> Título destacado na primeira linha!");
+  } else {
+    detalhesRedacaoPontos.push("📌 <strong>Dica:</strong> Crie um título curto na 1ª linha para valorizar a apresentação.");
+  }
+
+  if(paragrafos.length >= 4){
+    nota += 300;
+    detalhesRedacaoPontos.push("🌟 <strong>Parabéns:</strong> Estrutura completa em 4 parágrafos (Introdução, D1, D2 e Conclusão).");
+  } else {
+    nota += paragrafos.length * 60;
+    detalhesRedacaoPontos.push(`📌 <strong>Dica:</strong> Organize o texto em 4 parágrafos para encorpar suas ideias.`);
+  }
+
+  if(palavras >= 150 && palavras <= 300){
+    nota += 300;
+    detalhesRedacaoPontos.push(`🌟 <strong>Excelente extensão:</strong> ${palavras} palavras (média de 4 a 5 linhas por parágrafo).`);
+  } else if(palavras < 150){
+    nota += Math.round((palavras / 150) * 200);
+    detalhesRedacaoPontos.push(`📌 <strong>Dica:</strong> Escreva um pouco mais (mínimo de 150 palavras) para aprofundar os argumentos.`);
+  } else {
+    nota += 200;
+    detalhesRedacaoPontos.push(`📌 <strong>Dica:</strong> Mantenha o texto dentro do limite de 300 palavras.`);
+  }
+
+  if(conectivos >= 3){
+    nota += 200;
+    detalhesRedacaoPontos.push(`🌟 <strong>Ótima coesão:</strong> Boa ligação entre as frases e parágrafos.`);
+  } else {
+    nota += conectivos * 60;
+    detalhesRedacaoPontos.push("📌 <strong>Dica de Ouro:</strong> Use palavras de transição como 'portanto', 'além disso', 'dessa forma'.");
+  }
+
+  notaRedacao = Math.min(1000, nota);
+
+  resultadoRedacaoHTML = `
+    <h4>📊 Nota Estrutural da Redação: ${notaRedacao} / 1000 pts</h4>
+    <div style="font-size:14px;line-height:1.6">${detalhesRedacaoPontos.map(d => `<p style="margin:4px 0">${d}</p>`).join('')}</div>
+  `;
+
+  const elRes = document.getElementById('resultadoRedacao');
+  if(elRes){
+    elRes.innerHTML = resultadoRedacaoHTML;
+    elRes.style.display = 'block';
+  }
+}
+
+function finalizar(){
+  salvarTextoRedacao();
+  corrigirRedacao();
+
+  let acertosTotal = 0;
+  let acertosConhecimento = 0;
+  let acertosChute = 0;
+  let respondidas = 0;
+  let errosMapeados = [];
+  let htmlGabaritoComentado = `<h3>💡 Gabarito Comentado e Dicas do Professor</h3>`;
+
+  respostas.forEach((r, i) => {
+    const q = questoesSelecionadas[i];
+    if(r && r.letra){
+      respondidas++;
+      const acertou = (r.letra === q.gab);
+      if(acertou){
+        acertosTotal++;
+        if(r.tipo === 'chute') acertosChute++;
+        else acertosConhecimento++;
+      } else {
+        errosMapeados.push({ num: i + 1, materia: q.materia, topico: q.topico, serie: q.serie });
+      }
+
+      const classeBox = acertou ? "acerto" : "erro";
+      const icone = acertou ? (r.tipo === 'chute' ? "🍀 ACERTOU NO CHUTE" : "✅ ACERTOU") : "💡 PONTO DE ATENÇÃO";
+
+      htmlGabaritoComentado += `
+        <div class="box-gabarito ${classeBox}">
+          <strong>Questão ${i+1} (${q.materia} - ${q.serie}):</strong> ${icone}<br>
+          <em>Assunto:</em> ${q.topico}<br>
+          <em>Sua resposta:</em> Opção ${r.letra.toUpperCase()} (${r.tipo === 'chute' ? 'Marcado como Chute' : 'Já Estudado'}) | <em>Gabarito:</em> Opção ${q.gab.toUpperCase()}<br>
+          <div style="margin-top:6px"><strong>Explicação Construtiva:</strong> ${q.explicacao}</div>
+        </div>
+      `;
+    }
+  });
+
+  if(modoAtual !== 'texto' && respondidas < questoesSelecionadas.length){
+    return alert(`Responda todas as ${questoesSelecionadas.length} questões antes de finalizar!`);
+  }
+
+  const notaQ = Math.round((acertosTotal / questoesSelecionadas.length) * 1000);
+  const notaFinalGeral = Math.round((notaQ + notaRedacao) / 2);
+  const percentualMeta = Math.min(100, Math.round((notaFinalGeral / META_FIXA) * 100));
+
+  let htmlPlanoEstudo = `
+    <div class="box-estudo">
+      <h4>🌱 Caminho para o Próximo Nível (Apoio aos Pais e Aluno):</h4>
+      <p><strong>Nossa Meta:</strong> O objetivo deste treino é identificar o que já dominamos e o que podemos melhorar juntos!</p>
+      <ul>
+  `;
+  
+  if(errosMapeados.length > 0){
+    errosMapeados.forEach(e => {
+      htmlPlanoEstudo += `<li>📘 <strong>${e.materia} (${e.serie}):</strong> Vale a pena dar uma olhada em <em>${e.topico}</em>.</li>`;
+    });
+  } else {
+    htmlPlanoEstudo += `<li>🎉 <strong>Incrível!</strong> Você mandou muito bem nas questões objetivas deste simulado.</li>`;
+  }
+
+  if(acertosChute > 0){
+    htmlPlanoEstudo += `<li>🍀 <strong>Dica Amiga:</strong> Você acertou ${acertosChute} questão(ões) no chute. Revise a explicação para transformar sorte em certeza!</li>`;
+  }
+  htmlPlanoEstudo += `</ul></div>`;
+
+  relatorioWhatsAppTexto = `*RELATÓRIO DE EVOLUÇÃO E TREINO - SETA PREPARATÓRIO*\n` +
+    `*Aluno(a):* ${userLogin}\n` +
+    `*Simulado:* Prova ${String(numeroProvaAtual).padStart(2, '0')}\n` +
+    `*Desempenho Atual:* ${percentualMeta}% da Meta (${notaFinalGeral}/1000 pts)\n\n` +
+    `*Resumo do Treino:*\n` +
+    `• Questões Objetivas: ${notaQ}/1000 (${acertosTotal}/${questoesSelecionadas.length} acertos)\n` +
+    `  - Domínio Pleno: ${acertosConhecimento} acerto(s)\n` +
+    `  - Chutes Certo: ${acertosChute} acerto(s)\n` +
+    `• Redação: ${notaRedacao}/1000 pts\n\n` +
+    `*Pontos de Destaque e Aprendizado:*\n`;
+
+  detalhesRedacaoPontos.forEach(d => {
+    const textoLimpo = d.replace(/<[^>]*>/g, '');
+    relatorioWhatsAppTexto += `${textoLimpo}\n`;
+  });
+
+  if(errosMapeados.length > 0){
+    relatorioWhatsAppTexto += `\n*Assuntos para Repassar em Casa:*\n`;
+    errosMapeados.forEach(e => {
+      relatorioWhatsAppTexto += `• ${e.materia} (${e.serie}): ${e.topico}\n`;
+    });
+  }
+
+  relatorioWhatsAppTexto += `\n🚀 _Estamos juntos nessa jornada de treino! Fale com seus pais e vamos continuar evoluindo!_`;
+
+  let htmlResultado = `
+    <h3>📊 Relatório Construtivo - Prova ${String(numeroProvaAtual).padStart(2, '0')}</h3>
+    <h2>Aproveitamento Atual: ${notaFinalGeral} / 1000 pts (Meta Fixa: ${META_FIXA})</h2>
+    <p><strong>Desempenho Objetiva:</strong> ${notaQ}/1000 (${acertosTotal}/${questoesSelecionadas.length} acertos)</p>
+    <p><strong>Aproveitamento Redação:</strong> ${notaRedacao}/1000 pts</p>
+    
+    <div class="chance-box ${percentualMeta >= 80 ? 'chance-alta' : 'chance-construcao'}">
+      🚀 EVOLUÇÃO NO SIMULADO: ${percentualMeta}% da Meta Concluída!<br>
+      <span style="font-size:14px;font-weight:normal;color:#333">
+        ${percentualMeta >= 80 ? 'Excelente ritmo! Você está muito próximo do padrão oficial!' : 'Você está no caminho! Cada simulado é uma oportunidade para aprender. Vamos juntos com seus pais melhorar no próximo!'}
+      </span>
+    </div>
+
+    <div class="card" style="background:#f8f9fa;border:1px solid #ddd">
+      <h4>📝 Feedback Orientativo da Redação:</h4>
+      <div style="font-size:14px;line-height:1.6">${detalhesRedacaoPontos.map(d => `<p style="margin:4px 0">${d}</p>`).join('')}</div>
+    </div>
+
+    ${htmlPlanoEstudo}
+    <hr>
+    ${htmlGabaritoComentado}
+  `;
+
+  htmlResultado += `
+    <hr>
+    <div id="statusEnvio" style="font-weight:bold;color:var(--verde);margin-bottom:16px">⏳ Salvando treino na planilha...</div>
+    
+    <button class="btn-whats" onclick="enviarWhatsApp()">📱 Compartilhar Relatório no WhatsApp com os Pais e Liberar Próxima Prova</button>
+    
+    <button id="btnProximaProva" class="btn-seta" style="font-size:16px;width:100%;padding:14px;background:var(--azul)" disabled onclick="avancarParaProximaProva()">🔒 Compartilhe no WhatsApp para Liberar a Próxima Prova</button>
+  `;
+  
+  document.getElementById('resultadoFinal').innerHTML = htmlResultado;
+  document.getElementById('resultadoFinal').style.display = 'block';
+  document.getElementById('areaProva').style.display = 'none';
+
+  const telClean = userTelefone.replace(/\D/g, "");
+  const progressoAlunos = JSON.parse(localStorage.getItem('progresso_provas') || '{}');
+  progressoAlunos[telClean] = (progressoAlunos[telClean] || 0) + 1;
+  localStorage.setItem('progresso_provas', JSON.stringify(progressoAlunos));
+
+  enviarDadosAutomatico(notaQ, acertosTotal);
+}
+
+function enviarWhatsApp(){
+  if(!relatorioWhatsAppTexto) return;
+  const urlWa = `https://wa.me/?text=${encodeURIComponent(relatorioWhatsAppTexto)}`;
+  window.open(urlWa, '_blank');
+
+  const btnProx = document.getElementById('btnProximaProva');
+  if(btnProx){
+    btnProx.disabled = false;
+    btnProx.innerHTML = `🎲 Fazer Próxima Prova (Prova ${String((numeroProvaAtual % 15) + 1).padStart(2, '0')})`;
+  }
+}
+
+function avancarParaProximaProva(){
+  const telClean = userTelefone.replace(/\D/g, "");
+  const progressoAlunos = JSON.parse(localStorage.getItem('progresso_provas') || '{}');
+  let qtdFeitas = progressoAlunos[telClean] || 0;
+  numeroProvaAtual = (qtdFeitas % 15) + 1;
+
+  textoRedacaoSalvo = '';
+  limparRascunhoRedacao();
+
+  document.getElementById('exibirIdentificadorProva').textContent = `Prova ${String(numeroProvaAtual).padStart(2, '0')}`;
+  document.getElementById('resultadoFinal').style.display = 'none';
+  document.getElementById('areaProva').style.display = 'block';
+
+  gerarProvaSequencial();
+}
+
+function enviarDadosAutomatico(notaQ, acertosTotal){
+  const agora = new Date();
+  const tempoTotalMinutos = Math.max(1, Math.round((agora - tempoInicioApp) / 60000));
+  const telClean = userTelefone.replace(/\D/g, "");
+  const textoEscrito = textoRedacaoSalvo || "Redação não realizada nesta tentativa.";
+  
+  const chaveUnicaAluno = userLogin + "_" + telClean;
+
+  const payload = {
+    login: chaveUnicaAluno,
+    data: agora.toLocaleDateString('pt-BR'),
+    hora: agora.toLocaleTimeString('pt-BR'),
+    prova: `Prova ${String(numeroProvaAtual).padStart(2, '0')}`,
+    tema: temaRedacaoAtual,
+    notaProva: notaQ,
+    notaRedacao: notaRedacao,
+    acertos: acertosTotal,
+    tempoMinutos: tempoTotalMinutos,
+    objetivoMeta: META_FIXA,
+    textoRedacao: textoEscrito
+  };
+
+  fetch(URL_CEDAF, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(payload)
+  }).then(() => {
+    document.getElementById('statusEnvio').innerHTML = "✅ Treino registrado com sucesso!";
+    limparRascunhoRedacao();
+  }).catch(err => {
+    document.getElementById('statusEnvio').innerHTML = "❌ Erro ao salvar dados. Tente novamente.";
+  });
+}
+</script>
+</body>
+</html>
