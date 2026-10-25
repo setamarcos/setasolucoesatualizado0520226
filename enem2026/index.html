@@ -93,7 +93,7 @@
       </div>
 
       <div class="question-box">
-        <div class="question-enunciado" id="q-enunciado">Carregando questão do servidor...</div>
+        <div class="question-enunciado" id="q-enunciado">Carregando questões do servidor...</div>
         <img id="q-img" class="question-img hidden" src="" alt="Imagem da questão">
         
         <div class="options-group" id="options-container"></div>
@@ -120,6 +120,9 @@
   </div>
 
   <script>
+    // IMPORTANTE: Cole abaixo o link gerado pela sua WebApp do Google Apps Script
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxPM_vfxyPUxwB4Thd2CYI2VR4dYA-ODcAvTg0w9UcKMGMG2qt0ZggVwwfumb016YjF/exec";
+
     let currentUser = '';
     let currentAno = 2022;
     let questions = [];
@@ -128,7 +131,6 @@
     let timerInterval = null;
     let secondsElapsed = 0;
 
-    // Relógio de Data e Hora em Tempo Real
     function updateDateTime() {
       const now = new Date();
       const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
@@ -146,7 +148,6 @@
     }
 
     function atualizarBotoesProvas() {
-      // Verifica no localStorage do navegador quais provas o usuário já concluiu
       const p1Done = localStorage.getItem(currentUser + '_2022_done');
       const p2Done = localStorage.getItem(currentUser + '_2023_done');
 
@@ -172,13 +173,18 @@
       answers = {};
       startTimer();
 
-      // Busca na nuvem através do Google Apps Script
+      // Busca na nuvem (Suporta tanto GitHub Pages via fetch quanto Apps Script via google.script.run)
       if (typeof google !== 'undefined' && google.script) {
         google.script.run
           .withSuccessHandler(renderQuestions)
           .getQuestoesProva(ano);
       } else {
-        document.getElementById('q-enunciado').innerText = 'Atenção: Abra esta página pelo link oficial da WebApp do Apps Script para carregar o banco de questões.';
+        fetch(`${WEB_APP_URL}?action=getQuestoes&ano=${ano}`)
+          .then(response => response.json())
+          .then(data => renderQuestions(data))
+          .catch(err => {
+            document.getElementById('q-enunciado').innerText = 'Erro ao conectar ao banco de questões na nuvem. Verifique a URL do WebApp.';
+          });
       }
     }
 
@@ -258,7 +264,6 @@
       const total = questions.length;
       const percentual = ((acertos / total) * 100).toFixed(1);
 
-      // Marca a prova como concluída para liberar a próxima
       localStorage.setItem(currentUser + '_' + currentAno + '_done', 'true');
 
       document.getElementById('screen-quiz').classList.add('hidden');
@@ -267,9 +272,11 @@
       document.getElementById('res-score').innerText = percentual;
       document.getElementById('res-time').innerText = document.getElementById('timer').innerText;
 
-      // Salva no Apps Script
+      // Salva os resultados no Google Sheets
       if (typeof google !== 'undefined' && google.script) {
         google.script.run.salvarResultado(currentUser, currentAno, acertos, total, secondsElapsed);
+      } else {
+        fetch(`${WEB_APP_URL}?action=salvarResultado&usuario=${encodeURIComponent(currentUser)}&ano=${currentAno}&acertos=${acertos}&total=${total}&tempo=${secondsElapsed}`);
       }
     }
 
