@@ -3,13 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PREPARATÓRIO 9º ANO - CEDAF / COLTEC / IF / CENTEC</title>
+<title>SETA PREPARATÓRIO ENSINO MÉDIO - COLTEC / CEDAF / IFET / CENTEC</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-:root{ --azul:#1a73e8; --verde:#34a853; --laranja:#ff8c00; --vermelho:#d32f2f; --fundo:#fffaf0; }
+:root{ --azul:#1a73e8; --verde:#34a853; --laranja:#ff8c00; --vermelho:#d32f2f; --fundo:#fffaf0; --cinza-escuro:#1e293b; }
 body{font-family:'Segoe UI',Arial,sans-serif;max-width:980px;margin:0 auto;padding:16px;background:var(--fundo);color:#333}
 h1{color:var(--azul);text-align:center;font-size:24px;margin-bottom:4px}
 .subtitulo{color:var(--verde);text-align:center;font-weight:bold;margin-top:0}
+.header-data-hora{text-align:center;font-size:14px;font-weight:bold;color:#5f6368;margin-bottom:8px}
+
+.banner-rotina{background:var(--cinza-escuro);color:#fff;padding:12px;border-radius:10px;text-align:center;font-weight:bold;margin:12px 0;box-shadow:0 3px 6px rgba(0,0,0,0.15)}
+.timer-box{background:#fff3e0;border:2px solid var(--laranja);color:#d35400;padding:8px 16px;border-radius:20px;font-weight:bold;display:inline-block;margin:8px 0;font-size:15px}
+
 .btn-topo{background:var(--azul);color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-size:14px;margin:4px}
 .btn-topo.ativo{background:var(--verde)}
 .btn-seta{background:var(--verde);color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-size:15px;margin:4px}
@@ -20,35 +25,48 @@ h1{color:var(--azul);text-align:center;font-size:24px;margin-bottom:4px}
 .btn-whats{background:#25d366;color:#fff;font-weight:bold;padding:14px 18px;border-radius:8px;border:none;cursor:pointer;font-size:16px;margin:12px 0;width:100%;box-shadow:0 3px 6px rgba(0,0,0,0.15)}
 .btn-alt{width:100%;text-align:left;background:#fff;border:2px solid #ddd;padding:10px 12px;margin:4px 0;border-radius:6px;cursor:pointer;font-size:15px}
 .btn-alt.selecionada{border-color:var(--azul);background:#e8f0fe;font-weight:bold}
+
 .card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 3px 8px rgba(0,0,0,0.1);margin:16px 0}
+.box-orientacao{background:#e8f0fe;border-left:5px solid var(--azul);padding:14px;border-radius:6px;margin:12px 0}
+.box-quiz{background:#f8fafc;border:2px dashed var(--azul);padding:14px;border-radius:8px;margin:12px 0}
+.box-modelo{background:#f1f8e9;border:1px solid var(--verde);padding:12px;border-radius:8px;margin:10px 0;font-size:14px;line-height:1.5}
+.box-titulos{background:#fff8e1;border:1px solid var(--laranja);padding:12px;border-radius:8px;margin:10px 0}
+
 .hint{font-size:13px;color:#5f6368;font-style:italic}
 .textarea-redacao{width:100%;height:220px;padding:12px;font-size:15px;border:2px solid var(--azul);border-radius:8px;margin:8px 0;box-sizing:border-box}
 #resultadoFinal,#areaAplicacao{display:none}
+
 .tag-banca{display:inline-block;background:#e8f0fe;color:var(--azul);padding:2px 8px;border-radius:4px;font-size:12px;font-weight:bold;margin-bottom:6px}
 .tag-materia{display:inline-block;background:#e6f4ea;color:var(--verde);padding:2px 8px;border-radius:4px;font-size:12px;font-weight:bold;margin-bottom:6px}
 .tag-serie{display:inline-block;background:#fff3e0;color:var(--laranja);padding:2px 8px;border-radius:4px;font-size:12px;font-weight:bold;margin-bottom:6px}
-.header-data-hora{text-align:center;font-size:14px;font-weight:bold;color:#5f6368;margin-bottom:8px}
 
 .box-gabarito{background:#f8f9fa;border-left:4px solid var(--azul);padding:12px;margin:10px 0;border-radius:4px;font-size:14px}
 .box-gabarito.acerto{border-left-color:var(--verde);background:#e6f4ea}
 .box-gabarito.erro{border-left-color:var(--laranja);background:#fff3e0}
 .box-estudo{background:#e8f0fe;border:1px solid var(--azul);padding:14px;border-radius:8px;margin:16px 0}
-.box-estudo h4{margin-top:0;color:var(--azul)}
 
-#loginModal{background:#fff;padding:28px;border-radius:12px;box-shadow:0 4px 14px rgba(0,0,0,0.15);max-width:420px;margin:40px auto;text-align:center}
+#loginModal{background:#fff;padding:28px;border-radius:12px;box-shadow:0 4px 14px rgba(0,0,0,0.15);max-width:440px;margin:40px auto;text-align:center}
 #loginModal input{width:90%;padding:10px;margin:8px 0;border:1px solid #ccc;border-radius:6px;font-size:15px;box-sizing:border-box}
 .erro-msg{color:var(--vermelho);font-size:13px;font-weight:bold;display:none;margin-top:4px}
 .badge-meta{background:#fff3e0;color:var(--laranja);padding:6px 12px;border-radius:20px;font-weight:bold;display:inline-block;margin:8px 0}
 .chance-box{padding:16px;border-radius:8px;text-align:center;font-size:17px;font-weight:bold;margin:16px 0;line-height:1.5}
 .chance-alta{background:#e6f4ea;color:var(--verde);border:2px solid var(--verde)}
 .chance-construcao{background:#fff3e0;color:#d35400;border:2px solid var(--laranja)}
+
+.btn-pdf{background:#8e44ad;color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:14px;margin:6px 0;display:inline-block;text-decoration:none}
 </style>
 </head>
 <body>
 
 <div id="loginModal">
+  <!-- LOGO NA TELA DE LOGIN -->
+  <div style="text-align:center; margin-bottom:12px;">
+    <img src="https://raw.githubusercontent.com/setamarcos/setasolucoesatualizado0520226/main/img/logo2.png" alt="Seta Soluções" style="max-width:200px; height:auto;">
+  </div>
+
   <h2>Acesso do Aluno 🎯</h2>
-  <p class="hint">Digite seu telefone e nome para iniciar os simulados de treino.</p>
+  <p style="color:var(--azul);font-weight:bold;margin:4px 0">SETA PREPARATÓRIO ENSINO MÉDIO</p>
+  <p class="hint">Digite seu telefone e nome para iniciar seu treino diário.</p>
   
   <input type="tel" id="inputTelefone" placeholder="(XX) 9XXXX-XXXX" maxlength="15" oninput="aoDigitarTelefone(this)">
   <input type="text" id="inputNome" placeholder="Nome Completo do Aluno">
@@ -57,19 +75,37 @@ h1{color:var(--azul);text-align:center;font-size:24px;margin-bottom:4px}
   <div id="msgErro" class="erro-msg"></div>
   
   <br><br>
-  <button class="btn-topo" style="width:95%;padding:12px;font-size:16px" onclick="validarELogar()">🚀 Acessar Simulados</button>
+  <button class="btn-topo" style="width:95%;padding:12px;font-size:16px" onclick="validarELogar()">🚀 Iniciar Treino do Dia</button>
 </div>
 
 <div id="areaAplicacao">
-  <div class="header-data-hora" id="exibirDataHora">--/--/---- --:--:--</div>
-  <h1>PREPARATÓRIO 9º ANO - CEDAF / COLTEC / IF / CENTEC 🎯</h1>
+  <!-- LOGO NO TOPO DA APLICAÇÃO -->
+  <div style="text-align:center; margin-top:10px; margin-bottom:10px;">
+    <img src="https://raw.githubusercontent.com/setamarcos/setasolucoesatualizado0520226/main/img/logo2.png" alt="Seta Soluções" style="max-width:240px; height:auto;">
+  </div>
+
+  <!-- RELÓGIO E DATA DO TOPO -->
+  <div class="header-data-hora" id="exibirDataHora">📅 --/--/----  |  ⏰ --:--:--</div>
+
+  <!-- CRONÔMETRO DE TREINO DE 1 HORA -->
+  <div style="text-align:center; margin:8px 0;">
+    <div class="timer-box" id="caixaTimer">⏳ Tempo de Treino: 60:00</div>
+  </div>
+
+  <!-- TÍTULO PRINCIPAL E DADOS DO ALUNO -->
+  <h1>SETA PREPARATÓRIO ENSINO MÉDIO 🎯</h1>
   <p class="subtitulo">
     Aluno: <span id="exibirNomeAluno">--</span> | 
     Contato: <span id="exibirTelefone">--</span> | 
     <span style="color:var(--azul)" id="exibirIdentificadorProva">Prova 01</span>
   </p>
+
+  <!-- BANNER DA TRAVA DE ROTINA SEMANAL -->
+  <div class="banner-rotina" id="bannerRotina">
+    📅 MODO DE TREINO DIÁRIO
+  </div>
   
-  <div style="text-align:center;margin:16px 0">
+  <div style="text-align:center;margin:16px 0;display:none" id="controlesModoFimSemana">
     <button class="btn-topo" id="btnTexto" onclick="modo('texto')">📝 Só Redação</button>
     <button class="btn-topo" id="btnProva" onclick="modo('prova')">❓ Só Questões</button>
     <button class="btn-topo ativo" id="btnAmbos" onclick="modo('ambos')">📝+❓ Os Dois</button>
@@ -92,6 +128,10 @@ let textoRedacaoSalvo = '';
 let relatorioWhatsAppTexto = '';
 let notaRedacao = 0;
 let detalhesRedacaoPontos = [];
+let tempoRestanteSegundos = 3600;
+let timerInterval = null;
+let modoDiaSemana = 'ambos';
+let modoAtual = 'ambos';
 
 function atualizarDataHora(){
   const agora = new Date();
@@ -101,6 +141,50 @@ function atualizarDataHora(){
   if(el) el.textContent = `📅 ${dataStr}  |  ⏰ ${horaStr}`;
 }
 setInterval(atualizarDataHora, 1000);
+
+function iniciarTimerTreino(){
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    tempoRestanteSegundos--;
+    const min = Math.floor(tempoRestanteSegundos / 60);
+    const seg = tempoRestanteSegundos % 60;
+    const txtMin = String(min).padStart(2, '0');
+    const txtSeg = String(seg).padStart(2, '0');
+    
+    const elTimer = document.getElementById('caixaTimer');
+    if(elTimer) elTimer.textContent = `⏳ Tempo de Treino: ${txtMin}:${txtSeg}`;
+
+    if(tempoRestanteSegundos <= 0){
+      clearInterval(timerInterval);
+      alert("⏱️ Tempo limite de treino atingido (1 hora). Sua sessão foi encerrada para descansar a mente!");
+      location.reload();
+    }
+  }, 1000);
+}
+
+function verificarTravaRotina(){
+  const hoje = new Date();
+  const diaSemana = hoje.getDay();
+  const banner = document.getElementById('bannerRotina');
+  const ctrlFimSemana = document.getElementById('controlesModoFimSemana');
+
+  if(diaSemana === 1 || diaSemana === 3 || diaSemana === 5){
+    modoDiaSemana = 'prova';
+    modoAtual = 'prova';
+    if(banner) banner.innerHTML = `📝 ROTINA DIÁRIA: Hoje é Dia de PROVA OBJETIVA (10 Questões)<br><small style="font-weight:normal">Foco em fixar conteúdos e raciocínio lógico.</small>`;
+    if(ctrlFimSemana) ctrlFimSemana.style.display = 'none';
+  } else if(diaSemana === 2 || diaSemana === 4){
+    modoDiaSemana = 'texto';
+    modoAtual = 'texto';
+    if(banner) banner.innerHTML = `✍️ ROTINA DIÁRIA: Hoje é Dia de REDAÇÃO GUIADA & REPERTÓRIO<br><small style="font-weight:normal">Foco em construir ideias e treinar na Folha Pautada A4.</small>`;
+    if(ctrlFimSemana) ctrlFimSemana.style.display = 'none';
+  } else {
+    modoDiaSemana = 'ambos';
+    modoAtual = 'ambos';
+    if(banner) banner.innerHTML = `🎯 FIM DE SEMANA: Modo Treino Livre Habilitado`;
+    if(ctrlFimSemana) ctrlFimSemana.style.display = 'block';
+  }
+}
 
 const bancoTemasRedacao = [
   "1. Impactos da tecnologia e inteligência artificial na educação do século XXI",
@@ -136,6 +220,45 @@ const palavrasChaveTemas = [
   ["futuro do trabalho", "profissões", "carreira", "tecnologia"],
   ["ciência", "conhecimento científico", "pesquisa", "inovação"],
   ["lixo eletrônico", "reciclagem", "descarte", "e-lixo"]
+];
+
+const conteudoPedagogicoTemas = [
+  {
+    explicacao: "Como a tecnologia e os computadores inteligentes ajudam ou atrapalham o aprendizado nas escolas de hoje.",
+    perguntasQuiz: [
+      {q: "Qual a principal vantagem da tecnologia na escola?", ops: ["Pesquisar assuntos rapidamente","Jogar durante a aula","Substituir os professores","Não precisar estudar"]},
+      {q: "O que devemos evitar ao usar IA nos estudos?", ops: ["Copiar respostas sem entender nada","Usar para tirar dúvidas","Aprender palavras novas","Ler resumos de livros"]},
+      {q: "Como a escola pode ser melhor com a tecnologia?", ops: ["Unindo computadores com a explicação do professor","Proibindo qualquer uso de celular","Usando só livros antigos","Deixando os alunos sem tarefas"]}
+    ],
+    titulosSugestoes: ["A Tecnologia a Serviço do Conhecimento", "Inteligência Artificial: Aliada ou Vilã da Escola?", "O Futuro da Educação na Era Digital", "Aprender Mais e Melhor com a Tecnologia", "Computadores e Professores: Uma Parceria Necessária"],
+    modeloNivel1: "A tecnologia na escola é muito boa para os alunos pesquisarem matérias na internet. Hoje em dia todo mundo usa o celular para estudar.\n\nPorém, alguns estudantes usam para jogar durante a aula e não prestam atenção no professor.",
+    modeloNivel2: "A tecnologia e a inteligência artificial estão mudando a forma como aprendemos nas escolas brasileiras. Elas ajudam a encontrar dados rapidamente.\n\nContudo, o uso sem controle faz os alunos copiarem trabalhos sem pensar.\n\nPortanto, os professores devem ensinar a usar a internet com responsabilidade.",
+    modeloNivel3: "A transformação digital na educação do século XXI\n\nA tecnologia e a inteligência artificial representam ferramentas poderosas para modernizar o ensino nas escolas. O acesso rápido às informações amplia as oportunidades de aprendizado.\n\nEm primeiro lugar, o uso de recursos digitais torna as aulas mais dinâmicas e atrativas. No entanto, é preciso evitar a dependência excessiva de respostas automáticas.\n\nAlém disso, a presença do professor continua sendo indispensável para orientar os estudantes a desenvolverem o pensamento crítico.\n\nPortanto, a união entre inovação tecnológica e mediação pedagógica é o caminho para formar cidadãos preparados para o futuro."
+  },
+  {
+    explicacao: "Como proteger nossas florestas, rios e animais para garantir um futuro saudável no Brasil.",
+    perguntasQuiz: [
+      {q: "Qual o maior desafio ambiental do Brasil hoje?", ops: ["O desmatamento e as queimadas","O excesso de chuva nas praias","A falta de árvores nas praças","O frio intenso no inverno"]},
+      {q: "O que é sustentabilidade na prática?", ops: ["Usar os recursos sem destruir o futuro","Gastar toda a água do planeta","Comprar coisas sem necessidade","Queimar o lixo no quintal"]},
+      {q: "Como os jovens podem ajudar o meio ambiente?", ops: ["Economizando água e reciclando o lixo","Jogando plástico nas ruas","Usando sacolas plásticas descartáveis","Derrubando árvores"]}
+    ],
+    titulosSugestoes: ["Preservar Hoje para Existir Amanhã", "Sustentabilidade: Um Dever de Todos", "O Futuro do Brasil Depende da Natureza", "Pequenas Atitudes, Grandes Transformações Ambientais", "Cuidando do Nosso Planeta Vivo"],
+    modeloNivel1: "A preservação do meio ambiente é muito importante para o Brasil. Precisamos cuidar das árvores e dos rios para não faltar água.\n\nAs pessoas jogam muito lixo na rua e isso polui a natureza todo dia.",
+    modeloNivel2: "Os desafios ambientais no Brasil exigem a atenção de toda a sociedade. A poluição e o desmatamento estão destruindo nossos biomas.\n\nAlém disso, o consumo exagerado gasta recursos naturais de forma irresponsável.\n\nPortanto, precisamos reciclar o lixo e proteger nossas florestas.",
+    modeloNivel3: "Sustentabilidade e conscientização ambiental no Brasil\n\nA preservação do meio ambiente no Brasil é uma pauta urgente que exige ações imediatas de toda a sociedade. A riqueza de nossa biodiversidade precisa ser protegida para as próximas gerações.\n\nEm primeiro lugar, o aumento das queimadas e do desmatamento ameaça os ecossistemas naturais. A perda da vegetação afeta o clima e a disponibilidade de água potável.\n\nOutrossim, a falta de reciclagem e o descarte incorreto do lixo urbano poluem os rios e o solo nas grandes cidades.\n\nPortanto, o Governo e as escolas devem promover campanhas educativas para garantir o desenvolvimento sustentável em nosso país."
+  },
+  {
+    explicacao: "O combate ao bullying e ciberbullying para garantir que a escola seja um local seguro para todos os estudantes.",
+    perguntasQuiz: [
+      {q: "O que caracteriza o bullying escolar?", ops: ["Agressões e piadas ofensivas repetidas","Uma discussão pontual de futebol","Tirar nota baixa na prova","Fazer perguntas ao professor"]},
+      {q: "O que diferencia o ciberbullying?", ops: ["Ocorre na internet e nas redes sociais","Acontece apenas na quadra esportiva","É feito por carta escrita","Só ocorre nos fins de semana"]},
+      {q: "Como a escola deve combater esse problema?", ops: ["Criando canais seguros de denúncia e apoio","Proibindo os alunos de conversar","Fingindo que o problema não existe","Expulsando todos os estudantes"]}
+    ],
+    titulosSugestoes: ["Escola: Lugar de Respeito e Amizade", "Dizendo Não ao Bullying na Sala e na Tela", "A Força da União Contra a Violência Escolar", "Palavras que Ajudam, Atitudes que Protegem", "Construindo um Ambiente Seguro para Estudar"],
+    modeloNivel1: "O bullying na escola é muito ruim porque magoa os colegas. O ciberbullying acontece na internet e deixa a pessoa triste.\n\nOs professores devem punir quem faz brincadeiras de mau gosto.",
+    modeloNivel2: "O combate ao bullying e ao ciberbullying é essencial para manter a paz no colégio. As agressões virtuais perseguem a vítima até dentro de casa.\n\nContudo, muitos estudantes têm medo de denunciar os agressores.\n\nPortanto, a escola deve criar palestras e apoiar quem precisa.",
+    modeloNivel3: "Caminhos para combater a agressão e o preconceito escolar\n\nO combate ao bullying e ao ciberbullying no ambiente escolar é uma prioridade para garantir a saúde mental e a segurança dos estudantes. A violência, seja física ou virtual, compromete o aprendizado.\n\nEm primeiro lugar, as agressões nos corredores muitas vezes se desdobram nas redes sociais através de mensagens ofensivas. Isso gera ansiedade e isolamento nas vítimas.\n\nAlém disso, a omissão da comunidade escolar permite que piadas preconceituosas sejam vistas como normais, perpetuando o sofrimento.\n\nPortanto, a união entre família e gestão escolar é a solução para promover palestras conscientizadoras e transformar a escola em um espaço de acolhimento."
+  }
 ];
 
 const bancoQuestoes9Ano = [
@@ -200,7 +323,7 @@ const bancoQuestoes9Ano = [
   {materia:"História", banca:"IFET", serie:"9º Ano", topico:"História do Brasil - Ditadura Militar", q:"O Regime Militar no Brasil perdurou entre os anos de:", ops:["1964 e 1985","1930 e 1945","1950 e 1960","1988 e 2000"],"gab":"a", explicacao:"Iniciado pelo golpe de 31 de março de 1964 e encerrado com a posse de José Sarney em 1985."},
   {materia:"História", banca:"CENTEC", serie:"8º Ano", topico:"História do Brasil - Independência", q:"Ano da Proclamação da Independência do Brasil:", ops:["1822","1500","1889","1808"],"gab":"a", explicacao:"Dom Pedro I proclamou a independência do Brasil em 7 de setembro de 1822."},
   {materia:"História", banca:"CEDAF", serie:"8º Ano", topico:"História do Brasil - Abolição", q:"Ano da assinatura da Lei Áurea que extinguiu a escravidão:", ops:["1888","1822","1850","1871"],"gab":"a", explicacao:"A Princesa Isabel assinou a Lei Áurea em 13 de maio de 1888."},
-  {materia:"História", banca:"COLTEC", serie:"9º Ano", topico:"História do Brasil - Redemocratização", q:"Ano da promulgação da atual Constituição Brasileira (Constituição Cidadã):", ops:["1988","1964","1934","1946"],"gab":"a", explicacao:"A Constituição vigente foi promulgated em 5 de outubro de 1988."},
+  {materia:"História", banca:"COLTEC", serie:"9º Ano", topico:"História do Brasil - Redemocratização", q:"Ano da promulgação da atual Constituição Brasileira (Constituição Cidadã):", ops:["1988","1964","1934","1946"],"gab":"a", explicacao:"A Constituição vigente foi頒布gated em 5 de outubro de 1988."},
   {materia:"História", banca:"IFET", serie:"8º Ano", topico:"História do Brasil - Proclamação da República", q:"Quem proclamou a República no Brasil em 15 de novembro de 1889?", ops:["Marechal Deodoro da Fonseca","Dom Pedro II","Getúlio Vargas","Juscelino Kubitschek"],"gab":"a", explicacao:"O Marechal Deodoro da Fonseca liderou o golpe militar que derrubou a monarquia."},
   {materia:"História", banca:"CENTEC", serie:"6º Ano", topico:"História Antiga - Grécia", q:"Civilização antiga criadora do conceito de Democracia:", ops:["Grega","Romana","Egípcia","Chinesa"],"gab":"a", explicacao:"A democracia direta desenvolveu-se na cidade-estado de Atenas na Grécia Antiga."},
   {materia:"História", banca:"CEDAF", serie:"6º Ano", topico:"Pré-História", q:"O período da História antes da invenção da escrita chama-se:", ops:["Pré-História","Idade Média","Idade Moderna","Idade Contemporânea"],"gab":"a", explicacao:"A escrita (c. 4000 a.C.) marca tradicionalmente a transição da Pré-História para a História."},
@@ -225,7 +348,6 @@ const bancoQuestoes9Ano = [
   {materia:"Geografia", banca:"IFET", serie:"6º Ano", topico:"Cartografia - Escalas", q:"Qual escala cartográfica apresenta MAIOR detalhamento da realidade?", ops:["1:10.000","1:100.000","1:1.000.000","1:10.000.000"],"gab":"a", explicacao:"Escalas com denominadores menores são grandes escalas, representando mais detalhes da área."}
 ];
 
-let modoAtual = 'ambos';
 let questoesSelecionadas = [];
 let respostas = [];
 let resultadoRedacaoHTML = '';
@@ -293,6 +415,8 @@ function validarELogar(){
   document.getElementById('exibirTelefone').textContent = userTelefone;
   document.getElementById('exibirIdentificadorProva').textContent = `Prova ${String(numeroProvaAtual).padStart(2, '0')}`;
 
+  verificarTravaRotina();
+  iniciarTimerTreino();
   atualizarDataHora();
   gerarProvaSequencial();
 }
@@ -301,7 +425,8 @@ function modo(m){
   salvarTextoRedacao();
   modoAtual=m;
   document.querySelectorAll('.btn-topo').forEach(b=>b.classList.remove('ativo'));
-  document.getElementById(`btn${m.charAt(0).toUpperCase()+m.slice(1)}`).classList.add('ativo');
+  const btnAlvo = document.getElementById(`btn${m.charAt(0).toUpperCase()+m.slice(1)}`);
+  if(btnAlvo) btnAlvo.classList.add('ativo');
   montarProva();
 }
 
@@ -355,12 +480,62 @@ function gerarProvaSequencial(){
 function montarProva(){
   salvarTextoRedacao();
   let html='';
+  const idxPedagogico = (numeroProvaAtual - 1) % conteudoPedagogicoTemas.length;
+  const infoPedagogica = conteudoPedagogicoTemas[idxPedagogico] || conteudoPedagogicoTemas[0];
 
   if(modoAtual==='texto'||modoAtual==='ambos'){
     html+=`
-      <h3>📝 Redação - Prova ${String(numeroProvaAtual).padStart(2, '0')}</h3>
-      <p style="font-weight:bold;color:var(--azul)">Tema: ${temaRedacaoAtual}</p>
-      <p class="hint">Regras: Título na 1ª linha | Estrutura de 4 parágrafos | Texto focado no tema proposto.</p>
+      <h3>📝 Redação Guiada - Prova ${String(numeroProvaAtual).padStart(2, '0')}</h3>
+      <p style="font-weight:bold;color:var(--azul);font-size:16px">Tema: ${temaRedacaoAtual}</p>
+      
+      <!-- PASSO 1: ENTENDENDO O TEMA -->
+      <div class="box-orientacao">
+        <h4 style="margin-top:0;color:var(--azul)">📘 PASSO 1: Entendendo o Assunto (Guia de Estudo)</h4>
+        <p style="margin-bottom:0">${infoPedagogica.explicacao}</p>
+      </div>
+
+      <!-- PASSO 2: QUIZ DE IDEIAS (ENCONTRANDO O CAMINHO) -->
+      <div class="box-quiz">
+        <h4 style="margin-top:0;color:var(--azul)">💡 PASSO 2: Organize suas Ideias antes de Escrever</h4>
+        ${infoPedagogica.perguntasQuiz.map((pq, pidx) => `
+          <div style="margin-bottom:10px">
+            <p style="font-weight:bold;margin:4px 0">${pidx+1}. ${pq.q}</p>
+            ${pq.ops.map((o, oidx) => `
+              <label style="display:block;font-size:13px;margin:2px 0">
+                <input type="radio" name="quizP${pidx}" value="${oidx}"> ${['A','B','C','D'][oidx]}) ${o}
+              </label>
+            `).join('')}
+          </div>
+        `).join('')}
+      </div>
+
+      <!-- PASSO 3: TEXTOS MODELO DE REFERÊNCIA -->
+      <div style="margin:14px 0">
+        <h4 style="color:var(--verde)">🌟 PASSO 3: Leia os Textos Modelo de Exemplo</h4>
+        <div class="box-modelo">
+          <strong>🟢 Modelo Básico (Estrutura Inicial):</strong><br>
+          <div style="white-space:pre-line">${infoPedagogica.modeloNivel1}</div>
+        </div>
+        <div class="box-modelo" style="background:#e8f5e9">
+          <strong>🏆 Modelo Ouro / Aprovação (Padrão COLTEC/IFET):</strong><br>
+          <div style="white-space:pre-line">${infoPedagogica.modeloNivel3}</div>
+        </div>
+      </div>
+
+      <!-- SUGESTÕES DE TÍTULOS -->
+      <div class="box-titulos">
+        <strong>💡 5 Sugestões de Títulos Incríveis para usar na 1ª Linha:</strong>
+        <ul style="margin:4px 0;padding-left:20px;font-size:13.5px">
+          ${infoPedagogica.titulosSugestoes.map(t => `<li><em>${t}</em></li>`).join('')}
+        </ul>
+      </div>
+
+      <!-- DOWNLOAD DA FOLHA A4 -->
+      <div style="text-align:center;margin:12px 0">
+        <a href="folha_redacao_pautada.html" target="_blank" class="btn-pdf">📄 Imprimir Folha Oficial de Redação A4 (30 Linhas)</a>
+      </div>
+
+      <p class="hint">Escreva à caneta na Folha Pautada A4 e depois digite o seu rascunho abaixo para obter o diagnóstico imediato:</p>
       <textarea id="textoRedacao" class="textarea-redacao" placeholder="Digite seu título na primeira linha e pule uma linha para o 1º parágrafo..." oninput="salvarTextoRedacao()"></textarea>
       
       <button class="btn-seta" onclick="corrigirRedacao()">📊 Avaliar Estrutura e Pertinência do Texto</button>
@@ -387,7 +562,7 @@ function montarProva(){
       q.ops.forEach((op,idx)=>{
         const letra=['a','b','c','d'][idx];
         const classeSel = (respAtual === letra) ? 'selecionada' : '';
-        html+=`<button class="btn-alt ${classeSel}" id="alt${i}${letra}" onclick="selecionar(${i},'${letra}')">${letra}) ${op}</button>`;
+        html+=`<button class="btn-alt ${classeSel}" id="alt${i}${letra}" onclick="selecionar(${i},'${letra}')">${letra.toUpperCase()}) ${op}</button>`;
       });
       
       const estiloAcoes = respAtual ? 'block' : 'none';
@@ -448,7 +623,6 @@ function confirmarTipo(idx, tipo){
   }
 }
 
-// CORREÇÃO E AVALIAÇÃO DA REDAÇÃO COM BLOQUEIO DE CÓDIGO HTML E FORMATO LIMPO
 function corrigirRedacao(){
   salvarTextoRedacao();
   const textoOriginal = textoRedacaoSalvo.trim();
@@ -469,17 +643,15 @@ function corrigirRedacao(){
     return;
   }
 
-  // DETEÇÃO E REJEIÇÃO DE CÓDIGO HTML / SCRIPT / MARCAÇÃO
   const ehCodigoHTML = /<!DOCTYPE|<html|<style|<script|var\s+--|\{font-family/i.test(textoOriginal);
   if(ehCodigoHTML){
     notaRedacao = 0;
-    detalhesRedacaoPontos.push("📌 <strong>Ponto de Atenção:</strong> Código fonte detetado. Por favor, escreva apenas o texto da sua redação.");
+    detalhesRedacaoPontos.push("📌 <strong>Ponto de Atenção:</strong> Código fonte detetado. Escreva apenas o texto da sua redação.");
     
     resultadoRedacaoHTML = `
       <div style="background:#ffebee;border:2px solid var(--vermelho);padding:14px;border-radius:8px">
         <h4 style="color:var(--vermelho);margin-top:0">❌ REDAÇÃO REPROVADA: NOTA 0 / 1000 PTS</h4>
         <p style="color:var(--vermelho);font-weight:bold;margin-bottom:0">Formato Inválido (Código Fonte Detetado)!</p>
-        <p style="font-size:13px;color:#333;margin-top:6px">Foi detetada a colagem de código fonte HTML no campo de texto. Por favor, redija um texto em linguagem natural sobre o tema proposto.</p>
       </div>
     `;
     const elRes = document.getElementById('resultadoRedacao');
@@ -494,19 +666,18 @@ function corrigirRedacao(){
   const palavrasChave = palavrasChaveTemas[(numeroProvaAtual - 1) % 15];
   const textoLower = texto.toLowerCase();
   
-  // VALIDAÇÃO RIGOROSA: Exige pelo menos 2 palavras-chave do tema específico
   const coincidencias = palavrasChave.filter(p => textoLower.includes(p));
   const possuiPertinencia = coincidencias.length >= 2;
 
   if(!possuiPertinencia){
     notaRedacao = 0;
-    detalhesRedacaoPontos.push(`📌 <strong>Ponto de Atenção:</strong> Fuga ao Tema. O tema da Prova ${String(numeroProvaAtual).padStart(2, '0')} é "${temaRedacaoAtual}". O texto submetido não desenvolve os conceitos principais deste assunto.`);
+    detalhesRedacaoPontos.push(`📌 <strong>Ponto de Atenção:</strong> Fuga ao Tema. O tema da Prova ${String(numeroProvaAtual).padStart(2, '0')} trata de "${temaRedacaoAtual}". O texto não usou os conceitos principais.`);
     
     resultadoRedacaoHTML = `
       <div style="background:#ffebee;border:2px solid var(--vermelho);padding:14px;border-radius:8px">
         <h4 style="color:var(--vermelho);margin-top:0">❌ REDAÇÃO REPROVADA: NOTA 0 / 1000 PTS</h4>
         <p style="color:var(--vermelho);font-weight:bold;margin-bottom:0">Fuga ao Tema Proposto!</p>
-        <p style="font-size:13px;color:#333;margin-top:6px">O texto digitado não aborda o assunto desta prova (<strong>"${temaRedacaoAtual}"</strong>). Redija um texto focado neste tema para obter pontuação.</p>
+        <p style="font-size:13px;color:#333;margin-top:6px">Redija um texto focado em <strong>"${temaRedacaoAtual}"</strong> para obter pontuação.</p>
       </div>
     `;
     const elRes = document.getElementById('resultadoRedacao');
@@ -638,7 +809,7 @@ function finalizar(){
   }
   htmlPlanoEstudo += `</ul></div>`;
 
-  relatorioWhatsAppTexto = `*RELATÓRIO DE EVOLUÇÃO E TREINO - PREPARATÓRIO*\n` +
+  relatorioWhatsAppTexto = `*RELATÓRIO DE EVOLUÇÃO E TREINO - SETA PREPARATÓRIO*\n` +
     `*Aluno(a):* ${userLogin}\n` +
     `*Simulado:* Prova ${String(numeroProvaAtual).padStart(2, '0')}\n` +
     `*Desempenho Atual:* ${percentualMeta}% da Meta (${notaFinalGeral}/1000 pts)\n\n` +
