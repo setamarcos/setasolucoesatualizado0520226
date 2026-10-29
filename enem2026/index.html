@@ -1,356 +1,207 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Seta Soluções - ENEM 2026</title>
-  <style>
-    :root {
-      --bg-dark: #0f172a;
-      --card-bg: #1e293b;
-      --accent-blue: #2563eb;
-      --accent-green: #22c55e;
-      --accent-yellow: #eab308;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; padding: 20px; }
-
-    .header-logo { text-align: center; margin-bottom: 20px; }
-    .header-logo img { max-width: 300px; height: auto; border-radius: 8px; background: #fff; padding: 8px; }
-    .slogan { font-size: 1.2rem; color: var(--accent-green); font-weight: 600; margin-top: 8px; }
-    .datetime-bar { text-align: center; font-size: 0.95rem; color: #60a5fa; margin-top: 6px; font-weight: bold; }
-
-    .container { max-width: 920px; margin: 15px auto; background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-    h2 { text-align: center; margin-bottom: 20px; font-size: 1.5rem; color: #fff; }
-
-    .grid-users { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 25px; }
-    .user-card { background: #0f172a; border: 2px solid #334155; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s ease; }
-    .user-card:hover { border-color: var(--accent-green); transform: translateY(-4px); }
-    .user-avatar { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; margin-bottom: 12px; border: 3px solid var(--accent-blue); }
-
-    .grid-provas { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; margin-top: 20px; }
-    
-    .btn { background: var(--accent-blue); color: white; border: none; padding: 14px 18px; border-radius: 8px; font-size: 0.95rem; font-weight: bold; cursor: pointer; transition: all 0.2s ease; text-align: center; }
-    .btn:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.2); }
-    .btn:disabled { background: #334155; color: #64748b; cursor: not-allowed; border: 1px dashed #475569; }
-
-    .timer-bar { display: flex; justify-content: space-between; align-items: center; background: #0284c7; padding: 12px 20px; border-radius: 8px; font-size: 1.05rem; font-weight: bold; margin-bottom: 15px; }
-
-    .question-box { background: #0f172a; padding: 20px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #334155; }
-    .question-enunciado { font-size: 1.05rem; line-height: 1.6; margin-bottom: 15px; white-space: pre-wrap; }
-    .question-img { max-width: 100%; height: auto; border-radius: 6px; margin: 15px 0; display: block; }
-
-    .options-group { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
-    .option-btn { background: #1e293b; border: 1px solid #334155; padding: 12px 15px; border-radius: 6px; color: #fff; text-align: left; cursor: pointer; display: flex; gap: 10px; font-size: 0.95rem; }
-    .option-btn.selected { background: var(--accent-blue); border-color: #60a5fa; }
-
-    .nav-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; gap: 10px; flex-wrap: wrap; }
-    
-    .redacao-box { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
-    textarea { width: 100%; height: 180px; background: #1e293b; color: #fff; border: 1px solid #475569; border-radius: 6px; padding: 12px; font-size: 1rem; margin-top: 10px; resize: vertical; }
-
-    .hidden { display: none !important; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seta Soluções - ENEM 2026</title>
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--blue:#2563eb;--green:#22c55e;--yellow:#eab308;--txt:#f8fafc;--muted:#94a3b8}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',sans-serif}
+body{background:var(--bg);color:var(--txt);padding:20px;min-height:100vh}
+.header{text-align:center;margin-bottom:20px}
+.header img{max-width:280px;background:#fff;padding:8px;border-radius:8px}
+.slogan{color:var(--green);font-weight:700;margin-top:8px}
+.container{max-width:920px;margin:0 auto;background:var(--card);padding:25px;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,.5)}
+.grid-users{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-top:20px}
+.user-card{background:#0f172a;border:2px solid #334155;border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:.2s}
+.user-card:hover{border-color:var(--green);transform:translateY(-4px)}
+.btn{background:linear-gradient(135deg,var(--blue),var(--green));color:#fff;border:none;padding:14px 20px;border-radius:12px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(37,99,235,.3);transition:.2s;width:100%;margin-top:10px}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.2)}
+.btn-locked{background:#1e293b;color:#64748b;border:2px dashed #475569;cursor:not-allowed}
+.btn-done{background:linear-gradient(135deg,var(--green),#16a34a)}
+.btn-responder{background:linear-gradient(135deg,#22c55e,#16a34a)!important;box-shadow:0 4px 12px rgba(34,197,94,.4)}
+.hidden{display:none!important}
+.timer{display:flex;justify-content:space-between;background:#0284c7;padding:12px 20px;border-radius:8px;font-weight:700;margin-bottom:15px}
+.qbox{background:#0f172a;padding:20px;border-radius:8px;border:1px solid #334155;margin-bottom:15px}
+.opt{background:#1e293b;border:1px solid #334155;padding:12px;border-radius:6px;color:#fff;text-align:left;cursor:pointer;margin-top:8px;width:100%}
+.opt.selected{background:var(--blue);border-color:#60a5fa}
+.feedback{margin-top:18px;padding:16px;background:#020617;border:1px solid var(--green);border-radius:10px;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+</style>
 </head>
 <body>
+<div class="header">
+<img src="https://raw.githubusercontent.com/setamarcos/setasolucoesatualizado0520226/main/img/logo2.png">
+<div class="slogan">Família que estuda junta, vence junta!</div>
+<div id="dt" style="color:#60a5fa;font-weight:bold;margin-top:6px"></div>
+</div>
 
-  <div class="header-logo">
-    <img src="https://raw.githubusercontent.com/setamarcos/setasolucoesatualizado0520226/main/img/logo2.png" alt="Seta Soluções">
-    <div class="slogan">Família que estuda junta, vence junta!</div>
-    <div class="datetime-bar" id="live-datetime">Carregando data e hora...</div>
-  </div>
+<div class="container">
+<div id="screen-user">
+<h2 style="text-align:center">Quem está estudando?</h2>
+<div class="grid-users">
+<div class="user-card" onclick="selectUser('Marcos')"><h3>Marcos</h3><p style="color:var(--muted)">Pai / Bicho Solto 🦁</p><small style="color:#60a5fa">Aquele que não para</small></div>
+<div class="user-card" onclick="selectUser('Veronica')"><h3>Verônica</h3><p style="color:var(--muted)">Mãe / Encantadora ✨</p><small style="color:#f472b6">A que ilumina</small></div>
+<div class="user-card" onclick="selectUser('Yasmin')"><h3>Yasmin</h3><p style="color:var(--muted)">Aquela que passa 📚</p><small style="color:var(--green)">Estudante ENEM</small></div>
+</div>
+</div>
 
-  <div class="container">
-    
-    <!-- TELA 1: SELEÇÃO DE USUÁRIO COM FOTOS -->
-    <div id="screen-user">
-      <h2>Quem está estudando agora?</h2>
-      <div class="grid-users">
-        <div class="user-card" onclick="selectUser('Marcos')">
-          <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Marcos" class="user-avatar" alt="Marcos">
-          <h3>Marcos</h3>
-          <p style="color:var(--text-muted); font-size:0.85rem; margin-top:5px;">Pai / Gestor</p>
-        </div>
-        <div class="user-card" onclick="selectUser('Verônica')">
-          <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Veronica" class="user-avatar" alt="Verônica">
-          <h3>Verônica</h3>
-          <p style="color:var(--text-muted); font-size:0.85rem; margin-top:5px;">Mãe / Professora</p>
-        </div>
-        <div class="user-card" onclick="selectUser('Yasmin')">
-          <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Yasmin" class="user-avatar" alt="Yasmin">
-          <h3>Yasmin</h3>
-          <p style="color:var(--text-muted); font-size:0.85rem; margin-top:5px;">Estudante ENEM</p>
-        </div>
-      </div>
+<div id="screen-prova" class="hidden">
+<h2 style="text-align:center">Cronograma ENEM</h2>
+<p id="welcome" style="text-align:center;color:var(--muted)"></p>
+<button class="btn" id="btn-p1" onclick="iniciarProva(2022)">1ª Prova: ENEM 2022 (180 Q)</button>
+<button class="btn btn-locked" id="btn-p2" onclick="iniciarProva(2023)">🔒 2ª Prova: ENEM 2023 (Bloqueada)</button>
+<button class="btn btn-locked" id="btn-p3" onclick="iniciarProva(2024)">🔒 3ª Prova: ENEM 2024 (Bloqueada)</button>
+</div>
+
+<div id="screen-quiz" class="hidden">
+<div class="timer"><span>Q <span id="q-curr">1</span>/<span id="q-total">180</span></span><span>Tempo: <span id="timer">00:00:00</span></span></div>
+<div class="qbox" id="qbox">
+<div id="q-enun">Carregando...</div>
+<img id="q-img" style="max-width:100%;display:none;margin:15px 0;border-radius:6px" alt="Imagem da questão">
+<div id="opts"></div>
+<div id="feedback-box"></div>
+</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<button class="btn btn-responder" onclick="responderQ()">✅ Responder</button>
+<button class="btn" onclick="nextQ()">Próxima ➡️</button>
+<button class="btn" style="background:var(--yellow);color:#000" onclick="salvarESair()">💾 Salvar e Sair</button>
+<button class="btn" style="background:var(--green)" onclick="finalizarProva()">Finalizar</button>
+</div>
+<textarea id="redacao" placeholder="Rascunho redação..." style="width:100%;height:120px;margin-top:15px;background:#1e293b;color:#fff;border:1px solid #475569;border-radius:6px;padding:10px"></textarea>
+</div>
+
+<div id="screen-result" class="hidden" style="text-align:center">
+<h2>Concluído!</h2>
+<p>Estudante: <strong id="res-user"></strong></p>
+<p style="font-size:1.6rem;color:var(--green)">Aproveitamento: <span id="res-score"></span>%</p>
+<p>Tempo: <span id="res-time"></span></p>
+<button class="btn" onclick="proximaEtapa()">Continuar</button>
+</div>
+</div>
+
+<script>
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzAehbSIc2kljIhFN2bmqiuMFEIZr7YpEo1XChNgNcFy0FGuTsIQW5qOoxMXfd1vEt7/exec";
+let currentUser='', currentAno=2022, questions=[], currentIndex=0, answers={}, secondsElapsed=0, timerInt=null;
+
+setInterval(()=>{ document.getElementById('dt').innerText = new Date().toLocaleString('pt-BR'); },1000);
+
+function selectUser(u){
+  currentUser=u;
+  let apelido = u;
+  if(u==='Marcos') apelido = 'Pai - Bicho Solto 🦁';
+  if(u==='Veronica') apelido = 'Mãe - Encantadora ✨';
+  if(u==='Yasmin') apelido = 'Aquela que passa 📚';
+  document.getElementById('welcome').innerText='Ativo: '+apelido;
+  document.getElementById('screen-user').classList.add('hidden');
+  document.getElementById('screen-prova').classList.remove('hidden');
+  fetch(`${WEB_APP_URL}?action=acesso_geral&usuario=${u}`).catch(()=>{});
+  atualizarBotoes();
+}
+
+function atualizarBotoes(){
+  if(localStorage.getItem(currentUser+'_2022_done')){ const b=document.getElementById('btn-p2'); b.classList.remove('btn-locked'); b.classList.add('btn-done'); b.innerText='2ª Prova: ENEM 2023 (Liberada) ✅'; }
+  if(localStorage.getItem(currentUser+'_2023_done')){ const b=document.getElementById('btn-p3'); b.classList.remove('btn-locked'); b.classList.add('btn-done'); b.innerText='3ª Prova: ENEM 2024 (Liberada) ✅'; }
+}
+
+function iniciarProva(ano){
+  currentAno=ano;
+  document.getElementById('screen-prova').classList.add('hidden');
+  document.getElementById('screen-quiz').classList.remove('hidden');
+  const saved = localStorage.getItem(currentUser+'_'+ano+'_saved');
+  if(saved){ const p=JSON.parse(saved); answers=p.answers||{}; secondsElapsed=p.secondsElapsed||0; currentIndex=p.currentIndex||0; document.getElementById('redacao').value=p.redacao||''; }
+  else { answers={}; secondsElapsed=0; currentIndex=0; }
+  startTimer();
+  fetch(`${WEB_APP_URL}?action=getQuestoes&ano=${ano}&usuario=${currentUser}`)
+    .then(r=>r.json()).then(d=>{ questions=d; document.getElementById('q-total').innerText=d.length; showQ(currentIndex); })
+    .catch(()=>{ document.getElementById('q-enun').innerText='Erro ao buscar banco. Verifique Banco_Questoes.'; });
+}
+
+function startTimer(){ clearInterval(timerInt); timerInt=setInterval(()=>{ secondsElapsed++; const h=String(Math.floor(secondsElapsed/3600)).padStart(2,'0'); const m=String(Math.floor((secondsElapsed%3600)/60)).padStart(2,'0'); const s=String(secondsElapsed%60).padStart(2,'0'); document.getElementById('timer').innerText=`${h}:${m}:${s}`; },1000); }
+
+function showQ(i){
+  currentIndex=i;
+  const q=questions[i];
+  if(!q) return;
+  document.getElementById('q-curr').innerText=i+1;
+  document.getElementById('q-enun').innerText=q.enunciado;
+  
+  // CORREÇÃO DA IMAGEM: Só exibe se for URL real e terminada em formato de imagem/github
+  const img=document.getElementById('q-img');
+  if(q.imagem && typeof q.imagem === 'string' && q.imagem.startsWith('http') && q.imagem.length > 15 && !q.imagem.includes('undefined')){ 
+    img.src=q.imagem.trim(); 
+    img.style.display='block'; 
+  } else { 
+    img.style.display='none'; 
+    img.src=''; 
+  }
+
+  const cont=document.getElementById('opts');
+  cont.innerHTML='';
+  document.getElementById('feedback-box').innerHTML='';
+  [['A',q.optA],['B',q.optB],['C',q.optC],['D',q.optD],['E',q.optE]].forEach(([k,t])=>{
+    const b=document.createElement('button');
+    b.className='opt'+(answers[i]===k?' selected':'');
+    b.innerHTML=`<b>${k})</b> ${t}`;
+    b.onclick=()=>{ answers[i]=k; showQ(i); };
+    cont.appendChild(b);
+  });
+}
+
+function responderQ(){
+  const q=questions[currentIndex];
+  const resp=answers[currentIndex];
+  if(!resp){ alert('Escolha uma alternativa antes de responder!'); return; }
+  const box=document.getElementById('feedback-box');
+  const acertou = resp === String(q.gabarito).toUpperCase().trim();
+  
+  // TRATAMENTO DO LINK DO YOUTUBE
+  let linkYoutube = '#';
+  let textoLink = 'Link não cadastrado';
+  if (q.linkAula && String(q.linkAula).startsWith('http')) {
+    linkYoutube = q.linkAula.trim();
+    textoLink = '🎥 Assistir Aula de Reforço no YouTube';
+  } else if (q.linkAula && String(q.linkAula).length > 3) {
+    linkYoutube = `https://www.youtube.com/results?search_query=${encodeURIComponent(q.linkAula)}`;
+    textoLink = `🎥 Pesquisar no YouTube: ${q.linkAula}`;
+  }
+
+  box.innerHTML=`
+    <div class="feedback">
+      <div style="color:${acertou?'#22c55e':'#ef4444'};font-weight:800;font-size:1.2rem">${acertou?'✅ ACERTOU!':'❌ ERROU - Gabarito: '+q.gabarito}</div>
+      <div style="margin-top:12px"><b>📝 Comando:</b> ${q.comando||q.habilidade||'Analise o enunciado com atenção.'}</div>
+      <div style="margin-top:10px"><b>💡 Resolução:</b> ${q.resolucao||q.explicacao||'Confira a alternativa correta.'}</div>
+      <div style="margin-top:10px;color:#fbbf24"><b>⚠️ Pegadinha:</b> ${q.pegadinha||'Atenção às palavras de negação ou restrição.'}</div>
+      <div style="margin-top:10px;color:#22c55e"><b>🧠 Macete:</b> ${q.macete||'Elimine primeiro as alternativas absurdas.'}</div>
+      <div style="margin-top:12px"><a href="${linkYoutube}" target="_blank" style="color:#60a5fa;font-weight:700;text-decoration:underline">${textoLink}</a></div>
     </div>
+  `;
+}
 
-    <!-- TELA 2: SELEÇÃO DE PROVA SEQUENCIAL -->
-    <div id="screen-prova" class="hidden">
-      <h2>Cronograma de Provas do ENEM</h2>
-      <p style="text-align: center; color: var(--text-muted);" id="user-welcome"></p>
-      
-      <div class="grid-provas" style="margin-top: 25px;">
-        <button class="btn" id="btn-p1" onclick="iniciarProva(2022)">
-          1ª Prova: ENEM 2022 (180 Q)
-        </button>
-        <button class="btn" id="btn-p2" onclick="iniciarProva(2023)" disabled>
-          🔒 2ª Prova: ENEM 2023 (Bloqueada)
-        </button>
-        <button class="btn" id="btn-p3" onclick="iniciarProva(2024)" disabled>
-          🔒 3ª Prova: ENEM 2024 (Bloqueada)
-        </button>
-      </div>
-    </div>
+function nextQ(){ if(currentIndex<questions.length-1) showQ(currentIndex+1); }
 
-    <!-- TELA 3: SIMULADO EM EXECUÇÃO -->
-    <div id="screen-quiz" class="hidden">
-      <div class="timer-bar">
-        <span>Questão <span id="q-curr">1</span> de <span id="q-total">180</span></span>
-        <div>
-          <span>Tempo: <span id="timer">00:00:00</span></span>
-          <button class="btn" style="background:var(--accent-yellow); color:#000; padding:4px 10px; margin-left:10px;" onclick="togglePause()" id="btn-pause">Pausar</button>
-        </div>
-      </div>
+function salvarESair(){
+  const payload={action:'salvarParcial', usuario:currentUser, ano:currentAno, answers:answers, secondsElapsed:secondsElapsed, currentIndex:currentIndex, tempo:secondsElapsed, total:questions.length, redacao:document.getElementById('redacao').value};
+  localStorage.setItem(currentUser+'_'+currentAno+'_saved', JSON.stringify(payload));
+  fetch(WEB_APP_URL, {method:'POST', body: JSON.stringify(payload)}).then(()=>{ alert('Salvo na aba '+currentUser+'_Desempenho!'); location.reload(); }).catch(()=>{ alert('Salvo local!'); location.reload(); });
+}
 
-      <!-- PAINEL DE REDAÇÃO (EXPANDÍVEL) -->
-      <div id="redacao-panel" class="redacao-box hidden">
-        <h3 style="color:var(--accent-green)">Rascunho de Redação do ENEM</h3>
-        <p style="color:var(--text-muted); font-size:0.9rem; margin-top:5px;">Desenvolva aqui o seu texto antes de finalizar a prova:</p>
-        <textarea id="redacao-texto" placeholder="Digite seu texto dissertativo-argumentativo aqui..."></textarea>
-      </div>
+function finalizarProva(){
+  clearInterval(timerInt);
+  let acertos=0; questions.forEach((q,idx)=>{ if(answers[idx]===String(q.gabarito).toUpperCase().trim()) acertos++; });
+  const total=questions.length;
+  const payload={action:'salvarResultado', usuario:currentUser, ano:currentAno, acertos:acertos, total:total, tempo:secondsElapsed, redacao:document.getElementById('redacao').value};
+  fetch(WEB_APP_URL, {method:'POST', body: JSON.stringify(payload)});
+  localStorage.setItem(currentUser+'_'+currentAno+'_done','true');
+  localStorage.removeItem(currentUser+'_'+currentAno+'_saved');
+  document.getElementById('screen-quiz').classList.add('hidden');
+  document.getElementById('screen-result').classList.remove('hidden');
+  document.getElementById('res-user').innerText=currentUser;
+  document.getElementById('res-score').innerText=((acertos/total)*100).toFixed(1);
+  document.getElementById('res-time').innerText=document.getElementById('timer').innerText;
+}
 
-      <div class="question-box" id="q-box">
-        <div class="question-enunciado" id="q-enunciado">Carregando questão...</div>
-        <img id="q-img" class="question-img hidden" src="" alt="Imagem da questão">
-        
-        <div class="options-group" id="options-container"></div>
-      </div>
-
-      <div class="nav-controls">
-        <button class="btn" style="background:#475569" onclick="prevQuestion()">Anterior</button>
-        <button class="btn" style="background:#0284c7" onclick="toggleRedacaoPanel()">✍️ Redação</button>
-        <button class="btn" style="background:var(--accent-yellow); color:#000;" onclick="salvarESair()">💾 Salvar e Sair</button>
-        <button class="btn" style="background:var(--accent-green)" onclick="finalizarProva()">Finalizar Prova</button>
-        <button class="btn" onclick="nextQuestion()">Próxima</button>
-      </div>
-    </div>
-
-    <!-- TELA 4: RESULTADO -->
-    <div id="screen-result" class="hidden" style="text-align: center;">
-      <h2>Simulado Concluído!</h2>
-      <p style="font-size: 1.2rem; margin: 20px 0;">Estudante: <strong id="res-user"></strong></p>
-      <p style="font-size: 1.6rem; color: var(--accent-green); margin-bottom: 15px;">
-        Aproveitamento: <span id="res-score"></span>%
-      </p>
-      <p style="color: var(--text-muted); margin-bottom: 25px;">Tempo total registrado: <span id="res-time"></span></p>
-      <button class="btn" onclick="proximaEtapa()">Continuar Cronograma</button>
-    </div>
-
-  </div>
-
-  <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxPM_vfxyPUxwB4Thd2CYI2VR4dYA-ODcAvTg0w9UcKMGMG2qt0ZggVwwfumb016YjF/exec";
-
-    let currentUser = '';
-    let currentAno = 2022;
-    let questions = [];
-    let currentIndex = 0;
-    let answers = {};
-    let timerInterval = null;
-    let secondsElapsed = 0;
-    let isPaused = false;
-
-    function updateDateTime() {
-      const now = new Date();
-      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-      document.getElementById('live-datetime').innerText = now.toLocaleDateString('pt-BR', options);
-    }
-    setInterval(updateDateTime, 1000);
-    updateDateTime();
-
-    function selectUser(user) {
-      currentUser = user;
-      document.getElementById('user-welcome').innerText = 'Estudante ativo: ' + user;
-      document.getElementById('screen-user').classList.add('hidden');
-      document.getElementById('screen-prova').classList.remove('hidden');
-      atualizarBotoesProvas();
-    }
-
-    function atualizarBotoesProvas() {
-      const p1Done = localStorage.getItem(currentUser + '_2022_done');
-      const p2Done = localStorage.getItem(currentUser + '_2023_done');
-
-      const btnP2 = document.getElementById('btn-p2');
-      const btnP3 = document.getElementById('btn-p3');
-
-      if (p1Done) {
-        btnP2.disabled = false;
-        btnP2.innerText = '2ª Prova: ENEM 2023 (180 Q)';
-      }
-      if (p2Done) {
-        btnP3.disabled = false;
-        btnP3.innerText = '3ª Prova: ENEM 2024 (180 Q)';
-      }
-    }
-
-    function iniciarProva(ano) {
-      currentAno = ano;
-      document.getElementById('screen-prova').classList.add('hidden');
-      document.getElementById('screen-quiz').classList.remove('hidden');
-      
-      // Carrega sessão salva se existir
-      const savedData = localStorage.getItem(currentUser + '_' + ano + '_saved');
-      if (savedData) {
-        const parsed = JSON.parse(savedData);
-        answers = parsed.answers || {};
-        secondsElapsed = parsed.secondsElapsed || 0;
-        currentIndex = parsed.currentIndex || 0;
-      } else {
-        secondsElapsed = 0;
-        answers = {};
-        currentIndex = 0;
-      }
-
-      startTimer();
-
-      fetch(`${WEB_APP_URL}?action=getQuestoes&ano=${ano}`)
-        .then(response => response.json())
-        .then(data => renderQuestions(data))
-        .catch(err => {
-          document.getElementById('q-enunciado').innerText = 'Erro ao conectar ao banco de questões na nuvem.';
-        });
-    }
-
-    function startTimer() {
-      if (timerInterval) clearInterval(timerInterval);
-      timerInterval = setInterval(() => {
-        if (!isPaused) {
-          secondsElapsed++;
-          const h = String(Math.floor(secondsElapsed / 3600)).padStart(2, '0');
-          const m = String(Math.floor((secondsElapsed % 3600) / 60)).padStart(2, '0');
-          const s = String(secondsElapsed % 60).padStart(2, '0');
-          document.getElementById('timer').innerText = `${h}:${m}:${s}`;
-        }
-      }, 1000);
-    }
-
-    function togglePause() {
-      isPaused = !isPaused;
-      const btn = document.getElementById('btn-pause');
-      const qBox = document.getElementById('q-box');
-      if (isPaused) {
-        btn.innerText = 'Retomar';
-        qBox.classList.add('hidden');
-      } else {
-        btn.innerText = 'Pausar';
-        qBox.classList.remove('hidden');
-      }
-    }
-
-    function toggleRedacaoPanel() {
-      const panel = document.getElementById('redacao-panel');
-      panel.classList.toggle('hidden');
-    }
-
-    function salvarESair() {
-      const saveData = {
-        answers: answers,
-        secondsElapsed: secondsElapsed,
-        currentIndex: currentIndex
-      };
-      localStorage.setItem(currentUser + '_' + currentAno + '_saved', JSON.stringify(saveData));
-      alert('Progresso salvo com sucesso! Você pode retomar este simulado mais tarde.');
-      location.reload();
-    }
-
-    function renderQuestions(data) {
-      if (!data || data.length === 0) {
-        document.getElementById('q-enunciado').innerText = 'Nenhuma questão encontrada para esta prova.';
-        return;
-      }
-      questions = data;
-      document.getElementById('q-total').innerText = questions.length;
-      showQuestion(currentIndex);
-    }
-
-    function showQuestion(index) {
-      currentIndex = index;
-      const q = questions[index];
-      document.getElementById('q-curr').innerText = index + 1;
-      document.getElementById('q-enunciado').innerText = q.enunciado;
-
-      const imgElem = document.getElementById('q-img');
-      if (q.imagem && typeof q.imagem === 'string' && q.imagem.trim().startsWith('http')) {
-        imgElem.src = q.imagem.trim();
-        imgElem.classList.remove('hidden');
-      } else {
-        imgElem.classList.add('hidden');
-        imgElem.src = '';
-      }
-
-      const optsContainer = document.getElementById('options-container');
-      optsContainer.innerHTML = '';
-
-      const opts = [
-        { key: 'A', text: q.optA },
-        { key: 'B', text: q.optB },
-        { key: 'C', text: q.optC },
-        { key: 'D', text: q.optD },
-        { key: 'E', text: q.optE }
-      ];
-
-      opts.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn' + (answers[index] === opt.key ? ' selected' : '');
-        btn.innerHTML = `<strong>${opt.key})</strong> ${opt.text}`;
-        btn.onclick = () => {
-          answers[index] = opt.key;
-          showQuestion(index);
-        };
-        optsContainer.appendChild(btn);
-      });
-    }
-
-    function nextQuestion() {
-      if (currentIndex < questions.length - 1) showQuestion(currentIndex + 1);
-    }
-
-    function prevQuestion() {
-      if (currentIndex > 0) showQuestion(currentIndex - 1);
-    }
-
-    function finalizarProva() {
-      clearInterval(timerInterval);
-      let acertos = 0;
-      questions.forEach((q, idx) => {
-        if (answers[idx] === q.gabarito) acertos++;
-      });
-
-      const total = questions.length;
-      const percentual = ((acertos / total) * 100).toFixed(1);
-      const redacaoTexto = document.getElementById('redacao-texto').value;
-
-      localStorage.setItem(currentUser + '_' + currentAno + '_done', 'true');
-      localStorage.removeItem(currentUser + '_' + currentAno + '_saved');
-
-      document.getElementById('screen-quiz').classList.add('hidden');
-      document.getElementById('screen-result').classList.remove('hidden');
-      document.getElementById('res-user').innerText = currentUser;
-      document.getElementById('res-score').innerText = percentual;
-      document.getElementById('res-time').innerText = document.getElementById('timer').innerText;
-
-      // Envia os dados completos ao Apps Script
-      fetch(`${WEB_APP_URL}?action=salvarResultado&usuario=${encodeURIComponent(currentUser)}&ano=${currentAno}&acertos=${acertos}&total=${total}&tempo=${secondsElapsed}&redacao=${encodeURIComponent(redacaoTexto)}`);
-    }
-
-    function proximaEtapa() {
-      document.getElementById('screen-result').classList.add('hidden');
-      document.getElementById('screen-prova').classList.remove('hidden');
-      atualizarBotoesProvas();
-    }
-  </script>
+function proximaEtapa(){ document.getElementById('screen-result').classList.add('hidden'); document.getElementById('screen-prova').classList.remove('hidden'); atualizarBotoes(); }
+</script>
 </body>
 </html>
