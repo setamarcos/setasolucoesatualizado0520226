@@ -3,539 +3,495 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Seta Soluções - Painel de Abas</title>
+  <title>Seta Soluções - Painel</title>
+  <meta name="description" content="Painel de acesso rápido às soluções da Seta Soluções.">
+  <meta name="theme-color" content="#050b2e">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #002244;
-      --primary-dark: #000d1a;
-      --accent: #ff6600;
-      --accent-hover: #ff8533;
-      --accent-glow: rgba(255, 102, 0, 0.4);
-      --bg-gradient: radial-gradient(circle at top, #002b55 0%, #001328 60%, #000914 100%);
-      --card-bg: rgba(255, 255, 255, 0.05);
-      --card-hover: rgba(255, 255, 255, 0.12);
-      --card-border: rgba(255, 255, 255, 0.1);
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
+      --azul-profundo: #030824;
+      --azul-noite: #071140;
+      --azul-seta: #1c33e6;
+      --azul-claro: #4f7bff;
+      --laranja: #ff7a00;
+      --laranja-claro: #ffa53d;
+      --texto: #f4f6ff;
+      --texto-suave: #a9b4dc;
+      --vidro: rgba(255, 255, 255, 0.06);
+      --borda: rgba(255, 255, 255, 0.10);
+      --raio: 18px;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
     body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: var(--bg-gradient);
-      color: var(--text-main);
+      font-family: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: var(--azul-profundo);
+      color: var(--texto);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
-    
-    header {
-      background: rgba(0, 13, 26, 0.8);
-      backdrop-filter: blur(15px);
-      color: #fff;
-      text-align: center;
-      padding: 2rem 1rem 1.5rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      border-bottom: 2px solid rgba(255, 102, 0, 0.5);
-      position: relative;
-    }
-    
-    header h1 {
-      font-size: 2.2rem;
-      font-weight: 800;
-      letter-spacing: 1px;
-      background: linear-gradient(90deg, #ffffff, #ff944d);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 0.2rem;
-    }
-    
-    header p {
-      font-size: 0.95rem;
-      color: #cbd5e1;
-      margin-bottom: 1.2rem;
-      font-weight: 400;
-    }
 
-    .user-info-bar {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1rem;
-      font-size: 0.85rem;
-      background: rgba(255, 255, 255, 0.06);
-      backdrop-filter: blur(10px);
-      padding: 0.5rem 1.4rem;
-      border-radius: 30px;
-      border: 1px solid var(--card-border);
-      color: #e2e8f0;
-    }
-
-    /* Barra de Pesquisa */
-    .search-container {
-      max-width: 500px;
-      margin: 1.8rem auto 0;
-      width: 100%;
-      padding: 0 1rem;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 0.75rem 1.2rem;
-      border-radius: 25px;
-      border: 1px solid var(--card-border);
-      background: rgba(255, 255, 255, 0.08);
-      color: #fff;
-      font-size: 0.9rem;
-      outline: none;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(5px);
-    }
-
-    .search-input::placeholder {
-      color: #94a3b8;
-    }
-
-    .search-input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 15px var(--accent-glow);
-      background: rgba(255, 255, 255, 0.12);
-    }
-    
-    .container {
-      flex: 1;
-      max-width: 1350px;
-      margin: 2rem auto;
-      padding: 0 1.5rem;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-    
-    .abas-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-      gap: 1.3rem;
-      width: 100%;
-    }
-    
-    .aba-btn {
-      background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 1.4rem 1.2rem;
-      cursor: pointer;
-      text-align: left;
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      text-decoration: none;
-      color: var(--text-main);
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: space-between;
-      min-height: 160px;
-      position: relative;
+    /* ===== Fundo animado ===== */
+    .fundo {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
       overflow: hidden;
+      background:
+        radial-gradient(1200px 600px at 50% -10%, rgba(28, 51, 230, 0.45), transparent 60%),
+        linear-gradient(180deg, var(--azul-noite) 0%, var(--azul-profundo) 70%);
     }
-
-    .aba-btn::before {
+    .fundo::after {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background: transparent;
-      transition: background 0.3s ease;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse at 50% 30%, #000 20%, transparent 75%);
+      -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 20%, transparent 75%);
     }
-    
-    .aba-btn:hover {
-      transform: translateY(-6px);
-      background: var(--card-hover);
-      border-color: var(--accent);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 20px var(--accent-glow);
-    }
-
-    .aba-btn:hover::before {
-      background: var(--accent);
-    }
-
-    /* Badges/Tags */
-    .badge {
+    .bolha {
       position: absolute;
-      top: 12px;
-      right: 12px;
-      font-size: 0.65rem;
-      font-weight: 700;
-      padding: 0.2rem 0.5rem;
-      border-radius: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.55;
+      animation: flutuar 18s ease-in-out infinite alternate;
+    }
+    .bolha.b1 { width: 480px; height: 480px; background: var(--azul-seta); top: -120px; left: -120px; }
+    .bolha.b2 { width: 380px; height: 380px; background: var(--laranja); bottom: -140px; right: -100px; opacity: 0.28; animation-delay: -6s; }
+    .bolha.b3 { width: 300px; height: 300px; background: var(--azul-claro); top: 40%; right: 20%; opacity: 0.22; animation-delay: -12s; }
+    @keyframes flutuar {
+      0%   { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(60px, 40px) scale(1.15); }
     }
 
-    .badge-ia {
-      background: linear-gradient(135deg, #ff6600, #ff0055);
-      color: #fff;
+    /* ===== Cabeçalho ===== */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(3, 8, 36, 0.65);
+      backdrop-filter: blur(18px) saturate(140%);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
+      border-bottom: 1px solid var(--borda);
     }
+    header::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--azul-claro), var(--laranja), transparent);
+      background-size: 200% 100%;
+      animation: brilho 6s linear infinite;
+    }
+    @keyframes brilho { to { background-position: 200% 0; } }
 
-    .badge-novo {
-      background: #00c853;
-      color: #fff;
-    }
-
-    .badge-sistema {
-      background: rgba(255, 255, 255, 0.15);
-      color: #cbd5e1;
-    }
-    
-    .aba-icon {
-      width: 40px;
-      height: 40px;
-      margin-bottom: 0.8rem;
-      display: flex;
+    .topo {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0.9rem 1.5rem;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
       align-items: center;
-      justify-content: center;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 10px;
-      padding: 8px;
-      transition: all 0.3s ease;
+      gap: 1.5rem;
     }
 
-    .aba-icon svg {
+    .logo {
+      display: block;
+      position: relative;
+      height: 72px;
+      aspect-ratio: 12 / 5;
+      background: #0a1a9e;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--borda);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 122, 0, 0.0);
+      transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
+    }
+    /* recorte exato da arte do logo (sem zoom, para não perder nitidez) */
+    .logo img {
+      position: absolute;
+      width: 128%;
+      height: 204.8%;
+      left: -18.33%;
+      top: -35%;
+      max-width: none;
+      display: block;
+    }
+    .logo:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 0 2px var(--laranja);
+    }
+
+    .marca { text-align: center; min-width: 0; }
+    .marca h1 {
+      font-family: 'Sora', sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.35rem, 2.6vw, 2rem);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+    .marca h1 span {
+      background: linear-gradient(90deg, var(--laranja), var(--laranja-claro));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .marca p {
+      margin-top: 0.25rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--texto-suave);
+    }
+
+    /* ===== Saudação ===== */
+    .saudacao {
+      max-width: 1240px;
+      margin: 2.6rem auto 0;
+      padding: 0 1.5rem;
+      text-align: center;
+      animation: subir 0.9s var(--ease) both;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.45rem 1rem;
+      border-radius: 999px;
+      background: var(--vidro);
+      border: 1px solid var(--borda);
+      font-size: 0.82rem;
+      color: var(--texto-suave);
+    }
+    .chip .ponto {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--laranja);
+      box-shadow: 0 0 0 0 rgba(255, 122, 0, 0.7);
+      animation: pulso 2s infinite;
+    }
+    .chip strong { color: var(--texto); font-variant-numeric: tabular-nums; }
+    @keyframes pulso {
+      0%   { box-shadow: 0 0 0 0 rgba(255, 122, 0, 0.6); }
+      70%  { box-shadow: 0 0 0 10px rgba(255, 122, 0, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 122, 0, 0); }
+    }
+
+    .saudacao h2 {
+      margin-top: 1.1rem;
+      font-family: 'Sora', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+    }
+    .saudacao h2 .destaque {
+      background: linear-gradient(100deg, #ffffff 10%, var(--laranja-claro) 50%, var(--laranja) 90%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .frase {
+      margin: 0.9rem auto 0;
+      max-width: 640px;
+      min-height: 3.2em;
+      font-size: clamp(0.98rem, 1.6vw, 1.12rem);
+      line-height: 1.6;
+      color: var(--texto-suave);
+      transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+    }
+    .frase.saindo { opacity: 0; transform: translateY(8px); }
+    .frase::before { content: '“'; color: var(--laranja); font-weight: 700; margin-right: 2px; }
+    .frase::after  { content: '”'; color: var(--laranja); font-weight: 700; margin-left: 2px; }
+
+    /* ===== Grade de cards ===== */
+    main {
+      flex: 1;
+      width: 100%;
+      max-width: 1240px;
+      margin: 2.4rem auto 3.5rem;
+      padding: 0 1.5rem;
+    }
+
+    .grade {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1.1rem;
+    }
+
+    .card {
+      position: relative;
+      display: block;
+      aspect-ratio: 4 / 5;
+      border-radius: var(--raio);
+      overflow: hidden;
+      text-decoration: none;
+      color: var(--texto);
+      background: var(--azul-noite);
+      border: 1px solid var(--borda);
+      isolation: isolate;
+      opacity: 0;
+      transform: translateY(24px);
+      animation: subir 0.8s var(--ease) forwards;
+      animation-delay: calc(var(--i) * 70ms + 200ms);
+      transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease), border-color 0.45s var(--ease);
+    }
+    @keyframes subir { to { opacity: 1; transform: translateY(0); } from { opacity: 0; transform: translateY(24px); } }
+
+    .card img {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
-      fill: #ffffff;
-      transition: fill 0.3s ease;
+      object-fit: cover;
+      z-index: -2;
+      transform: scale(1.02);
+      transition: transform 0.9s var(--ease), filter 0.6s var(--ease);
+      filter: saturate(1.05);
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(180deg, rgba(3, 8, 36, 0.05) 30%, rgba(3, 8, 36, 0.55) 62%, rgba(3, 8, 36, 0.95) 100%);
+      transition: background 0.5s var(--ease);
+    }
+    .card::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--azul-claro), var(--laranja));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.5s var(--ease);
     }
 
-    .aba-btn:hover .aba-icon {
-      background: var(--accent);
-      transform: scale(1.05);
-    }
-
-    .aba-btn:hover .aba-icon svg {
-      fill: #ffffff;
-    }
-    
-    .aba-content {
-      width: 100%;
-    }
-
-    .aba-titulo {
-      font-size: 1.05rem;
+    .card .nome {
+      position: absolute;
+      left: 1rem; right: 1rem; bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      font-family: 'Sora', sans-serif;
       font-weight: 700;
-      margin-bottom: 0.3rem;
-      color: #fff;
+      font-size: clamp(0.9rem, 1.4vw, 1.1rem);
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     }
-    
-    .aba-desc {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      line-height: 1.4;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+    .card .seta {
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      transition: background 0.4s var(--ease), transform 0.4s var(--ease);
     }
-    
+    .card .seta svg { width: 14px; height: 14px; stroke: #fff; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+    .card:hover, .card:focus-visible {
+      transform: translateY(-6px);
+      border-color: rgba(255, 122, 0, 0.7);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 122, 0, 0.25);
+      outline: none;
+    }
+    .card:hover img, .card:focus-visible img { transform: scale(1.12); filter: saturate(1.2); }
+    .card:hover::after, .card:focus-visible::after { transform: scaleX(1); }
+    .card:hover .seta, .card:focus-visible .seta { background: var(--laranja); transform: rotate(-45deg); }
+
+    /* ===== Rodapé ===== */
     footer {
-      background: rgba(0, 13, 26, 0.9);
-      color: #64748b;
+      border-top: 1px solid var(--borda);
+      background: rgba(3, 8, 36, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 1.4rem 1.5rem;
       text-align: center;
-      padding: 1.2rem;
-      margin-top: auto;
       font-size: 0.85rem;
-      border-top: 1px solid var(--card-border);
+      color: var(--texto-suave);
     }
-
-    footer p {
-      margin-bottom: 0.3rem;
+    footer .contatos {
+      margin-top: 0.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.6rem;
     }
-
-    footer strong {
-      color: #cbd5e1;
-    }
-
     footer a {
-      color: #ff8533;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 0.95rem;
+      border-radius: 999px;
+      border: 1px solid var(--borda);
+      background: var(--vidro);
+      color: var(--texto);
       text-decoration: none;
-      transition: color 0.3s ease;
+      transition: border-color 0.3s, background 0.3s, transform 0.3s var(--ease);
+    }
+    footer a:hover { border-color: var(--laranja); background: rgba(255, 122, 0, 0.12); transform: translateY(-2px); }
+    footer a svg { width: 16px; height: 16px; fill: var(--laranja); }
+
+    /* ===== Responsivo ===== */
+    @media (max-width: 720px) {
+      .topo { gap: 0.7rem; padding: 0.7rem 1rem; }
+      .logo { height: 38px; border-radius: 9px; }
+      .marca h1 { font-size: 1.15rem; }
+      .marca p { font-size: 0.62rem; letter-spacing: 0.14em; }
+      .saudacao { margin-top: 1.8rem; }
+      .chip { font-size: 0.74rem; padding: 0.4rem 0.85rem; }
+      main { padding: 0 1rem; margin-top: 1.8rem; }
+      .grade { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+      .card { aspect-ratio: 1 / 1; }
+      .card .nome { font-size: 0.88rem; left: 0.7rem; right: 0.7rem; bottom: 0.7rem; }
+      .card .seta { width: 26px; height: 26px; }
     }
 
-    footer a:hover {
-      color: #ff6600;
-      text-decoration: underline;
-    }
-
-    .no-results {
-      display: none;
-      text-align: center;
-      width: 100%;
-      padding: 2rem;
-      color: var(--text-muted);
-      font-size: 1rem;
-    }
-    
-    @media (max-width: 768px) {
-      header h1 {
-        font-size: 1.7rem;
-      }
-      
-      .user-info-bar {
-        flex-direction: column;
-        gap: 0.2rem;
-        padding: 0.5rem 1rem;
-      }
-
-      .abas-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 0.9rem;
-      }
-      
-      .aba-btn {
-        min-height: 140px;
-        padding: 1rem 0.9rem;
-      }
-
-      .aba-icon {
-        width: 32px;
-        height: 32px;
-        padding: 6px;
-      }
-
-      .aba-titulo {
-        font-size: 0.92rem;
-      }
-
-      .aba-desc {
-        font-size: 0.72rem;
-      }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .card { opacity: 1; transform: none; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Seta Soluções</h1>
-    <p>Tecnologia e Soluções Inteligentes</p>
-    
-    <div class="user-info-bar">
-      <span id="saudacao">Olá, Seja bem-vindo!</span>
-      <span>•</span>
-      <span><strong id="data-atual">Carregando data...</strong></span>
-    </div>
+  <div class="fundo" aria-hidden="true">
+    <div class="bolha b1"></div>
+    <div class="bolha b2"></div>
+    <div class="bolha b3"></div>
+  </div>
 
-    <!-- Barra de busca rápida -->
-    <div class="search-container">
-      <input type="text" id="search-bar" class="search-input" placeholder="🔍 Buscar serviço ou aba..." onkeyup="filtrarAbas()">
+  <header>
+    <div class="topo">
+      <a class="logo" href="https://www.setasolucoes.com.br/" target="_blank" rel="noopener noreferrer" aria-label="Seta Soluções">
+        <img src="logo.png" alt="Logo Seta Soluções" onerror="this.onerror=null;this.src='https://www.setasolucoes.com.br/logo.png'">
+      </a>
+      <div class="marca">
+        <h1>Seta <span>Soluções</span></h1>
+        <p>Tecnologia e Soluções Inteligentes</p>
+      </div>
+      <a class="logo" href="https://www.setasolucoes.com.br/" target="_blank" rel="noopener noreferrer" aria-label="Seta Soluções">
+        <img src="logo.png" alt="Logo Seta Soluções" onerror="this.onerror=null;this.src='https://www.setasolucoes.com.br/logo.png'">
+      </a>
     </div>
   </header>
-  
-  <div class="container">
-    <div class="abas-grid" id="grid-abas">
-      
-      <a href="/" class="aba-btn">
-        <span class="badge badge-sistema">Início</span>
-        <div class="aba-icon">
-          <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        </div>
-        <div class="aba-content">
-          <div class="aba-titulo">Início</div>
-          <div class="aba-desc">Voltar para a página principal da plataforma</div>
-        </div>
-      </a>
 
-      <a href="https://prompt-polish-workshop.lovable.app/" target="_blank" rel="noopener noreferrer" class="aba-btn">
-        <span class="badge badge-ia">IA</span>
-        <div class="aba-icon">
-          <svg viewBox="0 0 24 24"><path d="M7.5 5.6L5 7l1.4-2.5L5 2l2.5 1.4L10 2 8.6 4.5 10 7 7.5 5.6zm12 9.8l-2.5 1.4 1.4-2.5L17 12l2.5 1.4L22 12l-1.4 2.5 1.4 2.5-2.5-1.4zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5L22 2zm-11 7.21l-7.38 7.38c-.39.39-.39 1.02 0 1.41l2.38 2.38c.39.39 1.02.39 1.41 0l7.38-7.38c.39-.39.39-1.02 0-1.41l-2.38-2.38c-.38-.39-1.02-.39-1.41 0z"/></svg>
-        </div>
-        <div class="aba-content">
-          <div class="aba-titulo">Prompt Polish</div>
-          <div class="aba-desc">Otimização e refinamento avançado de prompts com IA</div>
-        </div>
-      </a>
-      
-      <a href="https://www.setasolucoes.com.br/iaseta/" class="aba-btn">
-        <span class="badge badge-ia">IA Seta</span>
-        <div class="aba-icon">
-          <svg viewBox="0 0 24 24"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A1.5 1.5 0 0 0 6 14.5a1.5 1.5 0 0 0 7.5 1.5A1.5 1.5 0 0 0 9 14.5A1.5 1.5 0 0 0 7.5 13m9 0a1.5 1.5 0 0 0-1.5 1.5a1.5 1.5 0 0 0 1.5 1.5a1.5 1.5 0 0 0 1.5-1.5a1.5 1.5 0 0 0-1.5-1.5M12 10c-2.33 0-4.31 1.35-5.22 3.3c-.11.23.03.5.28.5h.39c.2 0 .38-.11.47-.29C8.42 12.39 10.05 11.5 12 11.5s3.58.89 4.38 2.51c.09.18.27.29.47.29h.39c.25 0 .39-.27.28-.5C16.31 11.35 14.33 10 12 10z"/></svg>
-        </div>
-        <div class="aba-content">
-          <div class="aba-titulo">IA Seta</div>
-          <div class="aba-desc">Plataforma de inteligência artificial da Seta Soluções</div>
-        </div>
-      </a>
+  <section class="saudacao">
+    <div class="chip"><span class="ponto"></span><span id="data-atual">Carregando...</span> • <strong id="relogio">--:--</strong></div>
+    <h2><span id="saudacao" class="destaque">Olá!</span></h2>
+    <p class="frase" id="frase">Grandes conquistas começam com pequenos passos.</p>
+  </section>
 
-      <a href="https://www.setasolucoes.com.br/aluguel/" class="aba-btn">
-        <span class="badge badge-novo">Novo</span>
-        <div class="aba-icon">
-          <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        </div>
-        <div class="aba-content">
-          <div class="aba-titulo">Aluguel</div>
-          <div class="aba-desc">Gestão e consulta de imóveis e aluguéis</div>
-        </div>
-      </a>
-      
-      <a href="/laura/" class="aba-btn">
-        <div class="aba-icon">
-          <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-        </div>
-        <div class="aba-content">
-          <div class="aba-titulo">Laura</div>
-          <div class="aba-desc">Soluções personalizadas para sua empresa</div>
-        </div>
-      </a>
-      
-      <a href="https://www.setasolucoes.com.br/cedaf2026/" class="aba-btn">
-        <div class="aba-icon">
-          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-        </div>
-        <div class="aba-content">
-          <div class="aba-titulo">CEDAF 2026</div>
-          <div class="aba-desc">Plataforma de simulados, redação e análise de erros</div>
-        </div>
-      </a>
-      
-      <a href="/neurociencia/" class="aba-btn">
-        <div class="aba-icon">
-          <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.22 19.56 10.58 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg>
-        </div>
-        <div class="aba-content">
-          <div class="aba-titulo">Neurociência</div>
-          <div class="aba-desc">Aplicações de neurociência em negócios</div>
-        </div>
-      </a>
-      
-      <a href="/governança/" class="aba-btn">
-        <span class="badge badge-ia">IA</span>
-        <div class="aba-icon">
-          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-        </div>
-        <div class="aba-content">
-          <div class="aba-titulo">Governança</div>
-          <div class="aba-desc">Diagnóstico direto com IA para estruturas organizacionais</div>
-        </div>
-      </a>
-      
-      <a href="/prospect-governanca-mp/" class="aba-btn">
-        <div class="aba-icon">
-          <svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM10 4h4v2h-4V4zm10 15H4V8h16v11z"/></svg>
-        </div>
-        <div class="aba-content">
-          <div class="aba-titulo">Prospect Governança MP</div>
-          <div class="aba-desc">Ferramenta especializada em prospecção de governança</div>
-        </div>
-      </a>
+  <main>
+    <nav class="grade" id="grade" aria-label="Acesso rápido"></nav>
+  </main>
 
-      <a href="/album/" class="aba-btn">
-        <div class="aba-icon">
-          <svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
-        </div>
-        <div class="aba-content">
-          <div class="aba-titulo">Álbum</div>
-          <div class="aba-desc">Crie álbuns de figurinhas para escolas, times e eventos</div>
-        </div>
-      </a>
-
-      <a href="https://www.setasolucoes.com.br/livro" class="aba-btn">
-        <div class="aba-icon">
-          <svg viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
-        </div>
-        <div class="aba-content">
-          <div class="aba-titulo">Livro</div>
-          <div class="aba-desc">Acervo digital e registro contínuo das crônicas</div>
-        </div>
-      </a>
-
-      <a href="https://www.setasolucoes.com.br/veronica/" class="aba-btn">
-        <div class="aba-icon">
-          <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-        </div>
-        <div class="aba-content">
-          <div class="aba-titulo">Verônica</div>
-          <div class="aba-desc">Atendimento e soluções inteligentes personalizadas</div>
-        </div>
-      </a>
-
-      <a href="https://www.setasolucoes.com.br/simonesemijoias/" class="aba-btn">
-        <div class="aba-icon">
-          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        </div>
-        <div class="aba-content">
-          <div class="aba-titulo">Simone Semijoias</div>
-          <div class="aba-desc">Catálogo e novidades em semijoias exclusivas</div>
-        </div>
-      </a>
-      
-    </div>
-    
-    <div id="no-results" class="no-results">
-      Nenhum serviço ou aba encontrada com este termo.
-    </div>
-  </div>
-  
   <footer>
-    <p>&copy; 2026 Seta Soluções. Todos os direitos reservados.</p>
-    <p>
-      <strong>WhatsApp:</strong> 
-      <a href="https://wa.me/5531984821901" target="_blank" rel="noopener noreferrer">(31) 98482-1901</a> 
-      | 
-      <strong>Email:</strong> 
-      <a href="mailto:setamarcos@gmail.com">setamarcos@gmail.com</a>
-    </p>
+    <p>&copy; <span id="ano">2026</span> Seta Soluções. Todos os direitos reservados.</p>
+    <div class="contatos">
+      <a href="https://wa.me/5531984821901" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.8 14.03c-.24.68-1.42 1.3-1.95 1.36-.5.06-1.13.09-1.82-.11-.42-.13-.96-.31-1.65-.61-2.9-1.25-4.79-4.17-4.94-4.36-.14-.19-1.18-1.57-1.18-3s.75-2.13 1.02-2.42c.26-.29.58-.36.77-.36h.55c.18 0 .42-.07.65.5.24.58.82 2 .89 2.14.07.15.12.32.02.51-.1.19-.14.31-.29.48-.14.17-.3.37-.43.5-.14.14-.29.3-.13.59.17.29.74 1.22 1.59 1.98 1.09.97 2.01 1.27 2.3 1.41.29.15.46.12.62-.07.17-.19.72-.84.91-1.13.19-.29.38-.24.65-.14.26.1 1.68.79 1.97.94.29.14.48.22.55.34.07.12.07.7-.17 1.38z"/></svg>
+        (31) 98482-1901
+      </a>
+      <a href="mailto:setamarcos@gmail.com">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4.24-8 5-8-5V6l8 5 8-5v2.24z"/></svg>
+        setamarcos@gmail.com
+      </a>
+    </div>
   </footer>
 
   <script>
-    // Data e Saudação Dinâmicas
-    const dataCorrente = new Date();
-    const opcoesData = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    document.getElementById('data-atual').innerText = dataCorrente.toLocaleDateString('pt-BR', opcoesData);
+    // ===== Cards (edite aqui para adicionar/remover) =====
+    const img = (id) => `https://images.unsplash.com/photo-${id}?w=600&q=80&auto=format&fit=crop`;
+    const cards = [
+      { nome: 'Seta Início',            link: '/',                                              foto: img('1615774925655-a0e97fc85c14') },
+      { nome: 'Brasil em Jogo',         link: 'https://www.setasolucoes.com.br/brasilemjogo/', foto: img('1601118964938-228a89955311') },
+      { nome: 'É Assim que Usa IA',          link: 'https://prompt-polish-workshop.lovable.app/',   foto: img('1526378722484-bd91ca387e72') },
+      { nome: 'Aluguel',                link: 'https://www.setasolucoes.com.br/aluguel/',      foto: img('1640531784350-0ddbb5f82795') },
+      { nome: 'Laura',                  link: '/laura/',                                        foto: img('1596495868845-63031cb496da') },
+      { nome: 'CEDAF 2026',             link: 'https://www.setasolucoes.com.br/cedaf2026/',    foto: img('1522202176988-66273c2fd55f') },
+      { nome: 'Prospect Governança MP', link: '/prospect-governanca-mp/',                       foto: img('1597502310092-31cdaa35b46d') },
+      { nome: 'Livro',                  link: 'https://www.setasolucoes.com.br/livro',         foto: img('1481627834876-b7833e8f5570') },
+      { nome: 'Verônica',               link: 'https://www.setasolucoes.com.br/veronica/',     foto: img('1519415510236-718bdfcd89c8') },
+      { nome: 'Simone Semijoias',       link: 'https://www.setasolucoes.com.br/simonesemijoias/', foto: img('1599643478518-a784e5dc4c8f') }
+    ];
 
-    const hora = dataCorrente.getHours();
-    let textoSaudacao = "Olá, Seja bem-vindo!";
-    if (hora >= 5 && hora < 12) {
-      textoSaudacao = "Bom dia!";
-    } else if (hora >= 12 && hora < 18) {
-      textoSaudacao = "Boa tarde!";
-    } else {
-      textoSaudacao = "Boa noite!";
+    const grade = document.getElementById('grade');
+    grade.innerHTML = cards.map((c, i) => `
+      <a class="card" href="${c.link}" target="_blank" rel="noopener noreferrer" style="--i:${i}" aria-label="Abrir ${c.nome} em nova guia">
+        <img src="${c.foto}" alt="" loading="${i < 6 ? 'eager' : 'lazy'}" decoding="async">
+        <span class="nome">${c.nome}
+          <span class="seta"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </span>
+      </a>`).join('');
+
+    // ===== Saudação, data e relógio =====
+    function atualizarHora() {
+      const agora = new Date();
+      const h = agora.getHours();
+      const saudacao = h >= 5 && h < 12 ? 'Bom dia!' : h >= 12 && h < 18 ? 'Boa tarde!' : 'Boa noite!';
+      document.getElementById('saudacao').textContent = saudacao;
+      const data = agora.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      document.getElementById('data-atual').textContent = data.charAt(0).toUpperCase() + data.slice(1);
+      document.getElementById('relogio').textContent =
+        agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('ano').textContent = agora.getFullYear();
     }
-    document.getElementById('saudacao').innerText = textoSaudacao;
+    atualizarHora();
+    setInterval(atualizarHora, 1000 * 15);
 
-    // Função para Busca em Tempo Real (Adicionado pela IA)
-    function filtrarAbas() {
-      const input = document.getElementById('search-bar').value.toLowerCase();
-      const abas = document.querySelectorAll('.aba-btn');
-      let encontrou = false;
-
-      abas.forEach(aba => {
-        const titulo = aba.querySelector('.aba-titulo').innerText.toLowerCase();
-        const desc = aba.querySelector('.aba-desc').innerText.toLowerCase();
-        
-        if (titulo.includes(input) || desc.includes(input)) {
-          aba.style.display = "flex";
-          encontrou = true;
-        } else {
-          aba.style.display = "none";
-        }
-      });
-
-      const msgSemResultado = document.getElementById('no-results');
-      if (encontrou) {
-        msgSemResultado.style.display = "none";
-      } else {
-        msgSemResultado.style.display = "block";
-      }
-    }
+    // ===== 20 frases motivacionais =====
+    const frases = [
+      'Grandes conquistas começam com pequenos passos dados todos os dias.',
+      'A persistência transforma o impossível em inevitável.',
+      'Faça hoje o que o seu futuro vai agradecer amanhã.',
+      'Disciplina é a ponte entre metas e realizações.',
+      'Quem planta com dedicação colhe com orgulho.',
+      'O sucesso é a soma de pequenos esforços repetidos diariamente.',
+      'Acredite no seu potencial: ele é maior do que você imagina.',
+      'Inovar é enxergar oportunidades onde outros veem obstáculos.',
+      'Cada desafio é uma chance de mostrar do que você é capaz.',
+      'Não espere por oportunidades, crie-as.',
+      'A energia que você coloca no dia define o resultado que você colhe.',
+      'Seja a seta que aponta para frente, sempre.',
+      'Foco no progresso, não na perfeição.',
+      'O melhor momento para começar é agora.',
+      'Trabalho em equipe transforma ideias em resultados.',
+      'Sonhe grande, comece pequeno, mas comece hoje.',
+      'A coragem de tentar é o primeiro passo para vencer.',
+      'Tecnologia é ferramenta; atitude é o que faz a diferença.',
+      'Quem se prepara não precisa ter sorte.',
+      'Seu esforço de hoje é o seu sucesso de amanhã.'
+    ];
+    const elFrase = document.getElementById('frase');
+    let idx = Math.floor(Math.random() * frases.length);
+    elFrase.textContent = frases[idx];
+    setInterval(() => {
+      elFrase.classList.add('saindo');
+      setTimeout(() => {
+        idx = (idx + 1) % frases.length;
+        elFrase.textContent = frases[idx];
+        elFrase.classList.remove('saindo');
+      }, 600);
+    }, 8000);
   </script>
 </body>
 </html>
