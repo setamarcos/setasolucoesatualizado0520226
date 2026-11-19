@@ -1,497 +1,782 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Seta Soluções - Painel</title>
-  <meta name="description" content="Painel de acesso rápido às soluções da Seta Soluções.">
-  <meta name="theme-color" content="#050b2e">
-  <link rel="icon" type="image/png" href="logo.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --azul-profundo: #030824;
-      --azul-noite: #071140;
-      --azul-seta: #1c33e6;
-      --azul-claro: #4f7bff;
-      --laranja: #ff7a00;
-      --laranja-claro: #ffa53d;
-      --texto: #f4f6ff;
-      --texto-suave: #a9b4dc;
-      --vidro: rgba(255, 255, 255, 0.06);
-      --borda: rgba(255, 255, 255, 0.10);
-      --raio: 18px;
-      --ease: cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
-      background: var(--azul-profundo);
-      color: var(--texto);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* ===== Fundo animado ===== */
-    .fundo {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      overflow: hidden;
-      background:
-        radial-gradient(1200px 600px at 50% -10%, rgba(28, 51, 230, 0.45), transparent 60%),
-        linear-gradient(180deg, var(--azul-noite) 0%, var(--azul-profundo) 70%);
-    }
-    .fundo::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
-      background-size: 48px 48px;
-      mask-image: radial-gradient(ellipse at 50% 30%, #000 20%, transparent 75%);
-      -webkit-mask-image: radial-gradient(ellipse at 50% 30%, #000 20%, transparent 75%);
-    }
-    .bolha {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(90px);
-      opacity: 0.55;
-      animation: flutuar 18s ease-in-out infinite alternate;
-    }
-    .bolha.b1 { width: 480px; height: 480px; background: var(--azul-seta); top: -120px; left: -120px; }
-    .bolha.b2 { width: 380px; height: 380px; background: var(--laranja); bottom: -140px; right: -100px; opacity: 0.28; animation-delay: -6s; }
-    .bolha.b3 { width: 300px; height: 300px; background: var(--azul-claro); top: 40%; right: 20%; opacity: 0.22; animation-delay: -12s; }
-    @keyframes flutuar {
-      0%   { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(60px, 40px) scale(1.15); }
-    }
-
-    /* ===== Cabeçalho ===== */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: rgba(3, 8, 36, 0.65);
-      backdrop-filter: blur(18px) saturate(140%);
-      -webkit-backdrop-filter: blur(18px) saturate(140%);
-      border-bottom: 1px solid var(--borda);
-    }
-    header::after {
-      content: '';
-      position: absolute;
-      left: 0; right: 0; bottom: -1px;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--azul-claro), var(--laranja), transparent);
-      background-size: 200% 100%;
-      animation: brilho 6s linear infinite;
-    }
-    @keyframes brilho { to { background-position: 200% 0; } }
-
-    .topo {
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 0.9rem 1.5rem;
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      align-items: center;
-      gap: 1.5rem;
-    }
-
-    .logo {
-      display: block;
-      position: relative;
-      height: 72px;
-      aspect-ratio: 12 / 5;
-      background: #0a1a9e;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid var(--borda);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 122, 0, 0.0);
-      transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
-    }
-    /* recorte exato da arte do logo (sem zoom, para não perder nitidez) */
-    .logo img {
-      position: absolute;
-      width: 128%;
-      height: 204.8%;
-      left: -18.33%;
-      top: -35%;
-      max-width: none;
-      display: block;
-    }
-    .logo:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 0 2px var(--laranja);
-    }
-
-    .marca { text-align: center; min-width: 0; }
-    .marca h1 {
-      font-family: 'Sora', sans-serif;
-      font-weight: 800;
-      font-size: clamp(1.35rem, 2.6vw, 2rem);
-      letter-spacing: -0.02em;
-      line-height: 1.1;
-    }
-    .marca h1 span {
-      background: linear-gradient(90deg, var(--laranja), var(--laranja-claro));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .marca p {
-      margin-top: 0.25rem;
-      font-size: 0.78rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--texto-suave);
-    }
-
-    /* ===== Saudação ===== */
-    .saudacao {
-      max-width: 1240px;
-      margin: 2.6rem auto 0;
-      padding: 0 1.5rem;
-      text-align: center;
-      animation: subir 0.9s var(--ease) both;
-    }
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      padding: 0.45rem 1rem;
-      border-radius: 999px;
-      background: var(--vidro);
-      border: 1px solid var(--borda);
-      font-size: 0.82rem;
-      color: var(--texto-suave);
-    }
-    .chip .ponto {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--laranja);
-      box-shadow: 0 0 0 0 rgba(255, 122, 0, 0.7);
-      animation: pulso 2s infinite;
-    }
-    .chip strong { color: var(--texto); font-variant-numeric: tabular-nums; }
-    @keyframes pulso {
-      0%   { box-shadow: 0 0 0 0 rgba(255, 122, 0, 0.6); }
-      70%  { box-shadow: 0 0 0 10px rgba(255, 122, 0, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(255, 122, 0, 0); }
-    }
-
-    .saudacao h2 {
-      margin-top: 1.1rem;
-      font-family: 'Sora', sans-serif;
-      font-weight: 800;
-      font-size: clamp(2rem, 5vw, 3.4rem);
-      letter-spacing: -0.03em;
-      line-height: 1.05;
-    }
-    .saudacao h2 .destaque {
-      background: linear-gradient(100deg, #ffffff 10%, var(--laranja-claro) 50%, var(--laranja) 90%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .frase {
-      margin: 0.9rem auto 0;
-      max-width: 640px;
-      min-height: 3.2em;
-      font-size: clamp(0.98rem, 1.6vw, 1.12rem);
-      line-height: 1.6;
-      color: var(--texto-suave);
-      transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
-    }
-    .frase.saindo { opacity: 0; transform: translateY(8px); }
-    .frase::before { content: '“'; color: var(--laranja); font-weight: 700; margin-right: 2px; }
-    .frase::after  { content: '”'; color: var(--laranja); font-weight: 700; margin-left: 2px; }
-
-    /* ===== Grade de cards ===== */
-    main {
-      flex: 1;
-      width: 100%;
-      max-width: 1240px;
-      margin: 2.4rem auto 3.5rem;
-      padding: 0 1.5rem;
-    }
-
-    .grade {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 1.1rem;
-    }
-
-    .card {
-      position: relative;
-      display: block;
-      aspect-ratio: 4 / 5;
-      border-radius: var(--raio);
-      overflow: hidden;
-      text-decoration: none;
-      color: var(--texto);
-      background: var(--azul-noite);
-      border: 1px solid var(--borda);
-      isolation: isolate;
-      opacity: 0;
-      transform: translateY(24px);
-      animation: subir 0.8s var(--ease) forwards;
-      animation-delay: calc(var(--i) * 70ms + 200ms);
-      transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease), border-color 0.45s var(--ease);
-    }
-    @keyframes subir { to { opacity: 1; transform: translateY(0); } from { opacity: 0; transform: translateY(24px); } }
-
-    .card img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: -2;
-      transform: scale(1.02);
-      transition: transform 0.9s var(--ease), filter 0.6s var(--ease);
-      filter: saturate(1.05);
-    }
-    .card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      background: linear-gradient(180deg, rgba(3, 8, 36, 0.05) 30%, rgba(3, 8, 36, 0.55) 62%, rgba(3, 8, 36, 0.95) 100%);
-      transition: background 0.5s var(--ease);
-    }
-    .card::after {
-      content: '';
-      position: absolute;
-      left: 0; right: 0; bottom: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--azul-claro), var(--laranja));
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.5s var(--ease);
-    }
-
-    .card .nome {
-      position: absolute;
-      left: 1rem; right: 1rem; bottom: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      font-family: 'Sora', sans-serif;
-      font-weight: 700;
-      font-size: clamp(0.9rem, 1.4vw, 1.1rem);
-      line-height: 1.2;
-      letter-spacing: -0.01em;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-    }
-    .card .seta {
-      flex-shrink: 0;
-      display: grid;
-      place-items: center;
-      width: 30px; height: 30px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.14);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      transition: background 0.4s var(--ease), transform 0.4s var(--ease);
-    }
-    .card .seta svg { width: 14px; height: 14px; stroke: #fff; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-
-    .card:hover, .card:focus-visible {
-      transform: translateY(-6px);
-      border-color: rgba(255, 122, 0, 0.7);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 122, 0, 0.25);
-      outline: none;
-    }
-    .card:hover img, .card:focus-visible img { transform: scale(1.12); filter: saturate(1.2); }
-    .card:hover::after, .card:focus-visible::after { transform: scaleX(1); }
-    .card:hover .seta, .card:focus-visible .seta { background: var(--laranja); transform: rotate(-45deg); }
-
-    /* ===== Rodapé ===== */
-    footer {
-      border-top: 1px solid var(--borda);
-      background: rgba(3, 8, 36, 0.7);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      padding: 1.4rem 1.5rem;
-      text-align: center;
-      font-size: 0.85rem;
-      color: var(--texto-suave);
-    }
-    footer .contatos {
-      margin-top: 0.5rem;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0.6rem;
-    }
-    footer a {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      padding: 0.45rem 0.95rem;
-      border-radius: 999px;
-      border: 1px solid var(--borda);
-      background: var(--vidro);
-      color: var(--texto);
-      text-decoration: none;
-      transition: border-color 0.3s, background 0.3s, transform 0.3s var(--ease);
-    }
-    footer a:hover { border-color: var(--laranja); background: rgba(255, 122, 0, 0.12); transform: translateY(-2px); }
-    footer a svg { width: 16px; height: 16px; fill: var(--laranja); }
-
-    /* ===== Responsivo ===== */
-    @media (max-width: 720px) {
-      .topo { gap: 0.7rem; padding: 0.7rem 1rem; }
-      .logo { height: 38px; border-radius: 9px; }
-      .marca h1 { font-size: 1.15rem; }
-      .marca p { font-size: 0.62rem; letter-spacing: 0.14em; }
-      .saudacao { margin-top: 1.8rem; }
-      .chip { font-size: 0.74rem; padding: 0.4rem 0.85rem; }
-      main { padding: 0 1rem; margin-top: 1.8rem; }
-      .grade { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
-      .card { aspect-ratio: 1 / 1; }
-      .card .nome { font-size: 0.88rem; left: 0.7rem; right: 0.7rem; bottom: 0.7rem; }
-      .card .seta { width: 26px; height: 26px; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation: none !important; transition: none !important; }
-      .card { opacity: 1; transform: none; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#07130d">
+<title>Brasil em Jogo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{
+  --bg:#07130d; --bg2:#0c1f15; --card:#10261a; --card2:#163322; --line:#ffffff14;
+  --tx:#eef6f0; --mut:#9fb8a8; --g:#19c26b; --g2:#0e8f4d; --y:#ffd23f; --b:#3d7bff; --r:#ff5d5d;
+  --rad:20px; --shadow:0 10px 40px #0007;
+  --fd:'Bricolage Grotesque',system-ui,'Segoe UI',Roboto,sans-serif;
+  --fb:'DM Sans',system-ui,'Segoe UI',Roboto,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--tx);font-family:var(--fb);font-size:16px}
+body{background:
+  radial-gradient(900px 500px at 110% -10%,#19c26b22,transparent 60%),
+  radial-gradient(700px 500px at -10% 110%,#3d7bff1f,transparent 60%),var(--bg);
+  background-attachment:fixed;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px}
+header.top{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:#07130dcc;border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:12px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--fd);font-weight:800;font-size:20px;letter-spacing:-.02em}
+.logo svg{width:34px;height:34px}
+.logo{white-space:nowrap;min-width:0}
+@media(max-width:520px){.logo small{display:none!important}.logo{font-size:17px}.top .wrap{gap:8px}.pill{padding:6px 10px;font-size:12px}}
+.logo small{display:block;font-family:var(--fb);font-weight:500;font-size:11px;color:var(--mut);letter-spacing:.06em;text-transform:uppercase}
+.spacer{flex:1}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:var(--card2);border:1px solid var(--line);font-size:13px;font-weight:700;white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--mut)}
+.pill.on .dot{background:var(--g);box-shadow:0 0 0 4px #19c26b33;animation:pulse 1.6s infinite}
+.pill.pause .dot{background:var(--y)}
+.pill.end .dot{background:var(--r)}
+@keyframes pulse{50%{box-shadow:0 0 0 8px #19c26b00}}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#0a1a11f2;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:8px 10px calc(8px + env(safe-area-inset-bottom));display:flex;justify-content:center;gap:6px}
+nav.tabs button{flex:1;max-width:200px;border:0;background:transparent;color:var(--mut);padding:8px 6px;border-radius:14px;font-weight:700;font-size:13px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+nav.tabs button svg{width:22px;height:22px}
+nav.tabs button.act{background:var(--card2);color:var(--tx)}
+nav.tabs button.act svg{color:var(--y)}
+@media(min-width:860px){
+  body{padding-bottom:24px}
+  nav.tabs{position:static;background:none;border:0;padding:0;backdrop-filter:none;justify-content:flex-start}
+  nav.tabs button{flex-direction:row;font-size:14px;padding:8px 14px;max-width:none;flex:0}
+  .nav-slot{display:block}
+}
+main{padding:18px 0 24px}
+.view{display:none;animation:fade .25s ease}
+.view.act{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}}
+.grid{display:grid;gap:16px}
+@media(min-width:860px){.grid.two{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
+#homeGrid{grid-template-areas:"player round" "lobby lobby";grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+#playerColumn{grid-area:player;min-width:0}#lobby{grid-area:lobby;min-width:0}#roundColumn{grid-area:round;min-width:0}
+@media(max-width:859px){#homeGrid{grid-template-columns:minmax(0,1fr);grid-template-areas:"player" "lobby" "round"}}
+.card{background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:var(--rad);padding:18px;box-shadow:var(--shadow)}
+.card h2{font-family:var(--fd);font-size:20px;margin:0 0 4px;letter-spacing:-.01em}
+.card .sub{color:var(--mut);font-size:14px;margin:0 0 14px}
+/* v2.2.2 — cards equilibrados e entrada destacada */
+#joinCard{border-color:#19c26b88;box-shadow:0 0 0 1px #19c26b22,var(--shadow)}
+#meCard{border:2px solid #19c26b;box-shadow:0 0 0 3px #19c26b22,var(--shadow);background:linear-gradient(145deg,#173d29,#10261a)}
+#meName{font-size:clamp(23px,4vw,30px);line-height:1.12;margin-top:4px;color:#fff}
+#meState{display:inline-flex;align-items:center;gap:6px;color:#b9ffd6;font-weight:800}
+#meState:before{content:'';width:8px;height:8px;border-radius:50%;background:var(--g);box-shadow:0 0 0 4px #19c26b22}
+.player-welcome{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--y);font-weight:900;margin-bottom:8px}
+.player-focus{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.player-focus .btn{flex:1 1 180px}
+#joinCard h2{color:#b9ffd6}
+#joinCard .step-tag{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9px;background:var(--y);color:#2a2100;font-weight:900;margin-right:7px}
+.manual-wrap{max-width:820px;margin:0 auto}
+.manual-hero{padding:22px;border-radius:22px;background:linear-gradient(130deg,#173d29,#102619 65%,#142b40);border:1px solid #ffffff22;margin-bottom:14px}
+.manual-hero h2{font:800 clamp(25px,4vw,34px)/1.08 var(--fd);margin:0 0 8px}
+.manual-step{display:grid;grid-template-columns:42px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.manual-step:last-child{border:0}
+.manual-num{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--card2);color:var(--y);font:800 18px var(--fd)}
+.manual-step h3{font:800 17px var(--fd);margin:0 0 5px}
+.manual-step p{margin:0;color:var(--mut);font-size:14px;line-height:1.55}
+.manual-note{padding:13px;border-radius:14px;background:#ffd23f12;border:1px solid #ffd23f44;color:#f5e8b3;font-size:13px;line-height:1.5}
+.manual-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+label{display:block;font-size:13px;font-weight:700;color:var(--mut);margin:12px 0 6px;letter-spacing:.02em}
+input,select{width:100%;padding:14px 16px;border-radius:14px;border:1px solid #ffffff22;background:#06110b;font-size:16px;outline:none;transition:border .15s}
+input:focus,select:focus{border-color:var(--g)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:14px 18px;font-weight:800;cursor:pointer;background:var(--card2);border:1px solid #ffffff1f;min-height:50px;transition:transform .08s,filter .15s,opacity .15s}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.pri{background:linear-gradient(135deg,var(--g),var(--g2));border-color:transparent;color:#03140a}
+.btn.yel{background:var(--y);color:#2a2100;border-color:transparent}
+.btn.blu{background:var(--b);color:#fff;border-color:transparent}
+.btn.dan{background:transparent;border-color:#ff5d5d66;color:#ffb3b3}
+.btn.full{width:100%}
+.btn.sm{min-height:38px;padding:8px 12px;font-size:13px;border-radius:12px}
+.btn.busy{pointer-events:none;filter:saturate(.4);opacity:.75}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>.btn{flex:1 1 140px}
+.muted{color:var(--mut);font-size:13px}
+.hidden{display:none!important}
+.hello{display:flex;align-items:center;gap:14px}
+.avatar{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;font-family:var(--fd);font-weight:800;font-size:22px;background:linear-gradient(135deg,var(--y),#ffad33);color:#2a2100;flex:none}
+.hello b{font-family:var(--fd);font-size:20px;display:block}
+.stat{font-family:var(--fd);font-size:34px;font-weight:800;line-height:1}
+/* lobby de mesas */
+.lobby{margin:0 0 16px;padding:20px;background:linear-gradient(125deg,#173d29,#102619 62%,#142b40);border:1px solid #ffffff22;border-radius:24px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.lobby:after{content:"";position:absolute;width:230px;height:230px;right:-90px;top:-130px;border-radius:50%;background:#ffd23f20;pointer-events:none}
+.lobby-top{display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;z-index:1}
+.lobby-kicker{font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--y)}
+.lobby h2{font:800 clamp(23px,4vw,32px)/1.05 var(--fd);margin:5px 0 7px;letter-spacing:-.03em}
+.lobby p{color:#c2d8ca;font-size:14px;margin:0}
+.lobby-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:18px 0;position:relative;z-index:1}
+.lobby-stat{padding:12px;border-radius:15px;background:#06130d66;border:1px solid #ffffff18;min-width:0}
+.lobby-stat b{display:block;font:800 22px var(--fd);color:#fff}
+.lobby-stat span{font-size:11px;color:#b7cebf}
+.lobby-actions{display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:1}
+.lobby-actions .btn{flex:1 1 160px}
+@media(max-width:600px){.create-mesa{display:grid;grid-template-columns:1fr;gap:9px}.create-mesa input,.create-mesa .btn{width:100%;min-width:0;min-height:50px}.lobby-actions{display:grid;grid-template-columns:1fr;gap:9px}.lobby-actions .btn{width:100%;min-width:0}.mesa-list{grid-template-columns:1fr}.player-focus{display:grid;grid-template-columns:1fr}}
+.lobby-date{font-size:12px!important;color:#b7cebf!important;margin-top:12px!important}
+.mesa-admin{display:block;margin-top:7px;color:#d7e9dd;font-size:12px;line-height:1.45}.mesa-admin b{color:#ffd23f}
+.mesa-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:9px;margin:14px 0;position:relative;z-index:1}.mesa-option{border:1px solid #ffffff2b;background:#071b11aa;color:#eef6f0;border-radius:15px;padding:12px;text-align:left;cursor:pointer}.mesa-option.selected{border-color:var(--y);box-shadow:0 0 0 2px #ffd23f33}.mesa-option b{display:block;font-family:var(--fd);font-size:16px}.mesa-option small{display:block;color:#b7cebf;margin-top:5px}.create-mesa{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;position:relative;z-index:1}.create-mesa input{flex:1 1 180px;min-width:0;border:1px solid #ffffff2b;background:#071b11;color:#fff;border-radius:12px;padding:11px}
+@media(max-width:420px){.lobby{padding:16px}.lobby-stat{padding:10px 8px}.lobby-stat b{font-size:19px}.lobby-stat span{font-size:10px}}
+/* carta */
+.game-card{position:relative;overflow:hidden;border-radius:24px;padding:20px;background:
+  linear-gradient(160deg,#173d29 0%,#0f2419 60%,#0b1b13 100%);border:1px solid #ffffff1f;box-shadow:var(--shadow)}
+.game-card::before{content:"";position:absolute;inset:-40% -30% auto auto;width:260px;height:260px;background:radial-gradient(circle,#ffd23f33,transparent 65%);pointer-events:none}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.chip{font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:6px 10px;border-radius:999px;background:#ffffff12;border:1px solid #ffffff1a}
+.chip.y{background:#ffd23f22;color:var(--y);border-color:#ffd23f44}
+.chip.b{background:#3d7bff22;color:#a9c4ff;border-color:#3d7bff55}
+.game-card h3{font-family:var(--fd);font-size:clamp(22px,4.6vw,32px);line-height:1.1;margin:0 0 12px;letter-spacing:-.02em}
+.question{font-size:clamp(17px,2.6vw,21px);line-height:1.5;margin:0}
+.round-head{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.timer{position:relative;width:86px;height:86px;flex:none}
+.timer svg{width:100%;height:100%;transform:rotate(-90deg)}
+.timer .t{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--fd);font-weight:800;font-size:22px}
+.timer.low .t{color:var(--r)}
+.who{flex:1;min-width:0}
+.who .k{font-size:12px;color:var(--mut);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.who .v{font-family:var(--fd);font-size:22px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who .v.me{color:var(--y)}
+.answer{margin-top:16px;padding:16px;border-radius:16px;background:#19c26b14;border:1px solid #19c26b44}
+.answer .k{font-size:12px;font-weight:800;color:var(--g);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.answer p{margin:0 0 8px;line-height:1.5}
+.dyn{margin-top:14px;padding:14px;border-radius:16px;background:#3d7bff14;border:1px solid #3d7bff44}
+.dyn b{color:#a9c4ff}
+.sources a{display:block;color:#a9c4ff;font-size:14px;margin-top:6px;word-break:break-word}
+.card-img{width:100%;max-height:320px;object-fit:cover;border-radius:16px;margin:0 0 14px;display:block}
+.empty{text-align:center;padding:36px 16px;color:var(--mut)}
+.empty .big{font-family:var(--fd);font-size:22px;color:var(--tx);font-weight:800;margin-bottom:6px}
+/* placar */
+.rank{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.rank li{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:#ffffff08;border:1px solid var(--line)}
+.rank .pos{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-weight:800;background:#ffffff10;flex:none}
+.rank li:nth-child(1) .pos{background:var(--y);color:#2a2100}
+.rank li:nth-child(2) .pos{background:#d7e0e6;color:#1a1f24}
+.rank li:nth-child(3) .pos{background:#e09a5b;color:#2b1503}
+.rank .nm{flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank .pts{font-family:var(--fd);font-weight:800;font-size:20px}
+.rank li.me{border-color:#ffd23f66;background:#ffd23f10}
+.rank li.out{opacity:.5}
+.tag{font-size:11px;font-weight:800;padding:3px 8px;border-radius:999px;background:#ffffff14;color:var(--mut);margin-left:6px}
+/* mesa */
+.scores{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.scores .btn{min-height:58px;font-size:20px;font-family:var(--fd)}
+.scores .btn small{display:block;font-family:var(--fb);font-size:10px;font-weight:700;opacity:.8}
+.plist{display:grid;gap:8px}
+.plist .it{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:#ffffff08;border:1px solid var(--line)}
+.plist .it span{flex:1;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sect{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:18px 0 8px}
+/* toast */
+#toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);opacity:0;z-index:50;max-width:min(92vw,520px);padding:14px 18px;border-radius:16px;font-weight:700;background:#14301f;border:1px solid #19c26b66;box-shadow:var(--shadow);transition:.25s;pointer-events:none;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.err{background:#3a1616;border-color:#ff5d5d77}
+@media(min-width:860px){#toast{bottom:28px}}
+.net{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:40;padding:6px 12px;border-radius:999px;background:#3a1616;border:1px solid #ff5d5d77;font-size:12px;font-weight:700}
+.foot{color:var(--mut);font-size:12px;text-align:center;padding:12px 0 0}
+/* v2.1 — logo + relógio */
+.brand{display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 0 10px;text-align:center}
+.brand img{height:92px;width:auto;max-width:80vw;object-fit:contain;display:block}
+.clock{font-size:14px;font-weight:700;color:var(--mut);letter-spacing:.02em;font-variant-numeric:tabular-nums}
+.clock:first-letter{text-transform:uppercase}
+.grid>*{min-width:0} /* v2.1 — Mesa não vaza a largura no celular */
+.row>select{min-width:0}
+.scores .btn{min-width:0;padding-left:4px;padding-right:4px}
+/* v2.1 — adicionar jogador na Mesa */
+.addp{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-top:10px}
+.addp input{padding:10px 12px;font-size:15px}
+@media(max-width:520px){.addp{grid-template-columns:1fr}}
+@media print{header.top,nav.tabs,.manual-actions,.brand,.foot{display:none!important}body{background:#fff;color:#111;padding:0}.card,.manual-hero{background:#fff;color:#111;box-shadow:none;border:1px solid #ccc}.manual-step p,.manual-note{color:#333}.manual-wrap{max-width:100%}}
+</style>
 </head>
 <body>
-  <div class="fundo" aria-hidden="true">
-    <div class="bolha b1"></div>
-    <div class="bolha b2"></div>
-    <div class="bolha b3"></div>
-  </div>
-
-  <header>
-    <div class="topo">
-      <a class="logo" href="https://www.setasolucoes.com.br/" target="_blank" rel="noopener noreferrer" aria-label="Seta Soluções">
-        <img src="logo.png" alt="Logo Seta Soluções" onerror="this.onerror=null;this.src='https://www.setasolucoes.com.br/logo.png'">
-      </a>
-      <div class="marca">
-        <h1>Seta <span>Soluções</span></h1>
-        <p>Tecnologia e Soluções Inteligentes</p>
-      </div>
-      <a class="logo" href="https://www.setasolucoes.com.br/" target="_blank" rel="noopener noreferrer" aria-label="Seta Soluções">
-        <img src="logo.png" alt="Logo Seta Soluções" onerror="this.onerror=null;this.src='https://www.setasolucoes.com.br/logo.png'">
-      </a>
+<header class="top">
+  <div class="wrap">
+    <div class="logo" aria-label="Brasil em Jogo">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#19c26b"/><path d="M20 6 36 20 20 34 4 20Z" fill="#ffd23f"/><circle cx="20" cy="20" r="7.5" fill="#3d7bff"/><path d="M13 19c4-2 10-2 14 1" stroke="#fff" stroke-width="1.6" fill="none"/></svg>
+      <div>Brasil em Jogo<small>aprender · argumentar · investigar</small></div>
     </div>
-  </header>
+    <div class="spacer"></div>
+    <span class="pill" id="statusPill"><span class="dot"></span><span id="statusTxt">Conectando…</span></span>
+    <span class="pill" title="Jogadores presentes"><span id="countTxt">0</span>👥</span>
+  </div>
+</header>
 
-  <section class="saudacao">
-    <div class="chip"><span class="ponto"></span><span id="data-atual">Carregando...</span> • <strong id="relogio">--:--</strong></div>
-    <h2><span id="saudacao" class="destaque">Olá!</span></h2>
-    <p class="frase" id="frase">Grandes conquistas começam com pequenos passos.</p>
-  </section>
+<div class="wrap">
+  <div class="brand">
+    <img id="brandLogo" src="logo.png" alt="Brasil em Jogo" onerror="this.style.display='none'">
+    <div class="clock" id="clock" aria-live="off"></div>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button data-v="jogar" class="act"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>Jogar</button>
+    <button data-v="placar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>Placar</button>
+    <button data-v="mesa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>Mesa</button>
+    <button data-v="manual" aria-label="Manual de uso">ⓘ Manual</button>
+  </nav>
 
   <main>
-    <nav class="grade" id="grade" aria-label="Acesso rápido"></nav>
+    <!-- CONFIG API (só GitHub Pages) -->
+    <section id="setup" class="card hidden" style="margin-bottom:16px">
+      <h2>Conectar ao jogo</h2>
+      <p class="sub">Cole a URL do Web App do Apps Script (termina em <b>/exec</b>).</p>
+      <input id="apiUrl" inputmode="url" placeholder="https://script.google.com/macros/s/…/exec">
+      <div class="row" style="margin-top:12px"><button class="btn pri" id="btnApi">Conectar</button></div>
+    </section>
+
+    <!-- JOGAR -->
+    <section class="view act" id="v-jogar">
+
+      <div class="grid two" id="homeGrid">
+        <div class="grid" id="playerColumn">
+          <div class="card" id="joinCard">
+            <div class="player-welcome">Você é a parte mais importante do jogo</div><h2><span class="step-tag">1</span>Entre e fique à vontade</h2>
+            <p class="sub">Escolha seu nome. Depois, selecione uma mesa logo abaixo e toque em <b>Entrar e jogar</b>. Não precisa entender de política nem ter medo de errar.</p>
+            <form id="joinForm" autocomplete="on">
+              <label for="nome">Nome</label>
+              <input id="nome" maxlength="60" autocomplete="given-name" placeholder="Como quer ser chamado(a)" required>
+              <label for="telefone">Telefone com DDD</label>
+              <input id="telefone" type="tel" inputmode="numeric" maxlength="16" autocomplete="tel-national" placeholder="(11) 98765-4321" required>
+              <button class="btn pri full" style="margin-top:16px" id="btnJoin" type="submit" disabled>Escolha uma mesa abaixo</button>
+            </form>
+          </div>
+          <div class="card hidden" id="meCard">
+            <div class="player-welcome">Sua participação está ativa</div><div class="hello">
+              <div class="avatar" id="meAv">?</div>
+              <div style="flex:1;min-width:0"><span class="muted" id="meState">Jogando</span><b id="meName">—</b></div>
+              <div style="text-align:right"><div class="stat" id="mePts">0</div><span class="muted">pontos</span></div>
+            </div>
+            <div class="row" style="margin-top:14px">
+              <button class="btn dan sm" id="btnLeave">Sair do jogo</button>
+              <button class="btn pri sm hidden" id="btnBack">Voltar ao jogo</button>
+              <button class="btn sm" id="btnSwitch">Trocar jogador</button>
+            </div>
+          </div>
+          <div class="card">
+            <h2>Na mesa agora</h2>
+            <p class="sub" id="miniSub">—</p>
+            <ul class="rank" id="miniRank"></ul>
+          </div>
+        </div>
+              <section class="lobby" id="lobby" aria-live="polite">
+        <div class="lobby-top"><div><div class="lobby-kicker">Sala de espera · Brasil em Jogo</div><h2 id="lobbyTitle">Procurando uma mesa…</h2><p id="lobbyDesc">Conectando ao servidor do jogo.</p></div><span class="pill" id="lobbyStatus"><span class="dot"></span><span>Conectando</span></span></div>
+        <div class="lobby-grid">
+          <div class="lobby-stat"><b id="lobbyNumber">—</b><span>PARTIDA</span></div>
+          <div class="lobby-stat"><b id="lobbyPlayers">0/12</b><span>PARTICIPANTES</span></div>
+          <div class="lobby-stat"><b id="lobbyMissing">—</b><span>FALTAM PARA COMEÇAR</span></div>
+        </div>
+        <div class="mesa-list" id="mesaList"><div class="muted">Carregando mesas…</div></div>
+        <div class="create-mesa"><input id="newMesaName" maxlength=60 placeholder="Nome da nova mesa (ex.: Família)"><button class="btn pri" id="btnCreateMesa" type="button">＋ Criar nova mesa</button></div>
+        <div class="lobby-actions"><button class="btn pri" id="btnEnterLobby" type="button">Entrar nesta mesa</button><button class="btn" id="btnLobbyAdmin" type="button">Administrar minha mesa</button></div>
+        <div class="manual-actions"><button class="btn sm" type="button" id="btnManual">ⓘ Como jogar?</button><a class="btn sm" id="manualNewTab" href="?manual=1" target="_blank" rel="noopener">↗ Abrir manual em nova aba</a></div>
+        <p class="lobby-date" id="lobbyDate">Aguardando informações da partida.</p>
+      </section>
+        <div id="roundColumn"><div id="roundBox"></div><div class="card" style="margin-top:12px"><h2>Precisa de ajuda?</h2><p class="sub">Ouça uma explicação rápida do que fazer. Você pode participar no seu ritmo.</p><button class="btn sm" type="button" id="btnSpeakGame">🔊 Ouvir instruções</button></div></div>
+      </div>
+    </section>
+
+    <!-- MANUAL DE USO -->
+    <section class="view" id="v-manual">
+      <div class="manual-wrap">
+        <div class="manual-hero"><div class="lobby-kicker">Guia rápido do participante</div><h2>Como jogar Brasil em Jogo</h2><p>Um jogo para aprender, conversar, defender ideias e investigar o Brasil em grupo. Não precisa conhecer política para participar.</p><div class="manual-actions"><button class="btn pri" id="btnManualStart" type="button">Começar a jogar</button><button class="btn sm" id="btnManualSpeak" type="button">🔊 Ouvir manual</button><button class="btn sm" id="btnManualPrint" type="button">Imprimir / salvar PDF</button></div></div>
+        <div class="card">
+          <div class="manual-step"><div class="manual-num">1</div><div><h3>Escolha uma mesa</h3><p>No lobby, veja as mesas disponíveis. Cada mesa é uma partida independente, com seus próprios participantes e placar. Você pode jogar com familiares ou amigos que estejam em outros lugares.</p></div></div>
+          <div class="manual-step"><div class="manual-num">2</div><div><h3>Crie uma mesa ou entre em uma existente</h3><p>Para organizar uma partida, escreva um nome e toque em <b>Criar nova mesa</b>. Para participar de uma partida existente, selecione-a e toque em <b>Entrar nesta mesa</b>. Todos usam o mesmo endereço do jogo.</p></div></div>
+          <div class="manual-step"><div class="manual-num">3</div><div><h3>Faça seu cadastro</h3><p>Informe seu nome e telefone com DDD. O telefone ajuda a reconhecer seu cadastro quando voltar à mesma mesa. Não é necessário PIN para entrar como jogador.</p></div></div>
+          <div class="manual-step"><div class="manual-num">4</div><div><h3>Espere pelo menos 2 participantes</h3><p>Com duas pessoas presentes, a mesa já tem o mínimo para começar. Quem criou a mesa administra e inicia a partida quando todos estiverem prontos.</p></div></div>
+          <div class="manual-step"><div class="manual-num">5</div><div><h3>Jogue a rodada</h3><p>A Mesa sorteia uma carta com uma pergunta ou desafio. Leia com atenção, converse com o grupo e apresente sua resposta. Use argumentos, exemplos e evidências sempre que possível.</p></div></div>
+          <div class="manual-step"><div class="manual-num">6</div><div><h3>Entenda a pontuação</h3><p>A avaliação vai de 0 a 3: <b>0</b> = não respondeu; <b>1</b> = resposta parcial; <b>2</b> = boa resposta; <b>3</b> = excelente resposta, bem justificada e com evidências.</p></div></div>
+          <div class="manual-step"><div class="manual-num">7</div><div><h3>Acompanhe o placar e troque de mesa</h3><p>Consulte a aba Placar para ver os pontos. Use <b>Trocar de mesa</b> para voltar ao lobby e escolher outra partida. O endereço do aplicativo não muda.</p></div></div>
+        </div>
+        <div class="manual-note" style="margin-top:14px"><b>Dica importante:</b> o objetivo não é vencer uma discussão política. É aprender, ouvir opiniões diferentes, justificar ideias e conferir informações. Respeito vale mais que concordância. A administração da mesa fica reservada à pessoa que a criou.</div>
+        <div class="manual-actions"><button class="btn pri" id="btnManualBack" type="button">Voltar ao jogo</button><a class="btn sm" href="?manual=1" target="_blank" rel="noopener">Abrir este manual em outra aba ↗</a></div>
+      </div>
+    </section>
+
+    <!-- PLACAR -->
+    <section class="view" id="v-placar">
+      <div class="card">
+        <h2 id="boardTitle">Placar</h2>
+        <p class="sub" id="boardSub">—</p>
+        <ul class="rank" id="board"></ul>
+      </div>
+    </section>
+
+    <!-- MESA -->
+    <section class="view" id="v-mesa">
+      <div class="card hidden" id="pinCard" style="max-width:460px">
+        <h2>Mesa do administrador</h2>
+        <p class="sub">Digite o PIN da Mesa (aba CONFIG → ADMIN_PIN).</p>
+        <form id="pinForm"><input id="pin" type="password" inputmode="numeric" autocomplete="off" placeholder="PIN">
+        <button class="btn pri full" style="margin-top:12px" type="submit">Entrar na Mesa</button></form>
+      </div>
+      <div class="card hidden" id="adminDenied"><h2>Administração reservada</h2><p class="sub">Somente quem criou esta mesa pode administrar a partida neste dispositivo. Você pode continuar jogando normalmente.</p><button class="btn pri" type="button" id="btnAdminBack">Voltar ao jogo</button></div>
+      <div class="grid two hidden" id="adminArea">
+        <div class="grid">
+          <div id="adminRound"></div>
+          <div class="card">
+            <h2>Pontuar</h2>
+            <p class="sub">0 = não respondeu · 1 = parcial · 2 = bom · 3 = excelente (com evidência)</p>
+            <select id="scoreWho"></select>
+            <div class="scores" style="margin-top:10px">
+              <button class="btn" data-s="0">0<small>nada</small></button>
+              <button class="btn" data-s="1">1<small>parcial</small></button>
+              <button class="btn blu" data-s="2">2<small>bom</small></button>
+              <button class="btn yel" data-s="3">3<small>excelente</small></button>
+            </div>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="card">
+            <h2>Partida</h2>
+            <p class="sub" id="adminGame">—</p>
+            <div id="newGame">
+              <label for="gameName">Nome da nova partida</label>
+              <input id="gameName" value="Brasil em Jogo">
+              <button class="btn pri full" style="margin-top:10px" data-a="criarPartida">Criar partida</button>
+            </div>
+            <div class="row" style="margin-top:10px" id="gameCtl">
+              <button class="btn pri" data-a="iniciar">▶ Iniciar</button>
+              <button class="btn" data-a="pausar">⏸ Pausar</button>
+              <button class="btn pri" data-a="retomar">▶ Retomar</button>
+              <button class="btn dan" data-a="encerrar">■ Encerrar</button>
+              <button class="btn yel" data-a="novoJogo">↻ Novo jogo</button>
+            </div>
+            <div class="sect">Rodada</div>
+            <div class="row">
+              <button class="btn yel" data-a="sortearCarta">🎴 Sortear carta</button>
+              <button class="btn blu" data-a="revelar">👁 Revelar resposta</button>
+            </div>
+            <div class="row" style="margin-top:10px">
+              <button class="btn sm" data-a="sortearDinamica">🎲 Dinâmica</button>
+              <button class="btn sm" data-a="reiniciarTempo">⟲ Tempo</button>
+              <button class="btn sm" data-a="sortearJogador">🔀 Outro jogador</button>
+              <button class="btn sm" data-a="concluirRodada">✓ Concluir</button>
+            </div>
+            <label for="respWho">Quem responde</label>
+            <div class="row"><select id="respWho" style="flex:1 1 180px"></select><button class="btn sm" data-a="definirRespondente" style="flex:0 0 auto">Definir</button></div>
+          </div>
+          <div class="card">
+            <h2>Jogadores</h2>
+            <p class="sub" id="adminPlayersSub">—</p>
+            <div class="plist" id="adminPlayers"></div>
+            <div class="sect">Adicionar jogador</div>
+            <form class="addp" id="addForm" autocomplete="off">
+              <input id="addNome" maxlength="60" placeholder="Nome">
+              <input id="addTel" type="tel" inputmode="numeric" maxlength="16" placeholder="Telefone com DDD">
+              <button class="btn pri sm" type="submit" id="btnAdd">+ Adicionar</button>
+            </form>
+            <div class="plist hidden" id="adminOut" style="margin-top:10px"></div>
+            <div class="row" style="margin-top:10px"><button class="btn dan sm" data-a="limparMesa">🧹 Limpar mesa</button></div>
+            <div class="row" style="margin-top:14px"><button class="btn sm" id="btnLockMesa">Sair da Mesa</button><button class="btn sm hidden" id="btnApiReset" type="button">Configuração</button></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="foot" id="foot">Brasil em Jogo</div>
   </main>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<div class="net hidden" id="net">Sem conexão — tentando de novo…</div>
 
-  <footer>
-    <p>&copy; <span id="ano">2026</span> Seta Soluções. Todos os direitos reservados.</p>
-    <div class="contatos">
-      <a href="https://wa.me/5531984821901" target="_blank" rel="noopener noreferrer">
-        <svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.8 14.03c-.24.68-1.42 1.3-1.95 1.36-.5.06-1.13.09-1.82-.11-.42-.13-.96-.31-1.65-.61-2.9-1.25-4.79-4.17-4.94-4.36-.14-.19-1.18-1.57-1.18-3s.75-2.13 1.02-2.42c.26-.29.58-.36.77-.36h.55c.18 0 .42-.07.65.5.24.58.82 2 .89 2.14.07.15.12.32.02.51-.1.19-.14.31-.29.48-.14.17-.3.37-.43.5-.14.14-.29.3-.13.59.17.29.74 1.22 1.59 1.98 1.09.97 2.01 1.27 2.3 1.41.29.15.46.12.62-.07.17-.19.72-.84.91-1.13.19-.29.38-.24.65-.14.26.1 1.68.79 1.97.94.29.14.48.22.55.34.07.12.07.7-.17 1.38z"/></svg>
-        (31) 98482-1901
-      </a>
-      <a href="mailto:setamarcos@gmail.com">
-        <svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4.24-8 5-8-5V6l8 5 8-5v2.24z"/></svg>
-        setamarcos@gmail.com
-      </a>
-    </div>
-  </footer>
+<script>
+(function(){
+'use strict';
+/* ====== CONFIG ======
+   Apps Script: nada a configurar.
+   GitHub Pages: cole aqui a URL /exec (ou informe na tela). */
+var API_URL_PADRAO = 'https://script.google.com/macros/s/AKfycbyCVOflmMLTzgEUn9G7xb_Fkfds7-eIE_Pg-Z2RarG05X6rian1hpFb0ygr32WD4Xa3/exec';
+var POLL_MS = 4000;
 
-  <script>
-    // ===== Cards (edite aqui para adicionar/remover) =====
-    const img = (id) => `https://images.unsplash.com/photo-${id}?w=600&q=80&auto=format&fit=crop`;
-    const cards = [
-      { nome: 'Seta Início',            link: '/',                                              foto: img('1615774925655-a0e97fc85c14') },
-      { nome: 'Brasil em Jogo',         link: 'https://www.setasolucoes.com.br/brasilemjogo/', foto: img('1601118964938-228a89955311') },
-      { nome: 'É Assim que Usa IA',          link: 'https://prompt-polish-workshop.lovable.app/',   foto: img('1526378722484-bd91ca387e72') },
-      { nome: 'Aluguel',                link: 'https://www.setasolucoes.com.br/aluguel/',      foto: img('1640531784350-0ddbb5f82795') },
-      { nome: 'Laura',                  link: '/laura/',                                        foto: img('1596495868845-63031cb496da') },
-      { nome: 'CEDAF 2026',             link: 'https://www.setasolucoes.com.br/cedaf2026/',    foto: img('1522202176988-66273c2fd55f') },
-      { nome: 'Prospect Governança MP', link: '/prospect-governanca-mp/',                       foto: img('1597502310092-31cdaa35b46d') },
-      { nome: 'Livro',                  link: 'https://www.setasolucoes.com.br/livro',         foto: img('1481627834876-b7833e8f5570') },
-      { nome: 'Verônica',               link: 'https://www.setasolucoes.com.br/veronica/',     foto: img('1519415510236-718bdfcd89c8') },
-      { nome: 'Simone Semijoias',       link: 'https://www.setasolucoes.com.br/simonesemijoias/', foto: img('1599643478518-a784e5dc4c8f') }
-    ];
+var LS = {
+  get:function(k){try{return localStorage.getItem('bj_'+k)}catch(e){return null}},
+  set:function(k,v){try{v==null?localStorage.removeItem('bj_'+k):localStorage.setItem('bj_'+k,v)}catch(e){}}
+};
+var isGAS = typeof google!=='undefined' && google.script && google.script.run;
+var apiUrl = isGAS ? '' : (LS.get('api') || API_URL_PADRAO);
+var qs = new URLSearchParams(location.search);
+if(!isGAS && qs.get('api')){ apiUrl = qs.get('api'); LS.set('api', apiUrl); }
 
-    const grade = document.getElementById('grade');
-    grade.innerHTML = cards.map((c, i) => `
-      <a class="card" href="${c.link}" target="_blank" rel="noopener noreferrer" style="--i:${i}" aria-label="Abrir ${c.nome} em nova guia">
-        <img src="${c.foto}" alt="" loading="${i < 6 ? 'eager' : 'lazy'}" decoding="async">
-        <span class="nome">${c.nome}
-          <span class="seta"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-        </span>
-      </a>`).join('');
+var S = { panel:null, me:null, pin:'', adminOk:false, adminToken:null, partidaId:LS.get('partidaId')||'', view:LS.get('view')||'jogar', offset:0, fails:0 };
+S.adminToken = S.partidaId ? LS.get('adminToken_'+S.partidaId) : null;
+try{ S.me = JSON.parse(LS.get('me')||'null'); }catch(e){ S.me=null; }
 
-    // ===== Saudação, data e relógio =====
-    function atualizarHora() {
-      const agora = new Date();
-      const h = agora.getHours();
-      const saudacao = h >= 5 && h < 12 ? 'Bom dia!' : h >= 12 && h < 18 ? 'Boa tarde!' : 'Boa noite!';
-      document.getElementById('saudacao').textContent = saudacao;
-      const data = agora.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-      document.getElementById('data-atual').textContent = data.charAt(0).toUpperCase() + data.slice(1);
-      document.getElementById('relogio').textContent =
-        agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-      document.getElementById('ano').textContent = agora.getFullYear();
+function $(id){return document.getElementById(id)}
+function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+function escapeHtml(v){return String(v||'').replace(/[&<>\"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]})}
+function initials(n){return String(n||'?').trim().split(/\s+/).slice(0,2).map(function(s){return s[0]}).join('').toUpperCase()}
+
+/* ====== API: google.script.run OU fetch ====== */
+function api(action, data){
+  data = Object.assign({partidaId:S.partidaId, adminToken:S.adminToken || ''}, data || {});
+  return new Promise(function(resolve,reject){
+    var done=function(raw){
+      var r; try{ r = typeof raw==='string' ? JSON.parse(raw) : raw; }catch(e){ return reject(new Error('Resposta inválida do servidor.')); }
+      if(!r) return reject(new Error('Servidor não respondeu.'));
+      if(r.ok) resolve(r.data); else reject(new Error(r.error||'Erro desconhecido.'));
+    };
+    if(isGAS){
+      google.script.run.withSuccessHandler(done).withFailureHandler(function(e){reject(new Error(e&&e.message?e.message:String(e)))}).bjApi(action,data);
+      return;
     }
-    atualizarHora();
-    setInterval(atualizarHora, 1000 * 15);
+    if(!apiUrl) return reject(new Error('Informe a URL do jogo.'));
+    var body = JSON.stringify(Object.assign({action:action},data));
+    fetch(apiUrl,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:body})
+      .then(function(res){return res.text()}).then(done).catch(function(){reject(new Error('Sem conexão com o servidor do jogo.'))});
+  });
+}
 
-    // ===== 20 frases motivacionais =====
-    const frases = [
-      'Grandes conquistas começam com pequenos passos dados todos os dias.',
-      'A persistência transforma o impossível em inevitável.',
-      'Faça hoje o que o seu futuro vai agradecer amanhã.',
-      'Disciplina é a ponte entre metas e realizações.',
-      'Quem planta com dedicação colhe com orgulho.',
-      'O sucesso é a soma de pequenos esforços repetidos diariamente.',
-      'Acredite no seu potencial: ele é maior do que você imagina.',
-      'Inovar é enxergar oportunidades onde outros veem obstáculos.',
-      'Cada desafio é uma chance de mostrar do que você é capaz.',
-      'Não espere por oportunidades, crie-as.',
-      'A energia que você coloca no dia define o resultado que você colhe.',
-      'Seja a seta que aponta para frente, sempre.',
-      'Foco no progresso, não na perfeição.',
-      'O melhor momento para começar é agora.',
-      'Trabalho em equipe transforma ideias em resultados.',
-      'Sonhe grande, comece pequeno, mas comece hoje.',
-      'A coragem de tentar é o primeiro passo para vencer.',
-      'Tecnologia é ferramenta; atitude é o que faz a diferença.',
-      'Quem se prepara não precisa ter sorte.',
-      'Seu esforço de hoje é o seu sucesso de amanhã.'
-    ];
-    const elFrase = document.getElementById('frase');
-    let idx = Math.floor(Math.random() * frases.length);
-    elFrase.textContent = frases[idx];
-    setInterval(() => {
-      elFrase.classList.add('saindo');
-      setTimeout(() => {
-        idx = (idx + 1) % frases.length;
-        elFrase.textContent = frases[idx];
-        elFrase.classList.remove('saindo');
-      }, 600);
-    }, 8000);
-  </script>
+var toastT;
+function toast(msg,err){var t=$('toast');t.textContent=msg;t.className='show'+(err?' err':'');clearTimeout(toastT);toastT=setTimeout(function(){t.className=''},err?4200:2400)}
+function busy(btn,on){if(btn){btn.classList.toggle('busy',on);btn.disabled=!!on}}
+function act(btn, action, data, okMsg){
+  busy(btn,true);
+  return api(action,data).then(function(r){ if(okMsg) toast(typeof okMsg==='function'?okMsg(r):okMsg); return refresh().then(function(){return r}); })
+    .catch(function(e){ toast(e.message,true); throw e; })
+    .finally(function(){busy(btn,false)});
+}
+
+/* ====== NAVEGAÇÃO ====== */
+function show(v){
+  S.view=v; LS.set('view',v);
+  Array.prototype.forEach.call(document.querySelectorAll('#tabs button'),function(b){b.classList.toggle('act',b.dataset.v===v)});
+  ['jogar','placar','mesa','manual'].forEach(function(k){$('v-'+k).classList.toggle('act',k===v)});
+  if(v==='mesa') renderAdmin();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('#tabs button').forEach(function(b){b.addEventListener('click',function(){show(b.dataset.v)})});
+$('btnManual').addEventListener('click',function(){show('manual')});
+$('btnManualStart').addEventListener('click',function(){show('jogar')});
+$('btnManualSpeak').addEventListener('click',function(){falarTexto('Como jogar Brasil em Jogo. Escolha uma mesa existente ou crie uma nova. Informe seu nome e telefone com DDD. A partir de duas pessoas, a partida pode começar. Leia a carta, converse, apresente sua resposta e escute os outros. A pontuação considera a qualidade da resposta e as evidências. O objetivo é aprender, não vencer uma discussão.');});
+$('btnManualBack').addEventListener('click',function(){show('jogar')});
+$('btnManualPrint').addEventListener('click',function(){window.print()});
+function falarTexto(texto){
+  if(!('speechSynthesis' in window)) return toast('A leitura em voz alta não está disponível neste navegador.',true);
+  window.speechSynthesis.cancel();
+  var fala=new SpeechSynthesisUtterance(texto); fala.lang='pt-BR'; fala.rate=0.96; fala.pitch=1;
+  window.speechSynthesis.speak(fala);
+}
+$('btnSpeakGame').addEventListener('click',function(){falarTexto('Bem-vindo ao Brasil em Jogo. Primeiro, escolha uma mesa ou crie uma nova. Depois, informe seu nome e telefone com DDD e toque em Entrar e jogar. Com pelo menos duas pessoas, o administrador pode iniciar a partida. Leia a carta, converse com os participantes e responda no seu ritmo. Não precisa ter conhecimento prévio. O objetivo é aprender junto, com respeito.');});
+$('btnAdminBack').addEventListener('click',function(){show('jogar')});
+if(qs.get('manual')==='1') show('manual');
+$('btnEnterLobby').addEventListener('click',function(){ if(!S.partidaId) return toast('Escolha uma mesa primeiro.',true); $('joinCard').scrollIntoView({behavior:'smooth',block:'center'}); $('nome').focus({preventScroll:true}); });
+$('btnLobbyAdmin').addEventListener('click',function(){if(!S.adminToken)return toast('Apenas o criador desta mesa pode administrar.',true);show('mesa')});
+$('btnCreateMesa').addEventListener('click',function(){var b=this;busy(b,true);api('criarMesa',{nome:$('newMesaName').value.trim()}).then(function(r){S.me=null;LS.set('me',null);S.partidaId=r.partida_id;LS.set('partidaId',S.partidaId);S.adminToken=r.admin_token||null;if(S.adminToken)LS.set('adminToken_'+S.partidaId,S.adminToken);$('newMesaName').value='';toast('Mesa criada. Você é o administrador desta mesa!');return refresh();}).catch(function(e){toast(e.message,true)}).finally(function(){busy(b,false)});});
+
+/* ====== CADASTRO ====== */
+function maskTel(e){
+  var d=e.target.value.replace(/\D/g,'').slice(0,11),o=d;
+  if(d.length>2) o='('+d.slice(0,2)+') '+d.slice(2);
+  if(d.length>6) o='('+d.slice(0,2)+') '+d.slice(2,d.length===11?7:6)+'-'+d.slice(d.length===11?7:6);
+  e.target.value=o;
+}
+$('telefone').addEventListener('input',maskTel);
+$('addTel').addEventListener('input',maskTel);
+$('joinForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  var nome=$('nome').value.trim(), tel=$('telefone').value;
+  if(nome.length<2) return toast('Digite seu nome.',true);
+  if(tel.replace(/\D/g,'').length<10) return toast('Telefone com DDD.',true);
+  act($('btnJoin'),'registrar',{nome:nome,telefone:tel},function(r){return (r.reentrada?'Bem-vindo(a) de volta, ':'Bem-vindo(a), ')+r.nome+'!'})
+    .then(function(r){ S.me={id:r.participante_id,nome:r.nome}; LS.set('me',JSON.stringify(S.me)); var perfil=S.adminToken?api('registrarAdmin',{nome:nome,telefone:tel}):Promise.resolve(null); return perfil.catch(function(err){toast('Jogador entrou, mas não foi possível registrar o contato do administrador: '+err.message,true)}).then(function(){ $('nome').value='';$('telefone').value=''; return refresh(); }); })
+    .catch(function(){});
+});
+$('btnLeave').addEventListener('click',function(){ if(!S.me) return; if(!confirm('Sair do jogo agora?')) return;
+  act(this,'sair',{participanteId:S.me.id},'Você saiu. Pode voltar quando quiser.').catch(function(){}); });
+$('btnBack').addEventListener('click',function(){ if(!S.me) return;
+  act(this,'voltar',{participanteId:S.me.id},'Você voltou ao jogo!').catch(function(e){ if(/não encontrado/i.test(e.message)){S.me=null;LS.set('me',null);render();} }); });
+$('btnSwitch').addEventListener('click',function(){ S.me=null; LS.set('me',null); render(); $('nome').focus(); });
+
+/* ====== MESA ====== */
+$('btnLockMesa').textContent='↩ Trocar de mesa';
+$('btnLockMesa').addEventListener('click',function(){S.me=null;LS.set('me',null);S.partidaId='';S.adminToken=null;LS.set('partidaId',null);show('jogar');refresh();});
+$('btnApiReset').addEventListener('click',function(){LS.set('api',null);apiUrl='';$('setup').classList.remove('hidden');$('apiUrl').focus()});
+
+var ACOES = {
+  criarPartida:function(b){return act(b,'criarPartida',{nome:$('gameName').value},'Mesa criada.').then(function(r){if(r&&r.partida_id){S.partidaId=r.partida_id;LS.set('partidaId',S.partidaId);return refresh().then(function(){return r;});}return r;})},
+  iniciar:function(b){return act(b,'statusPartida',{pin:S.pin,status:'EM_ANDAMENTO'},'Partida iniciada!')},
+  retomar:function(b){return act(b,'statusPartida',{pin:S.pin,status:'EM_ANDAMENTO'},'Partida retomada.')},
+  pausar:function(b){return act(b,'statusPartida',{pin:S.pin,status:'PAUSADA'},'Partida pausada.')},
+  encerrar:function(b){ if(!confirm('Encerrar a partida? O placar final fica salvo.')) return Promise.resolve();
+    return act(b,'statusPartida',{pin:S.pin,status:'ENCERRADA'},'Partida encerrada.')},
+  sortearCarta:function(b){return act(b,'sortearCarta',{pin:S.pin},function(r){return 'Rodada '+r.numero_rodada+(r.respondente?' · '+r.respondente+' responde':'')})},
+  revelar:function(b){return act(b,'revelar',{pin:S.pin},'Resposta revelada.')},
+  sortearDinamica:function(b){return act(b,'sortearDinamica',{pin:S.pin},function(d){return 'Dinâmica: '+d.nome})},
+  reiniciarTempo:function(b){return act(b,'reiniciarTempo',{pin:S.pin},'Tempo reiniciado.')},
+  sortearJogador:function(b){return act(b,'definirRespondente',{pin:S.pin,aleatorio:true},function(r){return r.nome+' responde.'})},
+  concluirRodada:function(b){return act(b,'concluirRodada',{pin:S.pin},'Rodada concluída.')},
+  definirRespondente:function(b){var id=$('respWho').value; if(!id) return toast('Escolha um jogador.',true);
+    return act(b,'definirRespondente',{pin:S.pin,participanteId:id},function(r){return r.nome+' responde.'})},
+  novoJogo:function(b){ if(!confirm('Encerrar a partida atual e começar um novo jogo? O placar desta fica salvo.')) return Promise.resolve();
+    var manter=confirm('Manter os mesmos jogadores na mesa?\n\nOK = manter  ·  Cancelar = limpar a mesa');
+    return act(b,'novoJogo',{nome:$('gameName').value,manterJogadores:manter},'Novo jogo criado.'+(manter?'':' Mesa limpa.')).then(function(r){if(r&&r.partida_id){if(S.me&&r.jogadoresMigrados){var m=r.jogadoresMigrados.filter(function(x){return x.anterior===S.me.id;})[0];if(m){S.me.id=m.novo;LS.set('me',JSON.stringify(S.me));}else{S.me=null;LS.set('me',null);}}S.partidaId=r.partida_id;LS.set('partidaId',S.partidaId);S.adminToken=r.admin_token||null;if(S.adminToken)LS.set('adminToken_'+S.partidaId,S.adminToken);return refresh();}return r;})},
+  limparMesa:function(b){ if(!confirm('Tirar TODOS os jogadores da mesa? Ninguém é apagado da planilha.')) return Promise.resolve();
+    return act(b,'limparMesa',{pin:S.pin},function(r){return r.retirados+' jogador(es) retirados.'})}
+};
+$('addForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  var nome=$('addNome').value.trim(), tel=$('addTel').value;
+  if(nome.length<2) return toast('Digite o nome.',true);
+  if(tel.replace(/\D/g,'').length<10) return toast('Telefone com DDD.',true);
+  act($('btnAdd'),'adicionarParticipante',{pin:S.pin,nome:nome,telefone:tel},function(r){return r.nome+(r.reentrada?' voltou à mesa.':' entrou na mesa.')})
+    .then(function(){$('addNome').value='';$('addTel').value='';}).catch(function(){});
+});
+document.querySelectorAll('#v-mesa [data-a]').forEach(function(b){b.addEventListener('click',function(){var p=ACOES[b.dataset.a](b); if(p&&p.catch)p.catch(function(){})})});
+document.querySelectorAll('.scores [data-s]').forEach(function(b){b.addEventListener('click',function(){
+  var id=$('scoreWho').value; if(!id) return toast('Escolha quem pontuar.',true);
+  act(b,'pontuar',{pin:S.pin,participanteId:id,pontos:Number(b.dataset.s)},function(r){return r.nome+': '+r.pontos+' ponto(s)'}).catch(function(){});
+})});
+
+/* ====== DADOS ====== */
+var refreshing=null;
+function refresh(){
+  if(!isGAS && !apiUrl){ $('setup').classList.remove('hidden'); return Promise.resolve(); }
+  if(refreshing) return refreshing;
+  var wantAdmin = !!S.adminToken;
+  var t0=Date.now();
+  refreshing = api('painel',{admin:wantAdmin,partidaId:S.partidaId,adminToken:S.adminToken||''}).then(function(p){
+    if(!S.partidaId && p.partida){S.partidaId=p.partida.id;LS.set('partidaId',S.partidaId);}
+    var t1=Date.now(); S.offset = p.serverNow - (t0+t1)/2;
+    S.panel=p; S.fails=0; $('net').classList.add('hidden');
+    S.adminOk = !!p.admin;
+    render();
+  }).catch(function(e){
+    S.fails++; if(S.fails>1) $('net').classList.remove('hidden');
+    if(!S.panel) { $('statusTxt').textContent='Erro'; toast(e.message,true); }
+  }).finally(function(){refreshing=null});
+  return refreshing;
+}
+
+function statusInfo(p){
+  if(!p.partida) return {t:'Sem partida',c:''};
+  var s=p.partida.status;
+  if(s==='EM_ANDAMENTO') return {t:'Ao vivo',c:'on'};
+  if(s==='PAUSADA') return {t:'Pausada',c:'pause'};
+  if(s==='ABERTA') return {t:'Aguardando início',c:''};
+  return {t:'Encerrada',c:'end'};
+}
+
+function myPlayer(){ if(!S.me||!S.panel) return null; return S.panel.jogadores.filter(function(j){return j.id===S.me.id})[0]||null; }
+
+function render(){
+  var p=S.panel; if(!p) return;
+  var st=statusInfo(p);
+  $('statusPill').className='pill '+st.c; $('statusTxt').textContent=st.t;
+  $('countTxt').textContent=p.totalJogando+'/'+p.config.max;
+  $('foot').textContent='Brasil em Jogo · v2.2.3'+(p.partida?' · '+p.partida.nome:'');
+  renderLobby(p,st);
+  $('btnJoin').disabled=!S.partidaId;
+  if(!S.partidaId) $('btnJoin').textContent='Escolha uma mesa abaixo'; else $('btnJoin').textContent='Entrar e jogar';
+
+  // eu
+  var me=myPlayer();
+  $('joinCard').classList.toggle('hidden',!!S.me);
+  $('meCard').classList.toggle('hidden',!S.me);
+  if(S.me){
+    var playing = me && me.status==='JOGANDO';
+    $('meAv').textContent=initials(S.me.nome);
+    $('meName').textContent=(me&&me.nome)||S.me.nome;
+    $('meState').textContent=playing?'Jogando':'Fora do jogo';
+    $('mePts').textContent=me?me.pontos:0;
+    $('btnLeave').classList.toggle('hidden',!playing);
+    $('btnBack').classList.toggle('hidden',playing);
+  }
+
+  renderRound($('roundBox'),false);
+  renderRank($('miniRank'),p.jogadores.filter(function(j){return j.status==='JOGANDO'}),true);
+  $('miniSub').textContent=p.totalJogando?p.totalJogando+' jogando · mínimo '+p.config.min+' para começar':'Ninguém entrou ainda.';
+  renderRank($('board'),p.jogadores,false);
+  $('boardTitle').textContent=p.partida&&p.partida.status==='ENCERRADA'?'Placar final':'Placar';
+  $('boardSub').textContent=p.partida?p.partida.nome+' · '+st.t+(p.rodada?' · rodada '+p.rodada.numero:''):'Nenhuma partida criada.';
+  if(S.view==='mesa') renderAdmin();
+}
+
+function dataPt(ms){
+  if(!ms) return 'não informado';
+  var d=new Date(ms); return isNaN(d.getTime())?'não informado':d.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+function renderLobby(p,st){
+  $('btnLobbyAdmin').classList.toggle('hidden',!S.adminToken);
+  var mesas=p.mesas||[], selected=S.partidaId|| (p.partida&&p.partida.id)||'';
+  if(selected && !mesas.some(function(m){return m.id===selected;})){selected='';S.partidaId='';LS.set('partidaId',null);}
+  var list=$('mesaList'); list.innerHTML='';
+  if(!mesas.length) list.appendChild(el('div','muted','Nenhuma mesa criada. Crie a primeira para começar.'));
+  mesas.forEach(function(m){var b=el('button','mesa-option'+(m.id===selected?' selected':''));b.type='button';b.appendChild(el('b','',m.nome));var sit=m.status==='ENCERRADA'?'Encerrada':m.status==='EM_ANDAMENTO'?'Em andamento':m.status==='PAUSADA'?'Pausada':'Aguardando';b.appendChild(el('small','',sit+' · '+m.presentes+'/'+m.max+' participantes · faltam '+Math.max(0,m.min-m.presentes)+' para iniciar'));var adm=el('span','mesa-admin');adm.innerHTML='<b>Mesa:</b> '+escapeHtml(m.nome)+' · <b>ADM:</b> '+escapeHtml(m.adminNome||'Aguardando identificação')+(m.adminContato?' · <b>Contato:</b> '+escapeHtml(m.adminContato):'');b.appendChild(adm);b.addEventListener('click',function(){S.partidaId=m.id;LS.set('partidaId',m.id);S.adminToken=LS.get('adminToken_'+m.id)||null;S.me=null;LS.set('me',null);refresh();});list.appendChild(b);});
+  var partida=p.partida, presentes=p.totalJogando||0, minimo=p.config.min||2, maximo=p.config.max||12;
+  $('lobbyStatus').className='pill '+(st.c||'');
+  $('lobbyStatus').querySelector('span:last-child').textContent=partida?st.t:'Sem mesa';
+  $('lobbyPlayers').textContent=presentes+'/'+maximo;
+  $('lobbyMissing').textContent=Math.max(0,minimo-presentes);
+  if(!partida){
+    $('lobbyTitle').textContent='Nenhuma mesa aberta';
+    $('lobbyDesc').textContent='Aguarde o organizador criar uma partida para reunir os participantes.';
+    $('lobbyNumber').textContent='—';
+    $('lobbyDate').textContent='Sem PIN. Crie uma mesa ou selecione uma mesa existente para entrar.';
+    $('btnEnterLobby').disabled=!selected; $('btnEnterLobby').textContent=selected?'Entrar na mesa':'Aguardando mesa';
+    return;
+  }
+  $('lobbyTitle').textContent=partida.nome||'Brasil em Jogo';
+  $('lobbyDesc').textContent=partida.status==='ENCERRADA'?'Esta partida foi encerrada. Escolha outra mesa ou crie uma nova.':(presentes>=minimo?'Mesa pronta para começar!':'Faltam '+Math.max(0,minimo-presentes)+' participante(s) para iniciar.');
+  $('lobbyNumber').textContent='JOGO '+String(partida.numero||1).padStart(2,'0');
+  $('lobbyDate').textContent='Criada em '+dataPt(partida.criadaMs)+' · '+(partida.iniciadaMs?'Iniciada em '+dataPt(partida.iniciadaMs):'Ainda não iniciada')+' · ADM: '+(partida.adminNome||'aguardando identificação')+(partida.adminContato?' · Contato: '+partida.adminContato:'');
+  var encerrada=partida.status==='ENCERRADA';
+  $('btnEnterLobby').disabled=encerrada || !selected; $('btnEnterLobby').textContent=encerrada?'Partida encerrada':'Entrar nesta mesa';
+  $('btnLobbyAdmin').classList.toggle('hidden',!S.adminToken);
+}
+
+function renderRank(ul,list,compact){
+  ul.innerHTML='';
+  if(!list.length){ul.appendChild(el('li','', compact?'—':'Sem jogadores ainda.'));return}
+  list.forEach(function(j,i){
+    var li=el('li',(S.me&&S.me.id===j.id?'me ':'')+(j.status!=='JOGANDO'?'out':''));
+    li.appendChild(el('div','pos',String(i+1)));
+    var nm=el('div','nm',j.nome); if(S.me&&S.me.id===j.id) nm.appendChild(el('span','tag','você')); if(j.status!=='JOGANDO') nm.appendChild(el('span','tag','saiu'));
+    li.appendChild(nm); li.appendChild(el('div','pts',String(j.pontos)));
+    ul.appendChild(li);
+  });
+}
+
+var timerEls=[];
+function renderRound(box,admin){
+  var p=S.panel; box.innerHTML='';
+  var r=p.rodada;
+  if(!p.partida || !r || !r.carta || (p.partida.status==='ENCERRADA')){
+    var c=el('div','card empty');
+    var msg = !p.partida ? ['Aguardando a Mesa','O administrador vai criar a partida.']
+      : p.partida.status==='ENCERRADA' ? ['Partida encerrada','Veja o placar final na aba Placar.']
+      : p.partida.status==='ABERTA' ? ['Partida criada','Entrem no jogo! Mínimo de '+p.config.min+' jogadores.']
+      : ['Prontos?','A Mesa vai sortear a primeira carta.'];
+    c.appendChild(el('div','big',msg[0])); c.appendChild(el('div','',msg[1]));
+    box.appendChild(c); return;
+  }
+  var k=r.carta, card=el('div','game-card');
+  var head=el('div','round-head');
+  var tm=el('div','timer'); tm.innerHTML='<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" stroke="#ffffff1a" stroke-width="9" fill="none"/><circle class="arc" cx="50" cy="50" r="44" stroke="#ffd23f" stroke-width="9" fill="none" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="0"/></svg><div class="t">--</div>';
+  head.appendChild(tm); timerEls.push(tm);
+  var who=el('div','who'); who.appendChild(el('div','k','Rodada '+r.numero+' · quem responde'));
+  var isMe = r.respondente && S.me && r.respondente.id===S.me.id;
+  who.appendChild(el('div','v'+(isMe?' me':''), r.respondente ? (isMe?'Você! ':'')+r.respondente.nome : 'A definir'));
+  head.appendChild(who); card.appendChild(head);
+  var chips=el('div','chips');
+  if(k.categoria) chips.appendChild(el('span','chip y',k.categoria));
+  if(k.dificuldade) chips.appendChild(el('span','chip',k.dificuldade.replace(/_/g,' ')));
+  if(k.tipo) chips.appendChild(el('span','chip b',k.tipo.replace(/_/g,' ')));
+  card.appendChild(chips);
+  if(k.imagem){var img=el('img','card-img');img.src=k.imagem;img.alt=k.imagem_descricao||k.titulo;img.loading='lazy';img.onerror=function(){img.remove()};card.appendChild(img)}
+  card.appendChild(el('h3','',k.titulo));
+  card.appendChild(el('p','question',k.pergunta));
+  if(r.dinamica){var d=el('div','dyn');d.appendChild(el('b','','🎲 '+r.dinamica.nome+' · '));d.appendChild(document.createTextNode(r.dinamica.descricao));card.appendChild(d)}
+  var revealed = r.status!=='ABERTA';
+  if(k.resposta_correta && (revealed||admin)){
+    var a=el('div','answer'); a.appendChild(el('div','k',revealed?'Resposta':'Resposta (só a Mesa vê)'));
+    a.appendChild(el('p','',k.resposta_correta)); if(k.explicacao) a.appendChild(el('p','muted',k.explicacao));
+    if(k.fontes&&k.fontes.length){var s=el('div','sources');k.fontes.forEach(function(f){if(!f.url)return;var l=el('a','',(f.instituicao?f.instituicao+' — ':'')+(f.titulo||f.id));l.href=f.url;l.target='_blank';l.rel='noopener';s.appendChild(l)});a.appendChild(s)}
+    card.appendChild(a);
+  }
+  if(r.respondente && r.pontos && r.pontos[r.respondente.id]!==undefined) card.appendChild(el('div','muted','Pontuação da rodada para '+r.respondente.nome+': '+r.pontos[r.respondente.id]));
+  box.appendChild(card);
+  tick();
+}
+
+function tick(){
+  var p=S.panel; if(!p||!p.rodada) return;
+  var r=p.rodada, rem, total=r.tempo||p.config.tempo;
+  if(r.status!=='ABERTA') rem=0;
+  else if(p.partida.status==='PAUSADA') rem=p.partida.tempoRestante;
+  else rem=Math.max(0,total-((Date.now()+S.offset)-r.iniciadaMs)/1000);
+  timerEls = timerEls.filter(function(t){return document.body.contains(t)});
+  timerEls.forEach(function(t){
+    var txt = r.status!=='ABERTA' ? '✓' : (p.partida.status==='PAUSADA' ? '⏸' : '');
+    var s=Math.ceil(rem); t.querySelector('.t').textContent = txt || (Math.floor(s/60)+':'+('0'+(s%60)).slice(-2));
+    t.querySelector('.arc').style.strokeDashoffset = String(276.5*(1-Math.max(0,Math.min(1,rem/total))));
+    t.classList.toggle('low', r.status==='ABERTA' && rem<=15);
+  });
+}
+setInterval(tick,250);
+
+function fillSelect(sel,list,val){
+  var cur = val!==undefined?val:sel.value; sel.innerHTML='';
+  var o0=el('option','', list.length?'Escolha o jogador…':'Sem jogadores presentes'); o0.value=''; sel.appendChild(o0);
+  list.forEach(function(j){var o=el('option','',j.nome+' ('+j.pontos+' pts)');o.value=j.id;sel.appendChild(o)});
+  if(cur && list.some(function(j){return j.id===cur})) sel.value=cur;
+}
+
+var lastRoundId='';
+function renderAdmin(){
+  var p=S.panel;
+  var need = !p || !p.admin;
+  $('pinCard').classList.add('hidden');
+  $('adminArea').classList.toggle('hidden',need);
+  $('adminDenied').classList.toggle('hidden',!need);
+  $('btnApiReset').classList.add('hidden');
+  if(need) return;
+  var st=p.partida?p.partida.status:'';
+  var ativa = st==='ABERTA'||st==='EM_ANDAMENTO'||st==='PAUSADA';
+  $('adminGame').textContent = p.partida ? p.partida.nome+' · '+statusInfo(p).t+' · '+(p.cartasRestantes!=null?p.cartasRestantes+' de '+p.totalCartas+' cartas restantes':'') : 'Nenhuma partida. Crie uma para começar.';
+  $('newGame').classList.toggle('hidden',ativa);
+  $('gameCtl').classList.toggle('hidden',!ativa);
+  var q=function(a){return document.querySelector('#v-mesa [data-a="'+a+'"]')};
+  q('iniciar').classList.toggle('hidden',st!=='ABERTA');
+  q('iniciar').disabled = st==='ABERTA' && p.totalJogando < p.config.min;
+  q('iniciar').title = q('iniciar').disabled ? 'São necessários pelo menos 2 participantes.' : 'Iniciar partida';
+  q('pausar').classList.toggle('hidden',st!=='EM_ANDAMENTO');
+  q('retomar').classList.toggle('hidden',st!=='PAUSADA');
+  var r=p.rodada, open = ativa && r && r.status!=='CONCLUIDA';
+  q('sortearCarta').disabled = st!=='EM_ANDAMENTO';
+  q('sortearCarta').textContent = r && ativa && r.status!=='CONCLUIDA' ? '🎴 Próxima carta' : '🎴 Sortear carta';
+  ['revelar','sortearDinamica','reiniciarTempo','sortearJogador','concluirRodada','definirRespondente'].forEach(function(a){q(a).disabled=!open});
+  q('revelar').disabled = !open || r.status!=='ABERTA';
+  var presentes=p.jogadores.filter(function(j){return j.status==='JOGANDO'});
+  var respId = r&&r.respondente?r.respondente.id:'';
+  var roundChanged = r && r.id!==lastRoundId; if(r) lastRoundId=r.id;
+  fillSelect($('respWho'),presentes, roundChanged?respId:undefined);
+  fillSelect($('scoreWho'),p.jogadores, roundChanged?respId:undefined);
+  if(!$('scoreWho').value && respId) $('scoreWho').value=respId;
+  document.querySelectorAll('.scores .btn').forEach(function(b){b.disabled=!ativa||!r});
+  renderRound($('adminRound'),true);
+  var list=$('adminPlayers'); list.innerHTML='';
+  $('adminPlayersSub').textContent=p.totalJogando+' presentes · máx. '+p.config.max+' · mín. '+p.config.min;
+  if(!presentes.length) list.appendChild(el('div','muted','Ninguém presente.'));
+  presentes.forEach(function(j){
+    var it=el('div','it'); it.appendChild(el('span','',j.nome+' · '+j.pontos+' pts'));
+    var b=el('button','btn dan sm','Tirar'); b.onclick=function(){ if(confirm('Tirar '+j.nome+' da mesa?')) act(b,'marcarSaida',{pin:S.pin,participanteId:j.id},j.nome+' saiu da mesa.').catch(function(){}) };
+    it.appendChild(b); list.appendChild(it);
+  });
+  var fora=p.fora||p.jogadores.filter(function(j){return j.status!=='JOGANDO'}), out=$('adminOut'); out.innerHTML='';
+  out.classList.toggle('hidden',!fora.length);
+  fora.forEach(function(j){
+    var it=el('div','it'); it.appendChild(el('span','',j.nome+' · fora · '+j.pontos+' pts'));
+    var b=el('button','btn pri sm','Voltar'); b.onclick=function(){ act(b,'readmitir',{pin:S.pin,participanteId:j.id},j.nome+' voltou à mesa.').catch(function(){}) };
+    it.appendChild(b); out.appendChild(it);
+  });
+  document.querySelector('#v-mesa [data-a="limparMesa"]').disabled=!presentes.length;
+}
+
+/* ====== SETUP GITHUB ====== */
+$('btnApi').addEventListener('click',function(){
+  var u=$('apiUrl').value.trim();
+  if(!/^https:\/\/script\.google(usercontent)?\.com\/.+/.test(u) && !/^https?:\/\/(localhost|127\.0\.0\.1)/.test(u)) return toast('URL inválida. Use a URL /exec do Web App.',true);
+  apiUrl=u; LS.set('api',u); $('setup').classList.add('hidden'); refresh();
+});
+
+/* ====== RELÓGIO (pt-BR, 1 s) ====== */
+function relogio(){
+  var d=new Date();
+  $('clock').textContent=d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'})+' · '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+relogio(); setInterval(relogio,1000);
+
+/* ====== LOOP ====== */
+show(S.view==='mesa'||S.view==='placar'?S.view:'jogar');
+refresh();
+setInterval(function(){ if(document.visibilityState==='visible') refresh(); }, POLL_MS);
+document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') refresh(); });
+if(!isGAS && 'serviceWorker' in navigator && location.protocol==='https:'){ navigator.serviceWorker.register('sw.js').catch(function(){}); }
+})();
+</script>
 </body>
 </html>
