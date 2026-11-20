@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ronda de Cuidado | Seta Soluções</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card: #1e293b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --blue: #2563eb;
+      --orange: #f97316;
+      --green: #10b981;
+      --yellow: #eab308;
+      --red: #ef4444;
+      --border: #334155;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 16px; max-width: 520px; margin: 0 auto; padding-bottom: 40px; }
+    
+    /* Header Seta Soluções */
+    .header { display: flex; align-items: center; justify-content: space-between; background: var(--card); padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border); margin-bottom: 14px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo-s { width: 42px; height: 42px; flex-shrink: 0; }
+    .brand-text h1 { font-size: 16px; font-weight: 700; color: #fff; }
+    .brand-text p { font-size: 12px; color: var(--muted); }
+    .clock-box { text-align: right; }
+    .clock-time { font-size: 18px; font-weight: 800; color: #38bdf8; font-variant-numeric: tabular-nums; }
+    .clock-date { font-size: 11px; color: var(--muted); }
+
+    /* Saudação & Frase */
+    .greeting-box { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-left: 4px solid var(--orange); padding: 14px; border-radius: 10px; margin-bottom: 16px; }
+    .greeting-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+    .greeting-quote { font-size: 13px; color: var(--muted); line-height: 1.4; }
+
+    /* Alerta Amigo de Pendência */
+    .alert-friend { background: rgba(234, 179, 8, 0.12); border: 1px solid var(--yellow); padding: 12px 14px; border-radius: 12px; margin-bottom: 16px; display: none; }
+    .alert-friend-title { font-size: 13px; font-weight: 700; color: #fde047; margin-bottom: 6px; }
+    .alert-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-top: 1px solid rgba(234, 179, 8, 0.2); font-size: 13px; }
+    .btn-mini { background: var(--yellow); color: #000; border: none; padding: 5px 10px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; }
+
+    /* Cards das Rondas */
+    .section-title { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 10px; font-weight: 700; }
+    .cards-grid { display: flex; flex-direction: column; gap: 12px; }
+    .ronda-card { background: var(--card); border: 1px solid var(--border); border-left: 6px solid var(--muted); border-radius: 12px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: transform 0.1s; }
+    .ronda-card:active { transform: scale(0.98); }
+    
+    .status-verde { border-left-color: var(--green); }
+    .status-amarelo { border-left-color: var(--yellow); background: rgba(234, 179, 8, 0.06); }
+    .status-vermelho { border-left-color: var(--red); background: rgba(239, 68, 68, 0.08); }
+    .status-futuro { border-left-color: #475569; opacity: 0.85; }
+
+    .ronda-info h3 { font-size: 17px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    .ronda-info p { font-size: 13px; color: var(--muted); margin-top: 4px; }
+    .badge { font-size: 11px; padding: 3px 8px; border-radius: 20px; font-weight: 700; }
+    .badge-verde { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+    .badge-amarelo { background: rgba(234, 179, 8, 0.2); color: #fde047; }
+    .badge-vermelho { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+    .badge-cinza { background: #334155; color: #cbd5e1; }
+
+    /* Modal de Registro */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: flex-end; justify-content: center; z-index: 100; }
+    .modal-sheet { background: var(--card); width: 100%; max-width: 520px; border-radius: 20px 20px 0 0; padding: 20px; border-top: 2px solid var(--blue); animation: slideUp 0.2s ease-out; }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .modal-header h2 { font-size: 18px; }
+    .close-btn { background: none; border: none; color: var(--muted); font-size: 24px; cursor: pointer; }
+
+    .field-label { font-size: 12px; color: var(--muted); font-weight: 700; margin-bottom: 8px; display: block; text-transform: uppercase; }
+    .btn-group { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+    .opt-btn { background: #0f172a; border: 1px solid var(--border); color: var(--text); padding: 10px 6px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; text-align: center; }
+    .opt-btn.active { border-color: var(--blue); background: rgba(37, 99, 235, 0.25); color: #fff; }
+    .opt-btn.active-green { border-color: var(--green); background: rgba(16, 185, 129, 0.25); }
+    .opt-btn.active-red { border-color: var(--red); background: rgba(239, 68, 68, 0.25); }
+
+    .extra-box { display: none; margin-bottom: 14px; }
+    input[type="time"], input[type="text"] { width: 100%; background: #0f172a; border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 10px; font-size: 15px; }
+    
+    .motivos-rapidos { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .tag-motivo { background: #334155; border: none; color: #f8fafc; padding: 6px 10px; border-radius: 8px; font-size: 12px; cursor: pointer; }
+
+    .btn-save { width: 100%; background: var(--green); color: #000; border: none; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 6px; }
+    .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .loader { text-align: center; padding: 30px; color: var(--muted); font-size: 14px; }
+  </style>
+</head>
+<body>
+
+  <!-- CABEÇALHO VIVO -->
+  <div class="header">
+    <div class="brand">
+      <!-- Logo Seta Soluções (S azul com pontas superiores laranja cortadas) -->
+      <svg class="logo-s" viewBox="0 0 100 100" fill="none">
+        <path d="M25 20 H80 L70 35 H38 V44 H75 L82 55 V80 H20 L30 65 H65 V56 H25 Z" fill="#2563eb"/>
+        <polygon points="72,20 85,20 75,35 62,35" fill="#f97316"/>
+        <polygon points="20,65 33,65 23,80 10,80" fill="#f97316"/>
+      </svg>
+      <div class="brand-text">
+        <h1>Ronda Joaquim</h1>
+        <p>Seta Soluções • Controle Pessoal</p>
+      </div>
+    </div>
+    <div class="clock-box">
+      <div class="clock-time" id="relogioHora">--:--:--</div>
+      <div class="clock-date" id="relogioData">--/--/----</div>
+    </div>
+  </div>
+
+  <!-- SAUDAÇÃO AMIGA -->
+  <div class="greeting-box">
+    <div class="greeting-title" id="saudacaoTexto">Olá, Marquinhos</div>
+    <div class="greeting-quote" id="fraseDia">Carregando seu painel de cuidado...</div>
+  </div>
+
+  <!-- ALERTA AMIGO DE PENDÊNCIAS -->
+  <div class="alert-friend" id="boxPendencias">
+    <div class="alert-friend-title">Fala Marquinhos, ficaram rondas em aberto para atualizar:</div>
+    <div id="listaPendencias"></div>
+  </div>
+
+  <!-- LISTA DE RONDAS DO DIA -->
+  <div class="section-title">Rondas de Hoje</div>
+  <div id="loadingBox" class="loader">Sincronizando com a planilha...</div>
+  <div class="cards-grid" id="cardsContainer"></div>
+
+  <!-- MODAL DE REGISTRO SEM TRAVAS -->
+  <div class="modal-overlay" id="modalRegistro">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h2 id="modalTitulo">Ronda 09:00</h2>
+        <button class="close-btn" onclick="fecharModal()">&times;</button>
+      </div>
+
+      <span class="field-label">1. Quando você olhou?</span>
+      <div class="btn-group">
+        <button class="opt-btn active" id="btnQuandoAgora" onclick="selecionarQuando('agora')">Agora mesmo</button>
+        <button class="opt-btn" id="btnQuandoCedo" onclick="selecionarQuando('cedo')">Mais cedo</button>
+        <button class="opt-btn" id="btnQuandoNao" onclick="selecionarQuando('nao')">Não olhei</button>
+      </div>
+
+      <div class="extra-box" id="boxHoraReal">
+        <span class="field-label">Que horas você visualizou?</span>
+        <input type="time" id="inputHoraReal">
+      </div>
+
+      <div id="secCamera">
+        <span class="field-label">2. Status da Câmera e Visualização</span>
+        <div class="btn-group">
+          <button class="opt-btn active-green" id="btnCamOk" onclick="selecionarCamera('ON', 'Tudo OK')">Câmera ON<br>Tudo OK</button>
+          <button class="opt-btn" id="btnCamOff" onclick="selecionarCamera('OFF', 'Atenção')">Câmera OFF<br>Sem Sinal</button>
+          <button class="opt-btn" id="btnCamAtencao" onclick="selecionarCamera('ON', 'Atenção')">Câmera ON<br>Atenção</button>
+        </div>
+      </div>
+
+      <span class="field-label">3. Observação ou Motivo (Opcional)</span>
+      <input type="text" id="inputObs" placeholder="Toque numa tag ou digite se quiser...">
+      <div class="motivos-rapidos">
+        <button class="tag-motivo" onclick="addMotivo('Trabalho / Rua')">Trabalho / Rua</button>
+        <button class="tag-motivo" onclick="addMotivo('Sem Internet')">Sem Internet</button>
+        <button class="tag-motivo" onclick="addMotivo('Esquecimento')">Esquecimento</button>
+        <button class="tag-motivo" onclick="addMotivo('Tudo tranquilo')">Tudo tranquilo</button>
+      </div>
+
+      <button class="btn-save" id="btnSalvar" onclick="salvarPonto()">CONFIRMAR REGISTRO</button>
+    </div>
+  </div>
+
+  <script>
+    // URL da implantação para funcionar também quando subir no GitHub Pages
+    const API_URL = 'https://script.google.com/macros/s/AKfycby--j5wSXhhoFjlybE7W4vZTH7e4HeNC0Pw6Zt5RLhxvq1LsGpDQNACC9GKKGo4Td6S/exec';
+    const IS_GAS = (typeof google !== 'undefined' && google.script && google.script.run);
+
+    const FRASES = [
+      "Presença constante vale mais que perfeição. Um clique de cada vez.",
+      "Sistema ativo e operando. Leva menos de 10 segundos para conferir.",
+      "Disciplina é criar ferramentas que trabalham a seu favor.",
+      "Cuidado técnico e atenção: tudo sob controle hoje, Marquinhos."
+    ];
+
+    let estadoApp = null;
+    let turnoSelecionado = '';
+    let dataSelecionada = '';
+    let modoQuando = 'agora';
+    let estadoCam = 'ON';
+    let situacaoCam = 'Tudo OK';
+
+    // Relógio ao vivo + Saudação
+    function atualizarRelogio() {
+      const agora = new Date();
+      document.getElementById('relogioHora').innerText = agora.toLocaleTimeString('pt-BR');
+      document.getElementById('relogioData').innerText = agora.toLocaleDateString('pt-BR');
+
+      const hora = agora.getHours();
+      let saudacao = 'Boa noite, Marquinhos';
+      if (hora >= 5 && hora < 12) saudacao = 'Bom dia, Marquinhos';
+      else if (hora >= 12 && hora < 18) saudacao = 'Boa tarde, Marquinhos';
+      document.getElementById('saudacaoTexto').innerText = saudacao;
+    }
+    setInterval(atualizarRelogio, 1000);
+    atualizarRelogio();
+    document.getElementById('fraseDia').innerText = FRASES[new Date().getDate() % FRASES.length];
+
+    // Comunicação Híbrida (Apps Script Nativo OU Fetch GitHub Pages)
+    function chamarBackend(acao, payload, callback) {
+      if (IS_GAS) {
+        if (acao === 'getEstado') {
+          google.script.run.withSuccessHandler(callback).obterEstadoAtual();
+        } else {
+          google.script.run.withSuccessHandler(callback).registrarPonto(payload);
+        }
+      } else {
+        if (acao === 'getEstado') {
+          fetch(API_URL + '?action=getEstado')
+            .then(r => r.json())
+            .then(callback)
+            .catch(err => alert('Erro de conexão: ' + err));
+        } else {
+          fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+          })
+          .then(r => r.json())
+          .then(callback)
+          .catch(err => alert('Erro ao salvar: ' + err));
+        }
+      }
+    }
+
+    function carregarDados() {
+      chamarBackend('getEstado', null, (res) => {
+        estadoApp = res;
+        document.getElementById('loadingBox').style.display = 'none';
+        renderizarTela();
+      });
+    }
+
+    function renderizarTela() {
+      const container = document.getElementById('cardsContainer');
+      container.innerHTML = '';
+
+      // Renderiza pendências anteriores (Alerta Amigo)
+      const boxPend = document.getElementById('boxPendencias');
+      const listaPend = document.getElementById('listaPendencias');
+      if (estadoApp.pendencias && estadoApp.pendencias.length > 0) {
+        boxPend.style.display = 'block';
+        listaPend.innerHTML = '';
+        estadoApp.pendencias.forEach(p => {
+          listaPend.innerHTML += `
+            <div class="alert-item">
+              <span>Dia <b>${p.data}</b> às <b>${p.turno}</b></span>
+              <button class="btn-mini" onclick="abrirModal('${p.turno}', '${p.data}')">Atualizar</button>
+            </div>`;
+        });
+      } else {
+        boxPend.style.display = 'none';
+      }
+
+      // Renderiza os 4 turnos do dia
+      const agora = new Date();
+      const minAtual = agora.getHours() * 60 + agora.getMinutes();
+
+      estadoApp.turnos.forEach((turno, i) => {
+        const reg = estadoApp.registrosHoje[turno];
+        const [h, m] = turno.split(':').map(Number);
+        const minTurno = h * 60 + m;
+
+        let classeCard = 'status-futuro';
+        let badgeHtml = '<span class="badge badge-cinza">Aguardando horário</span>';
+        let desc = 'Toque para registrar quando olhar';
+
+        if (reg) {
+          if (reg.statusAcesso === 'Não Acessado') {
+            classeCard = 'status-vermelho';
+            badgeHtml = '<span class="badge badge-vermelho">Não Acessado</span>';
+            desc = reg.obs ? `Motivo: ${reg.obs}` : 'Sem motivo registrado';
+          } else if (reg.camera === 'OFF' || reg.situacao === 'Atenção') {
+            classeCard = 'status-vermelho';
+            badgeHtml = `<span class="badge badge-vermelho">Câmera ${reg.camera} • ${reg.situacao}</span>`;
+            desc = `Visualizado às ${reg.horaReal} ${reg.obs ? '• ' + reg.obs : ''}`;
+          } else {
+            classeCard = 'status-verde';
+            badgeHtml = `<span class="badge badge-verde">Concluído (${reg.horaReal})</span>`;
+            desc = `Câmera ON • Tudo OK ${reg.obs ? '• ' + reg.obs : ''}`;
+          }
+        } else {
+          // Sem registro ainda: verifica tolerância de 15 min
+          if (minAtual > minTurno + estadoApp.tolerancia) {
+            classeCard = 'status-amarelo';
+            badgeHtml = '<span class="badge badge-amarelo">Em aberto (+15 min)</span>';
+            desc = 'Sem trava: toque para registrar agora ou informar hora';
+          } else if (minAtual >= minTurno) {
+            classeCard = 'status-amarelo';
+            badgeHtml = '<span class="badge badge-amarelo">Hora da Ronda!</span>';
+            desc = 'Janela ativa agora';
+          }
+        }
+
+        container.innerHTML += `
+          <div class="ronda-card ${classeCard}" onclick="abrirModal('${turno}', '${estadoApp.hoje}')">
+            <div class="ronda-info">
+              <h3>Ronda 0${i+1} • ${turno}</h3>
+              <p>${desc}</p>
+            </div>
+            <div>${badgeHtml}</div>
+          </div>`;
+      });
+    }
+
+    function abrirModal(turno, data) {
+      turnoSelecionado = turno;
+      dataSelecionada = data;
+      document.getElementById('modalTitulo').innerText = `Ronda ${turno} (${data})`;
+      document.getElementById('inputObs').value = '';
+      document.getElementById('inputHoraReal').value = turno;
+      
+      // Se for dia anterior, já abre sugerindo "Mais cedo"
+      if (data !== estadoApp.hoje) {
+        selecionarQuando('cedo');
+      } else {
+        selecionarQuando('agora');
+      }
+      selecionarCamera('ON', 'Tudo OK');
+      document.getElementById('modalRegistro').style.display = 'flex';
+    }
+
+    function fecharModal() {
+      document.getElementById('modalRegistro').style.display = 'none';
+    }
+
+    function selecionarQuando(modo) {
+      modoQuando = modo;
+      ['btnQuandoAgora', 'btnQuandoCedo', 'btnQuandoNao'].forEach(id => document.getElementById(id).classList.remove('active'));
+      
+      if (modo === 'agora') {
+        document.getElementById('btnQuandoAgora').classList.add('active');
+        document.getElementById('boxHoraReal').style.display = 'none';
+        document.getElementById('secCamera').style.display = 'block';
+      } else if (modo === 'cedo') {
+        document.getElementById('btnQuandoCedo').classList.add('active');
+        document.getElementById('boxHoraReal').style.display = 'block';
+        document.getElementById('secCamera').style.display = 'block';
+      } else {
+        document.getElementById('btnQuandoNao').classList.add('active');
+        document.getElementById('boxHoraReal').style.display = 'none';
+        document.getElementById('secCamera').style.display = 'none';
+      }
+    }
+
+    function selecionarCamera(cam, sit) {
+      estadoCam = cam;
+      situacaoCam = sit;
+      ['btnCamOk', 'btnCamOff', 'btnCamAtencao'].forEach(id => {
+        document.getElementById(id).classList.remove('active-green', 'active-red');
+      });
+      if (cam === 'ON' && sit === 'Tudo OK') document.getElementById('btnCamOk').classList.add('active-green');
+      else document.getElementById('btnCamOff').classList.add('active-red');
+      if (cam === 'ON' && sit === 'Atenção') document.getElementById('btnCamAtencao').classList.add('active-red');
+    }
+
+    function addMotivo(texto) {
+      document.getElementById('inputObs').value = texto;
+    }
+
+    function salvarPonto() {
+      const btn = document.getElementById('btnSalvar');
+      btn.disabled = true;
+      btn.innerText = 'SALVANDO...';
+
+      const agora = new Date();
+      const horaAtualStr = agora.toTimeString().slice(0, 5);
+
+      let statusAcesso = 'No Prazo';
+      let horaReal = horaAtualStr;
+      let camFinal = estadoCam;
+      let sitFinal = situacaoCam;
+
+      if (modoQuando === 'cedo') {
+        statusAcesso = 'Retroativo';
+        horaReal = document.getElementById('inputHoraReal').value || turnoSelecionado;
+      } else if (modoQuando === 'nao') {
+        statusAcesso = 'Não Acessado';
+        horaReal = '-';
+        camFinal = 'N/A';
+        sitFinal = 'Pendente';
+      }
+
+      const payload = {
+        data: dataSelecionada,
+        turno: turnoSelecionado,
+        horaReal: horaReal,
+        statusAcesso: statusAcesso,
+        camera: camFinal,
+        situacao: sitFinal,
+        obs: document.getElementById('inputObs').value.trim()
+      };
+
+      chamarBackend('salvar', payload, (res) => {
+        estadoApp = res;
+        btn.disabled = false;
+        btn.innerText = 'CONFIRMAR REGISTRO';
+        fecharModal();
+        renderizarTela();
+      });
+    }
+
+    // Inicia carregando estado
+    carregarDados();
+  </script>
+</body>
+</html>
