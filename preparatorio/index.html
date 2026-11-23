@@ -9,9 +9,13 @@
       --navy-top: #071b46;
       --navy-mid: #0a2d78;
       --blue: #1f5fe0;
+      --blue-dark: #1546ad;
       --accent: #f59e0b;
+      --accent-dark: #d97706;
       --green: #15803d;
-      --red: #dc2626;
+      --orange: #ea580c;
+      --pink: #db2777;
+      --yellow: #ca8a04;
       --bg: #eef3fb;
       --card: #ffffff;
       --line: #dbe3f0;
@@ -19,7 +23,15 @@
       --muted: #526075;
     }
     * { box-sizing: border-box; }
-    html, body { max-width: 100%; overflow-x: hidden; margin: 0; padding: 0; font: 15px/1.45 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color: var(--text); background: var(--bg); }
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+      font: 15px/1.45 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
 
     .top-header {
       position: sticky;
@@ -27,7 +39,7 @@
       z-index: 50;
       background: linear-gradient(90deg, var(--navy-top) 0%, var(--navy-mid) 50%, var(--navy-top) 100%);
       color: #fff;
-      border-bottom: 2px solid rgba(245, 158, 11, 0.55);
+      border-bottom: 2px solid rgba(245, 158, 11, 0.65);
       padding: 8px 12px;
     }
     .header-inner {
@@ -39,107 +51,278 @@
       gap: 10px;
     }
     .logo-slot {
-      width: 58px;
-      height: 44px;
-      flex: 0 0 58px;
+      width: 46px;
+      height: 46px;
+      flex: 0 0 46px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 8px;
+      border-radius: 12px;
       background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
       overflow: hidden;
     }
-    .logo-slot img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+    .logo-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: left center;
+      display: block;
+    }
     .header-center { flex: 1 1 auto; min-width: 0; text-align: center; }
-    .brand-title { font-weight: 800; font-size: clamp(15px, 2.2vw, 20px); letter-spacing: 0.4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .brand-title {
+      font-weight: 900;
+      font-size: clamp(16px, 2.3vw, 21px);
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .brand-title span { color: var(--accent); }
-    .clock-bar { margin-top: 2px; font-size: clamp(11px, 1.5vw, 13px); color: #e2ecff; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .clock-bar {
+      margin-top: 2px;
+      font-size: clamp(11px, 1.5vw, 13px);
+      color: #dbeafe;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .header-right {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-sair {
+      min-height: 38px;
+      padding: 6px 13px;
+      border-radius: 10px;
+      background: rgba(245, 158, 11, 0.18);
+      border: 1.5px solid var(--accent);
+      color: #fff;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .btn-sair:hover { background: var(--accent); color: #0f172a; }
+
+    .hero-banner {
+      background: linear-gradient(135deg, #071b46 0%, #0d3588 60%, #1649b2 100%);
+      color: #fff;
+      border-radius: 18px;
+      padding: 20px 18px;
+      margin-bottom: 14px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 10px 24px rgba(7, 27, 70, 0.16);
+    }
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(7, 27, 70, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #e2ecff;
+    }
+    .hero-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: inline-block;
+    }
+    .hero-greeting {
+      margin: 12px 0 6px;
+      font-size: clamp(26px, 4.5vw, 38px);
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+    }
+    .hero-greeting span { color: var(--accent); }
+    .hero-quote {
+      margin: 6px auto 0;
+      max-width: 640px;
+      font-size: clamp(13.5px, 2vw, 15.5px);
+      color: #e2ecff;
+      font-weight: 500;
+    }
+    .hero-quote b { color: var(--accent); }
+    .hero-meta-row {
+      margin-top: 14px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .hero-tag {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
 
     main { width: 100%; max-width: 960px; margin: 14px auto 24px; padding: 0 12px; }
     .card {
       background: var(--card);
       border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 12px;
-      box-shadow: 0 4px 14px rgba(7, 27, 70, 0.05);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 14px;
+      box-shadow: 0 6px 18px rgba(7, 27, 70, 0.06);
     }
     h1 { font-size: clamp(20px, 3vw, 25px); margin: 0 0 8px; color: var(--navy-top); }
     h2 { font-size: clamp(17px, 2.4vw, 20px); margin: 0 0 8px; color: var(--navy-top); }
-    h3 { font-size: 15px; margin: 10px 0 4px; color: var(--navy-top); }
+    h3 { font-size: 15px; margin: 12px 0 4px; color: var(--navy-top); }
     p { margin: 6px 0; }
     .muted { color: var(--muted); }
     .small { font-size: 12.5px; }
+
+    .guide-box {
+      background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+      border: 1.5px solid #bfdbfe;
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin: 10px 0 14px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+    .guide-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: #fff;
+      border: 1px solid #dbeafe;
+      border-radius: 10px;
+      padding: 10px;
+    }
+    .guide-num {
+      width: 26px;
+      height: 26px;
+      flex: 0 0 26px;
+      border-radius: 8px;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 900;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
     .bloco01-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; align-items: end; }
     label { display: block; font-weight: 700; font-size: 13.5px; margin: 8px 0 4px; color: var(--text); }
     .bloco01-grid label { margin-top: 0; }
     input, select, textarea {
       width: 100%;
-      min-height: 44px;
+      min-height: 46px;
       padding: 10px 12px;
-      border: 1px solid #c6d2e4;
-      border-radius: 10px;
+      border: 1.5px solid #c6d2e4;
+      border-radius: 12px;
       font: inherit;
       color: var(--text);
       background: #fff;
     }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(31, 95, 224, 0.14);
+    }
     textarea { min-height: 110px; resize: vertical; }
 
     button {
-      min-height: 44px;
+      min-height: 46px;
       border: 0;
-      border-radius: 10px;
+      border-radius: 12px;
       background: var(--blue);
       color: #fff;
-      padding: 10px 14px;
+      padding: 10px 16px;
       font: inherit;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 7px;
+      box-shadow: 0 3px 0 var(--blue-dark);
+      transition: transform 0.08s ease;
     }
-    button:hover { filter: brightness(0.96); }
+    button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--blue-dark); }
+    button:hover { filter: brightness(1.03); }
     button:disabled { opacity: 0.55; cursor: not-allowed; }
-    .secondary { background: #e6eefc; color: var(--navy-top); }
-    .green { background: var(--green); }
-    .amber { background: var(--accent); color: #111827; }
+    .secondary { background: #e6eefc; color: var(--navy-top); box-shadow: 0 3px 0 #c5d6f5; }
+    .green { background: var(--green); box-shadow: 0 3px 0 #0f5c2b; }
+    .amber { background: var(--accent); color: #111827; box-shadow: 0 3px 0 var(--accent-dark); }
 
-    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 10px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 12px; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
     .tile {
-      background: #f8faff;
+      background: #ffffff;
       color: var(--text);
-      border: 1px solid var(--line);
+      border: 2px solid var(--line);
+      border-bottom-width: 4px;
+      border-radius: 16px;
       text-align: left;
       flex-direction: column;
       align-items: flex-start;
-      padding: 14px;
+      padding: 16px;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
     }
-    .tile small { color: var(--muted); font-weight: 500; }
+    .tile-badge {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      margin-bottom: 6px;
+    }
+    .tile-blue { border-color: #bfdbfe; border-bottom-color: #2563eb; }
+    .tile-blue .tile-badge { background: #dbeafe; color: #1d4ed8; }
+    .tile-orange { border-color: #fed7aa; border-bottom-color: #ea580c; }
+    .tile-orange .tile-badge { background: #ffedd5; color: #c2410c; }
+    .tile-green { border-color: #bbf7d0; border-bottom-color: #16a34a; }
+    .tile-green .tile-badge { background: #dcfce7; color: #15803d; }
+    .tile-pink { border-color: #fbcfe8; border-bottom-color: #db2777; }
+    .tile-pink .tile-badge { background: #fce7f3; color: #be185d; }
+    .tile-amber { border-color: #fde68a; border-bottom-color: #d97706; }
+    .tile-amber .tile-badge { background: #fef3c7; color: #b45309; }
+
+    .tile b { font-size: 16px; color: var(--navy-top); }
+    .tile small { color: var(--muted); font-weight: 500; margin-top: 2px; }
 
     .hidden { display: none !important; }
-    .pill { display: inline-block; background: #e6eefc; color: var(--navy-top); border-radius: 999px; padding: 4px 10px; font-size: 12px; font-weight: 800; }
+    .pill { display: inline-block; background: #e6eefc; color: var(--navy-top); border-radius: 999px; padding: 4px 11px; font-size: 12px; font-weight: 800; }
 
-    /* Regra Verde / Amarelo / Vermelho nas questões */
-    .origin { display: inline-block; padding: 5px 11px; border-radius: 8px; font-size: 13px; font-weight: 800; margin: 4px 0 8px; }
-    .origin-prior { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
-    .origin-current { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
-    .origin-future { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    /* PALETA DE 5 CORES POR SÉRIE (SEM VERMELHO: AZUL 5º, VERDE 6º, AMARELO 7º, LARANJA 8º, ROSA 9º) */
+    .origin { display: inline-block; padding: 6px 12px; border-radius: 10px; font-size: 13px; font-weight: 800; margin: 4px 0 10px; }
+    .origin-5 { background: #dbeafe; color: #1e40af; border: 1.5px solid #93c5fd; }
+    .origin-6 { background: #dcfce7; color: #166534; border: 1.5px solid #86efac; }
+    .origin-7 { background: #fef9c3; color: #854d0e; border: 1.5px solid #fde047; }
+    .origin-8 { background: #ffedd5; color: #9a3412; border: 1.5px solid #fdba74; }
+    .origin-9 { background: #fce7f3; color: #9d174d; border: 1.5px solid #f9a8d4; }
 
-    .notice { background: #edf7f0; color: #165332; border: 1px solid #bce3ca; border-radius: 10px; padding: 11px 12px; white-space: pre-wrap; font-size: 13.5px; }
-    .correction-card { background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 14px; margin-top: 10px; white-space: pre-wrap; font-size: 13.5px; }
+    .notice { background: #edf7f0; color: #165332; border: 1px solid #bce3ca; border-radius: 12px; padding: 12px 14px; white-space: pre-wrap; font-size: 14px; }
+    .correction-card { background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 14px; margin-top: 10px; white-space: pre-wrap; font-size: 14px; }
     .script-box {
       background: #0f172a;
       color: #f8fafc;
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 12px;
       white-space: pre-wrap;
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       font-size: 12.5px;
-      max-height: 290px;
+      max-height: 260px;
       overflow-y: auto;
       margin-top: 8px;
     }
@@ -158,14 +341,30 @@
       font-weight: 700;
       margin: 10px 0;
     }
-    .timer-box.expired { background: #fef2f2; border-color: var(--red); color: var(--red); }
+    .timer-box.expired { background: #ffedd5; border-color: var(--orange); color: #9a3412; }
     .timer-value { font-size: 20px; font-weight: 900; font-variant-numeric: tabular-nums; }
 
-    .option { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--line); padding: 11px; border-radius: 10px; margin: 7px 0; cursor: pointer; }
+    .option { display: flex; gap: 10px; align-items: flex-start; border: 1.5px solid var(--line); padding: 12px; border-radius: 12px; margin: 8px 0; cursor: pointer; background: #fff; }
+    .option:hover { border-color: var(--blue); background: #f8faff; }
     .option input { width: auto; min-height: auto; margin-top: 3px; }
     .choice-row { display: flex; gap: 10px; flex-wrap: wrap; }
-    .choice-row label { display: flex; align-items: center; gap: 6px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; margin: 0; font-weight: 600; }
+    .choice-row label { display: flex; align-items: center; gap: 6px; padding: 9px 14px; border: 1.5px solid var(--line); border-radius: 10px; margin: 0; font-weight: 700; cursor: pointer; }
     .choice-row input { width: auto; min-height: auto; }
+
+    .manual-step {
+      border-left: 4px solid var(--blue);
+      background: #f8faff;
+      border-radius: 0 12px 12px 0;
+      padding: 10px 14px;
+      margin: 10px 0;
+    }
+    .dica-item {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px 13px;
+      margin-top: 8px;
+      background: #f8fafc;
+    }
 
     footer { max-width: 960px; margin: 0 auto 24px; padding: 0 12px; color: var(--muted); font-size: 12px; text-align: center; }
   </style>
@@ -173,12 +372,14 @@
 <body>
   <header class="top-header">
     <div class="header-inner">
-      <div class="logo-slot" id="logoLeftSlot"></div>
+      <div class="logo-slot" id="logoLeftSlot" title="Seta Soluções"></div>
       <div class="header-center">
         <div class="brand-title">PREPARATÓRIO<span>2029</span></div>
         <div class="clock-bar" id="dataHoraHeader">Carregando data e hora...</div>
       </div>
-      <div class="logo-slot" id="logoRightSlot"></div>
+      <div class="header-right">
+        <button type="button" id="btnSairHeader" class="btn-sair hidden" onclick="sair()">Sair</button>
+      </div>
     </div>
   </header>
 
@@ -186,36 +387,41 @@
     <!-- TELA 1: ACESSO E CADASTRO -->
     <section id="login" class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-        <span class="pill">Acesso e Cadastro</span>
+        <span class="pill">Portal do Estudante · 7º ao 9º ano</span>
         <span class="muted small" id="identPreview">ID: —</span>
       </div>
-      <h1>Vamos começar?</h1>
-      <p class="muted small">Bloco 01 — Informe seu nome e telefone. Identificador: <b>nome + 4 últimos dígitos</b> (ex.: <code>laura1901</code>).</p>
+      <h1 style="margin-top:8px">Bem-vindo ao Preparatório 2029</h1>
+
+      <div class="guide-box">
+        <div class="guide-step">
+          <div class="guide-num">1</div>
+          <div class="small"><b>Já tem cadastro?</b> Digite apenas seu <b>telefone com DDD</b> e toque em <b>Entrar</b>.</div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-num">2</div>
+          <div class="small"><b>Primeiro acesso?</b> Toque em <b>Criar meu cadastro</b>, informe seu nome, telefone e série.</div>
+        </div>
+      </div>
 
       <div class="bloco01-grid">
-        <div>
-          <label for="nome">Nome</label>
-          <input id="nome" placeholder="Ex.: Laura" oninput="atualizarPreviewId()">
-        </div>
         <div>
           <label for="telefone">Telefone com DDD</label>
           <input id="telefone" inputmode="tel" placeholder="(31) 98482-1901" oninput="atualizarPreviewId()">
         </div>
+        <div id="campoNomeLogin">
+          <label for="nome">Seu nome (para novo cadastro)</label>
+          <input id="nome" placeholder="Ex.: Laura" oninput="atualizarPreviewId()">
+        </div>
       </div>
 
       <div class="actions">
-        <button type="button" onclick="entrar()">Entrar</button>
-        <button type="button" class="secondary" onclick="alternarCadastro()">Cadastro</button>
+        <button type="button" onclick="entrar()">Entrar com telefone</button>
+        <button type="button" class="secondary" onclick="alternarCadastro()">Criar / Editar cadastro</button>
       </div>
 
-      <div id="cadastroExtra" class="hidden" style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)">
-        <h2>Completar / Editar Cadastro</h2>
+      <div id="cadastroExtra" class="hidden" style="margin-top:14px;padding-top:14px;border-top:1.5px dashed var(--line)">
+        <h2>Dados do Estudante</h2>
         <div class="bloco01-grid">
-          <div>
-            <label for="nascimento">Data de nascimento (opcional)</label>
-            <input id="nascimento" type="date" oninput="calcularIdadeTela()">
-            <span id="idadeCalculada" class="muted small">Opcional — idade calculada automaticamente.</span>
-          </div>
           <div>
             <label for="serieCadastro">Série / Ano escolar</label>
             <select id="serieCadastro">
@@ -224,37 +430,81 @@
               <option value="9">9º ano</option>
             </select>
           </div>
+          <div>
+            <label for="nascimento">Data de nascimento (opcional)</label>
+            <input id="nascimento" type="date" oninput="calcularIdadeTela()">
+            <span id="idadeCalculada" class="muted small">Opcional — idade calculada automaticamente.</span>
+          </div>
         </div>
         <div class="actions">
-          <button type="button" class="green" onclick="salvarCadastro()">Salvar cadastro</button>
+          <button type="button" class="green" onclick="salvarCadastro()">Salvar cadastro e entrar</button>
         </div>
       </div>
 
-      <p id="msg" class="muted small" style="margin-top:10px"></p>
+      <p id="msg" class="muted small" style="margin-top:10px;font-weight:700"></p>
     </section>
 
     <!-- TELA 2: INÍCIO -->
     <section id="home" class="hidden">
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-          <span class="pill" id="serie"></span>
-          <span class="pill" id="idBadge"></span>
+      <div class="hero-banner">
+        <div class="hero-pill">
+          <span class="hero-dot"></span>
+          <span id="heroDataHora">Preparatório Ensino Médio</span>
         </div>
-        <h1 id="ola" style="margin-top:8px">Olá!</h1>
-        <div class="notice" id="last">Seu espaço está pronto. Cada atividade é um passo.</div>
-
-        <div class="grid" style="margin-top:12px">
-          <button type="button" class="tile" onclick="iniciar()"><b>📝 Provas</b><small>Desafios no seu ritmo</small></button>
-          <button type="button" class="tile hidden" id="retomarTile" onclick="retomar()"><b>▶️ Continuar prova</b><small>Retomar de onde parou</small></button>
-          <button type="button" class="tile" onclick="redacao()"><b>✍️ Redação (Caderno + Gemini)</b><small>Tema sorteado, 1h e correção</small></button>
-          <button type="button" class="tile" onclick="mapa()"><b>📈 Evolução</b><small>Desempenho por assunto</small></button>
-          <button type="button" class="tile" onclick="manual()"><b>📚 Manual</b><small>Como estudar e responder</small></button>
-          <button type="button" class="tile" onclick="abrirEdicaoCadastro()"><b>✏️ Editar cadastro</b><small>Nome, telefone, série e idade</small></button>
+        <h1 class="hero-greeting" id="heroSaudacao">Bom dia, <span>Estudante!</span></h1>
+        <p class="hero-quote" id="heroFrase">“A coragem de tentar é o primeiro passo para vencer.”</p>
+        <div class="hero-meta-row">
+          <span class="hero-tag" id="serie"></span>
+          <span class="hero-tag" id="idBadge"></span>
+          <span class="hero-tag" id="statusPlanilhaTag">🟢 Conectado</span>
         </div>
       </div>
 
-      <div class="actions">
-        <button type="button" class="secondary" onclick="sair()">Trocar estudante</button>
+      <div class="card">
+        <div class="notice" id="last">Seu espaço está pronto. Cada atividade é um passo rumo a 2029.</div>
+
+        <div class="grid" style="margin-top:14px">
+          <button type="button" class="tile tile-blue" onclick="iniciar()">
+            <span class="tile-badge">Simulado</span>
+            <b>📝 Fazer Prova</b>
+            <small>Questões no seu ritmo com diagnóstico</small>
+          </button>
+
+          <button type="button" class="tile tile-amber hidden" id="retomarTile" onclick="retomar()">
+            <span class="tile-badge">Em aberto</span>
+            <b>▶️ Continuar Prova</b>
+            <small>Retomar exatamente de onde parou</small>
+          </button>
+
+          <button type="button" class="tile tile-orange" onclick="redacao()">
+            <span class="tile-badge">Escrita + IA</span>
+            <b>✍️ Redação (Caderno + Gemini)</b>
+            <small>Tema sorteado, 1h e correção guiada</small>
+          </button>
+
+          <button type="button" class="tile tile-green" onclick="mapa()">
+            <span class="tile-badge">Desempenho</span>
+            <b>📈 Minha Evolução</b>
+            <small>Acertos e domínio por matéria</small>
+          </button>
+
+          <button type="button" class="tile tile-pink" onclick="manual()">
+            <span class="tile-badge">Guia</span>
+            <b>📚 Manual em Passos</b>
+            <small>Cores das séries, chute e dicas</small>
+          </button>
+
+          <button type="button" class="tile tile-blue" onclick="abrirEdicaoCadastro()">
+            <span class="tile-badge">Perfil</span>
+            <b>✏️ Editar Cadastro</b>
+            <small>Nome, telefone, série e nascimento</small>
+          </button>
+        </div>
+      </div>
+
+      <div id="dicasCard" class="card hidden">
+        <h2>🔗 Dicas &amp; Links de Apoio</h2>
+        <div id="listaDicas"></div>
       </div>
     </section>
 
@@ -262,7 +512,7 @@
     <section id="exam" class="card hidden">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
         <span class="pill">Desafio</span>
-        <span id="progress" class="muted small"></span>
+        <span id="progress" class="muted small" style="font-weight:700"></span>
         <span id="liveExamTimers" class="pill">Ativo: 00:00:00</span>
       </div>
       <h2 id="disc" style="margin-top:10px"></h2>
@@ -283,7 +533,7 @@
       </div>
       <div id="feedback" class="notice hidden"></div>
       <div class="actions hidden" id="nextBox">
-        <button type="button" class="green" onclick="next()">Próxima</button>
+        <button type="button" class="green" onclick="next()">Próxima questão</button>
       </div>
       <div class="actions">
         <button type="button" class="secondary" onclick="pausarEVoltar()">Pausar e voltar</button>
@@ -293,74 +543,70 @@
 
     <!-- TELA 4: CONCLUSÃO DE PROVA -->
     <section id="finish" class="card hidden">
-      <h1>Você concluiu!</h1>
+      <h1>Prova concluída!</h1>
       <p id="result" class="notice"></p>
       <div class="actions">
         <button type="button" onclick="home()">Voltar ao início</button>
       </div>
     </section>
 
-    <!-- TELA 5: REDAÇÃO (CADERNO + 1H + 4 BLOCOS + GEMINI + CORREÇÃO NA PÁGINA DO ALUNO) -->
+    <!-- TELA 5: REDAÇÃO (CADERNO + 1H + GEMINI 100% NOTA E ORIENTAÇÕES) -->
     <section id="essay" class="card hidden">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-        <span class="pill">Redação no Caderno</span>
+        <span class="pill">Missão Redação · 100% Avaliação Gemini</span>
         <button type="button" class="secondary" onclick="sortearNovoTema()">🎲 Sortear outro tema</button>
       </div>
-      <h1 style="margin-top:8px">Escrita no Caderno &amp; Correção no Gemini</h1>
-      <p class="muted small">O tema é sorteado para você. Escreva no caderno dentro do prazo de 1 hora e, quando terminar, clique em <b>Acabei / Seguir passos</b>.</p>
+      <h1 style="margin-top:8px">Escrita no Caderno &amp; Orientação no Gemini</h1>
+      <p class="muted small">Escreva no caderno no prazo de 1 hora. Ao terminar, copie o roteiro com 1 toque, abra o Gemini e traga de volta sua nota e orientações.</p>
 
       <div id="temaSorteadoBox" class="notice">Sorteando proposta de redação...</div>
 
       <div id="timerCadernoBox" class="timer-box">
         <div>
-          <div class="small">Tempo de escrita no caderno (limite 1h00m — fica vermelho após 1h)</div>
+          <div class="small">Tempo de escrita no caderno (meta 1h00m)</div>
           <div id="statusTimerCaderno" class="small muted">Cronômetro em andamento</div>
         </div>
         <div class="timer-value" id="timerCadernoDisplay">00:00 / 60:00</div>
       </div>
 
       <div class="actions">
-        <button type="button" class="green" id="btnAcabeiCaderno" onclick="acabeiCaderno()">✅ Acabei / Seguir passos (Copiar 4 blocos)</button>
+        <button type="button" class="green" id="btnAcabeiCaderno" onclick="acabeiCaderno()">✅ Acabei no caderno (Copiar roteiro)</button>
         <button type="button" class="secondary" id="btnReiniciarCrono" onclick="reiniciarCronometroCaderno()">Reiniciar tempo</button>
       </div>
 
-      <div id="passosGeminiBox" class="hidden" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">
-        <h2>4 Blocos Copiados — Cole no Gemini</h2>
-        <p class="small">Os 4 blocos já foram copiados. Clique em <b>Abrir Gemini</b>, cole o texto e anexe a foto da sua redação do caderno.</p>
+      <div id="passosGeminiBox" class="hidden" style="margin-top:14px;padding-top:14px;border-top:1.5px solid var(--line)">
+        <h2>Passo seguinte — Copiar e abrir o Gemini</h2>
+        <p class="small">No Gemini, cole o roteiro abaixo (e envie a foto ou o texto da sua redação). No Android, toque no botão <b>Copiar</b> no fim da resposta do Gemini e volte aqui.</p>
 
         <div class="actions">
           <button type="button" class="amber" onclick="abrirGemini()">🚀 Abrir Gemini</button>
-          <button type="button" class="secondary" onclick="copiarQuatroBlocos()">📋 Copiar 4 blocos novamente</button>
-          <button type="button" class="secondary" onclick="copiarAjudaDuvida()">💡 Não entendeu? Copiar pedido de exemplos</button>
+          <button type="button" class="secondary" onclick="copiarQuatroBlocos()">📋 Copiar roteiro novamente</button>
+          <button type="button" class="secondary" onclick="copiarAjudaDuvida()">💡 Pedir exemplos antes de escrever</button>
         </div>
 
         <div class="script-box" id="previewQuatroBlocos"></div>
 
-        <h3>Devolução do Gemini (Cole aqui o retorno para ver e salvar)</h3>
-        <textarea id="retornoGeminiInput" oninput="atualizarPreviewCorrecaoAluno()" placeholder="Cole aqui a resposta que o Gemini devolveu (texto cru do caderno, correção e nota)..."></textarea>
+        <h3>Devolução do Gemini (Nota + Orientações)</h3>
+        <div class="actions" style="margin-top:4px;margin-bottom:8px">
+          <button type="button" class="secondary" onclick="colarRetornoAndroid()">📋 Colar resposta copiada (1 toque)</button>
+        </div>
+        <textarea id="retornoGeminiInput" oninput="atualizarPreviewCorrecaoAluno()" placeholder="Toque em 'Colar resposta copiada' ou cole aqui o retorno completo do Gemini..."></textarea>
 
-        <div class="bloco01-grid" style="margin-top:8px">
-          <div>
-            <label for="notaSistemaShare">Nota / Avaliação registrada</label>
-            <input id="notaSistemaShare" placeholder="Ex.: 8,5 ou conforme retorno do Gemini">
-          </div>
-          <div>
-            <label for="notaIaShare">Nota da IA (se houver)</label>
-            <input id="notaIaShare" placeholder="Ex.: 9,0">
-          </div>
+        <div style="margin-top:8px">
+          <label for="notaIaShare">Nota atribuída pelo Gemini</label>
+          <input id="notaIaShare" placeholder="Preenchida automaticamente ao colar (ex.: 8.0/10)">
         </div>
 
         <div class="actions">
-          <button type="button" class="green" id="btnSalvarRedacao" onclick="salvarRedacaoGemini()">💾 Salvar e fixar correção na página</button>
-          <button type="button" class="secondary" onclick="compartilharWhatsAppFixo()">📲 Enviar WhatsApp (31984821901)</button>
+          <button type="button" class="green" id="btnSalvarRedacao" onclick="salvarRedacaoGemini()">💾 Salvar na planilha e fixar abaixo</button>
+          <button type="button" class="secondary" onclick="compartilharWhatsAppFixo()">📲 Enviar WhatsApp</button>
           <button type="button" class="secondary" onclick="home()">Voltar</button>
         </div>
-        <p id="statusRedacao" class="muted small"></p>
+        <p id="statusRedacao" class="muted small" style="font-weight:700"></p>
       </div>
 
-      <!-- CORREÇÃO DO ALUNO NA PRÓPRIA PÁGINA -->
-      <div id="correcaoAlunoBox" class="hidden" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line)">
-        <h2>📄 Sua Correção &amp; Histórico de Redações</h2>
+      <div id="correcaoAlunoBox" class="hidden" style="margin-top:16px;padding-top:14px;border-top:1.5px solid var(--line)">
+        <h2>📄 Sua Nota &amp; Orientações de Redação</h2>
         <div id="correcaoAtualCard" class="correction-card"></div>
         <div id="historicoRedacoesLista" style="margin-top:10px"></div>
       </div>
@@ -372,30 +618,85 @@
 
     <!-- TELA 6: EVOLUÇÃO -->
     <section id="map" class="card hidden">
-      <h1>Minha evolução</h1>
+      <h1>Minha evolução por matéria</h1>
       <div id="maptext" class="notice">Carregando...</div>
       <div class="actions"><button type="button" onclick="home()">Voltar</button></div>
     </section>
 
-    <!-- TELA 7: MANUAL -->
+    <!-- TELA 7: MANUAL EM PASSOS -->
     <section id="manual" class="card hidden">
-      <h1>Manual do estudante</h1>
-      <h3>1. Cores das questões</h3>
-      <p><b>Vermelho:</b> revisão de séries anteriores. <b>Amarelo:</b> conteúdo da sua série atual. <b>Verde:</b> conteúdo avançado/seguinte.</p>
-      <h3>2. Caderno primeiro</h3>
-      <p>Escreva sua redação no caderno antes de abrir o Gemini. O cronômetro marca 1 hora e fica vermelho se passar desse tempo.</p>
-      <h3>3. Devolução da correção</h3>
-      <p>Copie o retorno do Gemini e cole no PREPARATÓRIO2029 para visualizar sua correção na página e salvar na planilha.</p>
-      <div class="actions"><button type="button" onclick="home()">Voltar</button></div>
+      <h1>Manual do Estudante — Passo a Passo</h1>
+
+      <div class="manual-step">
+        <h3>Passo 1 — Como entrar</h3>
+        <p>Depois do primeiro cadastro, você só precisa digitar o seu <b>telefone com DDD</b> e clicar em <b>Entrar</b>. Para sair da conta em aparelhos compartilhados, use o botão <b>Sair</b> no canto superior direito.</p>
+      </div>
+
+      <div class="manual-step">
+        <h3>Passo 2 — Cores das séries nas questões</h3>
+        <p>Cada questão mostra uma etiqueta colorida indicando o ano escolar de origem daquele conteúdo:</p>
+        <p>
+          <span class="origin origin-5">5º ano (Azul)</span>
+          <span class="origin origin-6">6º ano (Verde)</span>
+          <span class="origin origin-7">7º ano (Amarelo)</span>
+          <span class="origin origin-8">8º ano (Laranja)</span>
+          <span class="origin origin-9">9º ano (Rosa)</span>
+        </p>
+      </div>
+
+      <div class="manual-step">
+        <h3>Passo 3 — "Já estudei" vs. "Chute"</h3>
+        <p>Marcar <b>Chute</b> nunca diminui sua nota de acertos. Ele serve para o sistema diferenciar o que você já domina de verdade (100 pts) do que acertou na sorte (50 pts) ou precisa revisar com urgência (25 pts).</p>
+      </div>
+
+      <div class="manual-step">
+        <h3>Passo 4 — Redação no caderno + Gemini</h3>
+        <p>Sorteie o tema, escreva no caderno (meta de 1 hora), toque em <b>Acabei no caderno</b> para copiar o roteiro, abra o Gemini, copie a devolução com 1 toque e cole de volta para registrar sua nota e orientações.</p>
+      </div>
+
+      <div class="actions"><button type="button" onclick="home()">Voltar ao início</button></div>
     </section>
   </main>
 
-  <footer>PREPARATÓRIO2029 · Aprender é um processo.</footer>
+  <footer>PREPARATÓRIO2029 · Constância, clareza e evolução.</footer>
 
   <script>
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz9ohwuCV_wuE9QPK93lyA946U70MtQfuMQSXUHc_th6_IjQu5V8_Q1WoKJk1y6LyqcrA/exec';
     const WHATSAPP_NUMERO = '5531984821901';
     const LOGO_CANDIDATES = ['./logo.png', 'logo.png'];
+
+    const FRASES_MOTIVACIONAIS = [
+      'A coragem de tentar é o primeiro passo para vencer.',
+      'Constância vence a pressa: 20 minutos bem feitos hoje valem ouro.',
+      'Errar no treino é descobrir exatamente o que revisar antes da prova.',
+      'Quem constrói a base no 7º e 8º ano chega gigante no 9º.',
+      'Disciplina é fazer o que precisa ser feito mesmo sem vontade.',
+      'Cada questão resolvida é um degrau a mais rumo ao Ensino Médio.',
+      'Não existe atalho para aprender, mas existe método.',
+      'Seu futuro em 2029 começa nas escolhas que você faz hoje.',
+      'Ler com calma o enunciado já resolve metade da questão.',
+      'Escrever à mão organiza o pensamento e fortalece a memória.',
+      'Dúvida não é fraqueza: é o sinal de que seu cérebro está crescendo.',
+      'Pequenos avanços todos os dias geram resultados gigantes.',
+      'Foco no processo: a nota alta é consequência do treino.',
+      'Você não precisa saber tudo hoje, só precisa aprender um pouco mais que ontem.',
+      'Revisar o que errou vale mais do que fazer dez questões fáceis.',
+      'A confiança vem da preparação feita em silêncio.',
+      'Mantenha a mente curiosa e o caderno sempre por perto.',
+      'Quem pergunta e pratica nunca fica para trás.',
+      'Seu ritmo importa mais do que a velocidade dos outros.',
+      'Treino difícil, prova tranquila.',
+      'Aprender a pensar com calma é o melhor superpoder nos estudos.',
+      'Cada parágrafo bem escrito abre uma porta nova.',
+      'Não desista na primeira dificuldade: respire, releia e tente de novo.',
+      'Organização é metade da aprovação.',
+      'Você é capaz de muito mais do que imagina quando mantém o foco.',
+      'Transforme curiosidade em hábito diário.',
+      'Estudar é investir em liberdade para escolher seu próprio caminho.',
+      'A diferença entre quem chega lá e quem para está na persistência.',
+      'Hoje é um ótimo dia para superar sua melhor marca.',
+      'Aprender é um processo — aproveite cada conquista.'
+    ];
 
     const $ = id => document.getElementById(id);
     const telas = ['login', 'home', 'exam', 'finish', 'essay', 'map', 'manual'];
@@ -407,6 +708,7 @@
     let temasCache = [];
     let temaSorteado = null;
     let provaPendente = null;
+    let modoOffline = false;
 
     let provaInicioMs = 0;
     let provaAtivoSeg = 0;
@@ -418,6 +720,13 @@
     let cadernoInterval = null;
     let quatroBlocosTexto = '';
 
+    function saudacaoPorHorario() {
+      const h = new Date().getHours();
+      if (h >= 5 && h < 12) return 'Bom dia';
+      if (h >= 12 && h < 18) return 'Boa tarde';
+      return 'Boa noite';
+    }
+
     function atualizarRelogio() {
       const agora = new Date();
       const dataStr = agora.toLocaleDateString('pt-BR', {
@@ -426,38 +735,44 @@
         month: '2-digit',
         year: 'numeric'
       });
+      const dataLonga = agora.toLocaleDateString('pt-BR', {
+        weekday: 'long',
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      });
       const horaStr = agora.toLocaleTimeString('pt-BR', {
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit'
       });
       $('dataHoraHeader').textContent = dataStr + ' · ' + horaStr;
+      if ($('heroDataHora')) {
+        $('heroDataHora').textContent = dataLonga.charAt(0).toUpperCase() + dataLonga.slice(1) + ' · ' + horaStr.slice(0, 5);
+      }
     }
 
     function montarLogos() {
-      const slots = [$('logoLeftSlot'), $('logoRightSlot')];
-      const svgFallback = '<svg width="42" height="32" viewBox="0 0 42 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="38" height="28" rx="7" fill="#1f5fe0"/><path d="M12 16H29M23 10L29 16L23 22" stroke="#f59e0b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-
-      slots.forEach(slot => {
-        if (!slot) return;
-        slot.innerHTML = svgFallback;
-        const img = document.createElement('img');
-        img.alt = 'Logo';
-        let idx = 0;
-        const tentar = () => {
-          if (idx >= LOGO_CANDIDATES.length) {
-            slot.innerHTML = svgFallback;
-            return;
-          }
-          img.src = LOGO_CANDIDATES[idx++];
-        };
-        img.onload = () => {
-          slot.innerHTML = '';
-          slot.appendChild(img);
-        };
-        img.onerror = tentar;
-        tentar();
-      });
+      const slot = $('logoLeftSlot');
+      const svgFallback = '<svg width="32" height="32" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="38" height="38" rx="10" fill="#1f5fe0"/><path d="M13 21H29M23 14L30 21L23 28" stroke="#f59e0b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      if (!slot) return;
+      slot.innerHTML = svgFallback;
+      const img = document.createElement('img');
+      img.alt = 'Seta Soluções';
+      let idx = 0;
+      const tentar = () => {
+        if (idx >= LOGO_CANDIDATES.length) {
+          slot.innerHTML = svgFallback;
+          return;
+        }
+        img.src = LOGO_CANDIDATES[idx++];
+      };
+      img.onload = () => {
+        slot.innerHTML = '';
+        slot.appendChild(img);
+      };
+      img.onerror = tentar;
+      tentar();
     }
 
     function limparNome(n) {
@@ -502,6 +817,7 @@
 
     function tela(x) {
       telas.forEach(t => $(t).classList.toggle('hidden', t !== x));
+      $('btnSairHeader').classList.toggle('hidden', x === 'login');
     }
 
     function formatarHMS(seg) {
@@ -555,6 +871,7 @@
       if (fn === 'encerrarAcesso') return true;
       if (fn === 'buscarProvaEmAndamento') return null;
       if (fn === 'gerarMapaAprendizagem') return [];
+      if (fn === 'listarDicasAtivas') return [];
       if (fn === 'listarRedacoesAluno') {
         return db.redacoes.filter(r => r.alunoId === (p && p.alunoId)).reverse();
       }
@@ -563,10 +880,10 @@
           redacaoId: 'RED-' + Date.now().toString().slice(-6),
           alunoId: p.alunoId,
           data: new Date().toLocaleString('pt-BR'),
-          tema: p.temaId,
+          tema: p.temaTitulo || p.temaId,
           texto: p.retornoGemini,
           feedback: p.retornoGemini,
-          notaSistema: p.notaSistema || '',
+          notaSistema: '',
           notaIA: p.notaIA || '',
           status: 'SALVA_LOCAL'
         };
@@ -577,8 +894,9 @@
       return null;
     }
 
-    async function call(fn, p) {
+    async function call(fn, p, exigirPlanilha) {
       if (window.google && google.script && google.script.run) {
+        modoOffline = false;
         return new Promise((ok, no) => {
           google.script.run
             .withSuccessHandler(ok)
@@ -593,9 +911,21 @@
             body: JSON.stringify({ action: fn, payload: p || {} })
           });
           const json = await resp.json();
-          if (json && json.ok) return json.data;
-        } catch (e) {}
+          if (json && json.ok) {
+            modoOffline = false;
+            return json.data;
+          }
+          if (json && !json.ok) {
+            throw Error(json.error || 'Erro retornado pela planilha.');
+          }
+        } catch (e) {
+          if (exigirPlanilha) throw e;
+        }
       }
+      if (exigirPlanilha) {
+        throw Error('Sem conexão com a planilha no momento. Verifique sua internet e tente novamente.');
+      }
+      modoOffline = true;
       return executarOffline_(fn, p);
     }
 
@@ -610,7 +940,7 @@
         const nomeDigitado = $('nome').value.trim();
         const foneDigitado = soDigitos($('telefone').value);
         if (!foneDigitado || foneDigitado.length < 8) {
-          throw Error('Informe o telefone com DDD para entrar.');
+          throw Error('Informe seu telefone com DDD para entrar.');
         }
 
         let encontrado = await call('buscarAluno', { telefone: foneDigitado });
@@ -619,7 +949,7 @@
         } else {
           if (nomeDigitado.length < 2) {
             $('cadastroExtra').classList.remove('hidden');
-            throw Error('Telefone ainda não cadastrado. Informe seu nome e clique em "Salvar cadastro".');
+            throw Error('Telefone ainda não cadastrado. Informe seu nome, escolha sua série e toque em "Salvar cadastro e entrar".');
           }
           aluno = await call('cadastrarAluno', {
             nome: nomeDigitado,
@@ -687,23 +1017,50 @@
       tela('login');
     }
 
+    function sortearFraseMotivacional() {
+      const idx = Math.floor(Math.random() * FRASES_MOTIVACIONAIS.length);
+      return FRASES_MOTIVACIONAIS[idx];
+    }
+
+    async function carregarDicasHome() {
+      try {
+        const dicas = await call('listarDicasAtivas', {});
+        if (dicas && dicas.length) {
+          $('dicasCard').classList.remove('hidden');
+          $('listaDicas').innerHTML = dicas.map(d =>
+            `<div class="dica-item">
+              <b>${d.titulo}</b>
+              <p class="small">${d.texto}</p>
+              ${d.link ? `<a href="${d.link}" target="_blank" rel="noopener noreferrer" class="small" style="font-weight:800;color:var(--blue)">Abrir material de apoio ↗</a>` : ''}
+            </div>`
+          ).join('');
+        } else {
+          $('dicasCard').classList.add('hidden');
+        }
+      } catch (e) {}
+    }
+
     async function abrir() {
       if (!aluno || !aluno.alunoId) {
         tela('login');
         return;
       }
-      $('ola').textContent = 'Olá, ' + aluno.nome + '!';
+      const primeiroNome = String(aluno.nome || 'Estudante').trim().split(/\s+/)[0];
+      $('heroSaudacao').innerHTML = saudacaoPorHorario() + ', <span>' + primeiroNome + '!</span>';
+      $('heroFrase').innerHTML = '<b>“</b>' + sortearFraseMotivacional() + '<b>”</b>';
       $('serie').textContent = aluno.serie + 'º ano' + (aluno.idade !== null && aluno.idade !== undefined ? ' · ' + aluno.idade + ' anos' : '');
-      $('idBadge').textContent = aluno.alunoId;
+      $('idBadge').textContent = 'ID: ' + aluno.alunoId;
       tela('home');
 
       try {
         acesso = await call('registrarAcesso', { alunoId: aluno.alunoId });
+        $('statusPlanilhaTag').textContent = modoOffline ? '🟠 Modo local' : '🟢 Planilha conectada';
         if (acesso && acesso.ultimoAcesso) {
-          $('last').textContent = 'Último acesso registrado: ' + acesso.ultimoAcesso + '. Seu espaço está pronto!';
+          $('last').textContent = 'Último acesso: ' + acesso.ultimoAcesso + '. Bom treino hoje!';
         }
         provaPendente = await call('buscarProvaEmAndamento', { alunoId: aluno.alunoId });
         $('retomarTile').classList.toggle('hidden', !provaPendente);
+        await carregarDicasHome();
       } catch (e) {}
     }
 
@@ -730,7 +1087,7 @@
 
     function atualizarHudTempoProva() {
       const corridoSeg = provaInicioMs ? Math.max(0, Math.floor((Date.now() - provaInicioMs) / 1000)) : 0;
-      $('liveExamTimers').textContent = 'Ativo no app: ' + formatarHMS(provaAtivoSeg) + ' · Corrido: ' + formatarHMS(corridoSeg);
+      $('liveExamTimers').textContent = 'Ativo: ' + formatarHMS(provaAtivoSeg) + ' · Corrido: ' + formatarHMS(corridoSeg);
     }
 
     async function iniciar() {
@@ -770,25 +1127,19 @@
       }
     }
 
-    // Regra Verde / Amarelo / Vermelho restaurada e corrigida para 7º, 8º e 9º ano
+    // 5 Cores por série (sem vermelho): 5º Azul, 6º Verde, 7º Amarelo, 8º Laranja, 9º Rosa
     function render() {
       const q = prova.questoes[pos];
       const serieAluno = Number(aluno ? aluno.serie : 7);
-      const anoQuestao = Number(q.anoOrigem);
+      const anoQuestao = Number(q.anoOrigem) || serieAluno;
       $('progress').textContent = 'Questão ' + (pos + 1) + ' de ' + prova.questoes.length;
       $('disc').textContent = q.disciplina + ' — ' + q.conteudo;
 
       const originEl = $('origin');
-      if (anoQuestao < serieAluno) {
-        originEl.textContent = 'Conteúdo do ' + anoQuestao + 'º ano (revisão de base)';
-        originEl.className = 'origin origin-prior';
-      } else if (anoQuestao === serieAluno) {
-        originEl.textContent = 'Conteúdo do ' + anoQuestao + 'º ano (sua série atual)';
-        originEl.className = 'origin origin-current';
-      } else {
-        originEl.textContent = 'Conteúdo do ' + anoQuestao + 'º ano (avançado)';
-        originEl.className = 'origin origin-future';
-      }
+      const anoClamp = Math.min(9, Math.max(5, anoQuestao));
+      const papel = anoQuestao < serieAluno ? 'base e revisão' : anoQuestao === serieAluno ? 'sua série atual' : 'avançado';
+      originEl.textContent = 'Conteúdo do ' + anoQuestao + 'º ano · ' + papel;
+      originEl.className = 'origin origin-' + anoClamp;
 
       $('question').textContent = q.enunciado;
       $('opts').innerHTML = '';
@@ -856,7 +1207,8 @@
         $('result').textContent =
           `Estudante: ${aluno.alunoId}\n` +
           `Respondidas: ${r.respondidas}/${r.total} · Acertos: ${r.acertos} (${r.aproveitamento}%)\n` +
-          `Tempo total (com pausa): ${t.totalCorrido} | Tempo sem pausa: ${t.semPausa} | Tempo ativo no app: ${t.ativoApp}\n` +
+          `Índice de Domínio: ${r.estrategia}/100\n` +
+          `Tempo total: ${t.totalCorrido} | Sem pausa: ${t.semPausa} | Ativo no app: ${t.ativoApp}\n` +
           `${r.diagnostico || ''}`;
         prova = null;
         provaPendente = null;
@@ -891,7 +1243,6 @@
       }
     }
 
-    // --- REDAÇÃO NO CADERNO + CORREÇÃO NA PÁGINA DO ALUNO ---
     function iniciarCronometroCaderno() {
       if (cadernoInterval) clearInterval(cadernoInterval);
       cadernoRodando = true;
@@ -914,17 +1265,17 @@
       $('timerCadernoBox').classList.toggle('expired', estourou);
       $('timerCadernoDisplay').textContent = formatarMS(cadernoSeg) + ' / 60:00';
       if (estourou) {
-        $('statusTimerCaderno').textContent = 'Prazo de 1 hora atingido/ultrapassado — finalize no caderno e clique em Acabei / Seguir passos.';
+        $('statusTimerCaderno').textContent = 'Meta de 1 hora ultrapassada — finalize no caderno e clique em Acabei no caderno.';
       } else {
         $('statusTimerCaderno').textContent = cadernoRodando
-          ? 'Escrevendo no caderno... (fica vermelho após 1 hora)'
-          : 'Tempo parado — pronto para seguir os passos.';
+          ? 'Escrevendo no caderno... (meta de 1 hora)'
+          : 'Tempo parado — pronto para seguir ao Gemini.';
       }
     }
 
     function renderizarTemaSorteado() {
       if (!temaSorteado) {
-        $('temaSorteadoBox').textContent = 'Nenhum tema ativo disponível no momento.';
+        $('temaSorteadoBox').textContent = 'Nenhum tema ativo cadastrado na aba TemasRedacao.';
         return;
       }
       const linhas = [
@@ -962,18 +1313,20 @@
         if (lista && lista.length) {
           $('correcaoAlunoBox').classList.remove('hidden');
           const maisRecente = lista[0];
+          const notaExibir = maisRecente.notaIA || maisRecente.notaSistema;
           $('correcaoAtualCard').textContent =
-            `Última correção salva (${maisRecente.data || ''}) — ${maisRecente.tema}\n` +
-            (maisRecente.notaSistema || maisRecente.notaIA ? `Nota: ${maisRecente.notaSistema || maisRecente.notaIA}\n\n` : '\n') +
+            `Última redação salva (${maisRecente.data || ''}) — ${maisRecente.tema}\n` +
+            (notaExibir ? `Nota Gemini: ${notaExibir}\n\n` : '\n') +
             (maisRecente.feedback || maisRecente.texto || '');
 
           if (lista.length > 1) {
-            $('historicoRedacoesLista').innerHTML = '<h3>Anteriores</h3>' + lista.slice(1).map(item =>
-              `<details style="border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:6px 0;background:#fff">
-                <summary style="cursor:pointer;font-weight:700">${item.data || ''} — ${item.tema} ${item.notaSistema || item.notaIA ? '(' + (item.notaSistema || item.notaIA) + ')' : ''}</summary>
+            $('historicoRedacoesLista').innerHTML = '<h3>Anteriores</h3>' + lista.slice(1).map(item => {
+              const nItem = item.notaIA || item.notaSistema;
+              return `<details style="border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:6px 0;background:#fff">
+                <summary style="cursor:pointer;font-weight:700">${item.data || ''} — ${item.tema} ${nItem ? '(' + nItem + ')' : ''}</summary>
                 <div style="white-space:pre-wrap;margin-top:8px;font-size:13px">${(item.feedback || item.texto || '').replace(/</g, '&lt;')}</div>
-              </details>`
-            ).join('');
+              </details>`;
+            }).join('');
           } else {
             $('historicoRedacoesLista').innerHTML = '';
           }
@@ -984,9 +1337,9 @@
     function atualizarPreviewCorrecaoAluno() {
       const txt = $('retornoGeminiInput').value.trim();
       if (!txt) return;
-      const notaMatch = txt.match(/NOTA_SUGERIDA:\s*([^\n]+)/i);
-      if (notaMatch && !$('notaSistemaShare').value.trim()) {
-        $('notaSistemaShare').value = notaMatch[1].trim();
+      const notaMatch = txt.match(/NOTA_GEMINI:\s*([^\n]+)|NOTA_SUGERIDA:\s*([^\n]+)/i);
+      if (notaMatch && !$('notaIaShare').value.trim()) {
+        $('notaIaShare').value = String(notaMatch[1] || notaMatch[2] || '').trim();
       }
       $('correcaoAlunoBox').classList.remove('hidden');
       $('correcaoAtualCard').textContent = txt;
@@ -998,6 +1351,7 @@
       $('voltarRedacaoSimples').classList.remove('hidden');
       $('statusRedacao').textContent = '';
       $('retornoGeminiInput').value = '';
+      $('notaIaShare').value = '';
       cadernoSeg = 0;
       iniciarCronometroCaderno();
       $('temaSorteadoBox').textContent = 'Sorteando tema de redação...';
@@ -1015,28 +1369,26 @@
       const tempoEscrita = formatarHMS(cadernoSeg);
 
       return [
-        '=== BLOCO 1: IDENTIFICAÇÃO E CONTEXTO ===',
+        '=== IDENTIFICAÇÃO E CONTEXTO ===',
         `Estudante: ${nomeAluno} (ID: ${idAluno}) | Série: ${serieAluno}`,
-        `Tema sorteado: ${tituloTema}`,
+        `Tema: ${tituloTema}`,
         propostaTema ? `Proposta: ${propostaTema}` : '',
-        `Tempo gasto no caderno: ${tempoEscrita}`,
+        `Tempo de escrita no caderno: ${tempoEscrita}`,
         '',
-        '=== BLOCO 2: COMPORTAMENTO E TÉCNICA PEDAGÓGICA ===',
-        `Atue como tutor pedagógico para o ${serieAluno} (linguagem clara, encorajadora e formativa, sem tom punitivo).`,
-        'Aponte o que funcionou, pontos cegos do texto, o que melhorar e dê exemplos práticos de reescrita adequados à série.',
+        '=== PAPEL PEDAGÓGICO (100% AVALIAÇÃO GEMINI) ===',
+        `Atue como professor corretor de redação para o ${serieAluno} (tom claro, encorajador e objetivo).`,
+        'Vou te enviar minha redação (por foto do caderno ou digitada). Avalie o texto dando destaque especial para:',
+        '1) NOTA FINAL (de 0 a 10, explicando o porquê da nota);',
+        '2) ORIENTAÇÕES PRÁTICAS DE MELHORIA (aderência ao tema, estrutura dos parágrafos, ortografia/gramática e um exemplo curto de reescrita).',
         '',
-        '=== BLOCO 3: TRAVA 1 — FOTO DO CADERNO OBRIGATÓRIA ===',
-        'IMPORTANTE: Se o estudante ainda NÃO enviou/anexou a foto da redação escrita no caderno, NÃO faça a correção final ainda. Peça educadamente para enviar a foto legível do caderno primeiro.',
-        'Assim que a foto estiver anexada e legível, valide e execute a correção completa.',
-        '',
-        '=== BLOCO 4: FORMATO DE DEVOLUÇÃO PARA COLAR NO PREPARATÓRIO2029 ===',
-        'Quando a foto estiver anexada, devolva sua resposta exatamente neste formato para o aluno copiar e colar de volta no app:',
-        'TEXTO_CRU_CADERNO:',
-        '[transcreva aqui o texto conforme está na foto do caderno]',
-        'CORRECAO_E_ORIENTACAO:',
-        '[pontos fortes, pontos cegos, melhorias e reescrita guiada para a série]',
-        'NOTA_SUGERIDA:',
-        '[ex.: 8.0/10 ou observação de desempenho]'
+        '=== FORMATO DE RESPOSTA (PARA COPIAR COM 1 TOQUE NO ANDROID) ===',
+        'Entregue toda a sua resposta dentro de um ÚNICO bloco de texto simples (sem dividir em várias caixas), usando exatamente os títulos abaixo:',
+        'NOTA_GEMINI:',
+        '[nota de 0 a 10 + resumo rápido do critério]',
+        'ORIENTACOES_E_CORRECAO:',
+        '[pontos fortes, o que melhorar no tema/gramática e exemplo prático de reescrita]',
+        'TEXTO_ALUNO:',
+        '[transcrição fiel do texto enviado]'
       ].filter(Boolean).join('\n');
     }
 
@@ -1056,6 +1408,22 @@
       }
     }
 
+    async function colarRetornoAndroid() {
+      try {
+        const texto = await navigator.clipboard.readText();
+        if (!texto || !texto.trim()) {
+          alert('A área de transferência está vazia. Copie primeiro a resposta no app do Gemini.');
+          return;
+        }
+        $('retornoGeminiInput').value = texto;
+        atualizarPreviewCorrecaoAluno();
+        $('statusRedacao').textContent = 'Resposta colada! Confira a nota abaixo e toque em "Salvar na planilha".';
+      } catch (e) {
+        $('retornoGeminiInput').focus();
+        $('statusRedacao').textContent = 'Segure o dedo na caixa abaixo e toque em "Colar".';
+      }
+    }
+
     async function acabeiCaderno() {
       cadernoRodando = false;
       atualizarHudCaderno();
@@ -1065,22 +1433,22 @@
       $('voltarRedacaoSimples').classList.add('hidden');
       const copiou = await copiarTextoArea_(quatroBlocosTexto);
       $('statusRedacao').textContent = copiou
-        ? '4 blocos copiados automaticamente! Clique em "Abrir Gemini", cole o texto e anexe a foto do caderno.'
-        : '4 blocos prontos abaixo. Copie e cole no Gemini junto com a foto do caderno.';
+        ? 'Roteiro copiado! Toque em "Abrir Gemini", cole o texto e envie sua redação.'
+        : 'Roteiro pronto abaixo. Copie e cole no Gemini.';
     }
 
     async function copiarQuatroBlocos() {
       const txt = quatroBlocosTexto || montarQuatroBlocos();
       await copiarTextoArea_(txt);
-      $('statusRedacao').textContent = '4 blocos copiados.';
+      $('statusRedacao').textContent = 'Roteiro copiado.';
     }
 
     async function copiarAjudaDuvida() {
       const serieAluno = (aluno ? aluno.serie : 7) + 'º ano';
       const temaTxt = temaSorteado ? (temaSorteado.Topico_01_NumeroTitulo || temaSorteado.TemaID) : 'este tema';
-      const promptAjuda = `Não estou entendendo bem como escrever sobre "${temaTxt}" no ${serieAluno}. Me explique de um jeito simples, dê exemplos práticos e casos de sucesso de boas respostas para a minha série, mantendo a trava de conferir a foto do meu caderno quando eu enviar a redação.`;
+      const promptAjuda = `Ainda não escrevi minha redação sobre "${temaTxt}" (${serieAluno}). Me explique de forma simples como organizar introdução, desenvolvimento e conclusão para esse tema e me dê 2 exemplos de argumentos.`;
       await copiarTextoArea_(promptAjuda);
-      $('statusRedacao').textContent = 'Pedido de exemplos e casos de sucesso copiado. Cole no Gemini.';
+      $('statusRedacao').textContent = 'Pedido de ajuda copiado. Cole no Gemini.';
     }
 
     function abrirGemini() {
@@ -1097,23 +1465,21 @@
       btn.disabled = true;
       $('statusRedacao').textContent = 'Salvando na planilha...';
       try {
-        const notaMatch = retorno.match(/NOTA_SUGERIDA:\s*([^\n]+)/i);
-        const notaInformada = $('notaSistemaShare').value.trim() || (notaMatch ? notaMatch[1].trim() : '');
+        const notaMatch = retorno.match(/NOTA_GEMINI:\s*([^\n]+)|NOTA_SUGERIDA:\s*([^\n]+)/i);
+        const notaInformada = $('notaIaShare').value.trim() || (notaMatch ? String(notaMatch[1] || notaMatch[2] || '').trim() : '');
         const r = await call('salvarRedacao', {
           alunoId: aluno.alunoId,
-          temaId: temaSorteado ? temaSorteado.TemaID : 'TEMA-SORTEADO',
-          textoCruCaderno: retorno,
+          temaId: temaSorteado ? temaSorteado.TemaID : '',
+          temaTitulo: temaSorteado ? (temaSorteado.Topico_01_NumeroTitulo || temaSorteado.TemaID) : 'Tema livre / sorteado',
           retornoGemini: retorno,
-          notaSistema: notaInformada,
-          notaIA: $('notaIaShare').value.trim(),
+          notaIA: notaInformada,
           tempoCadernoFormatado: formatarHMS(cadernoSeg),
-          excedeuUmaHora: cadernoSeg >= 3600,
-          metodoEntrada: 'CADERNO_GEMINI'
-        });
-        $('statusRedacao').textContent = 'Salvo com sucesso! Registro: ' + r.redacaoId + ' (' + aluno.alunoId + ').';
+          excedeuUmaHora: cadernoSeg >= 3600
+        }, true);
+        $('statusRedacao').textContent = 'Salvo na planilha! Registro: ' + r.redacaoId + ' (' + aluno.alunoId + ').';
         await carregarHistoricoRedacoesAluno();
       } catch (e) {
-        $('statusRedacao').textContent = 'Erro ao salvar: ' + e.message;
+        $('statusRedacao').textContent = 'Falha ao salvar na planilha: ' + e.message;
       } finally {
         btn.disabled = false;
       }
@@ -1122,13 +1488,13 @@
     function compartilharWhatsAppFixo() {
       const temaTxt = temaSorteado ? (temaSorteado.Topico_01_NumeroTitulo || temaSorteado.TemaID) : 'Redação';
       const retorno = $('retornoGeminiInput').value.trim();
-      const nota = $('notaSistemaShare').value.trim() || $('notaIaShare').value.trim() || 'ver retorno';
+      const nota = $('notaIaShare').value.trim() || 'ver retorno';
       const msg = [
         `Redação — ${aluno ? aluno.nome : 'Estudante'} (${aluno ? aluno.alunoId : ''})`,
         `Tema: ${temaTxt}`,
         `Tempo no caderno: ${formatarHMS(cadernoSeg)}`,
-        `Nota: ${nota}`,
-        retorno ? `\nResumo/Retorno:\n${retorno.slice(0, 900)}` : ''
+        `Nota Gemini: ${nota}`,
+        retorno ? `\nOrientações:\n${retorno.slice(0, 900)}` : ''
       ].filter(Boolean).join('\n');
       window.open('https://wa.me/' + WHATSAPP_NUMERO + '?text=' + encodeURIComponent(msg), '_blank');
     }
@@ -1138,7 +1504,7 @@
       try {
         const a = await call('gerarMapaAprendizagem', aluno.alunoId);
         $('maptext').textContent = a && a.length
-          ? a.map(x => `${x.topico}: ${x.acertos}/${x.total} (${x.aproveitamento}%) — ${x.status}`).join('\n')
+          ? a.map(x => `${x.topico}: ${x.acertos}/${x.total} (${x.aproveitamento}%) · Índice Domínio: ${x.mediaDominio}/100`).join('\n')
           : 'Ainda não há respostas registradas para ' + aluno.alunoId + '.';
       } catch (e) {
         $('maptext').textContent = e.message;
@@ -1159,10 +1525,15 @@
       if (acesso && acesso.acessoId) {
         try { await call('encerrarAcesso', { acessoId: acesso.acessoId }); } catch (e) {}
       }
+      localStorage.removeItem('p2029_tel');
+      localStorage.removeItem('p2029_ultimo_id');
       aluno = null;
       acesso = null;
       prova = null;
       provaPendente = null;
+      $('nome').value = '';
+      $('telefone').value = '';
+      atualizarPreviewId();
       tela('login');
     }
 
