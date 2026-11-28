@@ -1063,6 +1063,122 @@
       color: #1e293b;
     }
 
+
+
+    /* ACABAMENTO VISUAL — preserva a estrutura e toda a lógica original */
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #dbeafe;
+      --blue: #2563eb;
+      --blue-dark: #1e40af;
+    }
+    .card {
+      border-color: #dbeafe;
+      box-shadow: 0 12px 32px rgba(30, 64, 175, .07), 0 2px 8px rgba(15, 23, 42, .025);
+    }
+    .guide-box {
+      background: linear-gradient(135deg, #eff6ff 0%, #f5f9ff 100%);
+      border: 1px solid #bfdbfe;
+      border-radius: 18px;
+      padding: 13px;
+      gap: 10px;
+    }
+    .guide-step {
+      background: linear-gradient(145deg, #ffffff 0%, #f8fbff 100%);
+      border: 1px solid #cfe0fb;
+      border-radius: 14px;
+      box-shadow: 0 3px 10px rgba(37, 99, 235, .055);
+      padding: 12px;
+    }
+    .guide-num {
+      background: linear-gradient(145deg, #2563eb, #4f8df7);
+      box-shadow: 0 4px 10px rgba(37, 99, 235, .22);
+    }
+    .mascote-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 82px;
+      padding: 9px 12px;
+      margin: 12px 0 16px;
+      border: 1px solid #c7d9ff;
+      border-radius: 19px;
+      background: linear-gradient(110deg, #f0f6ff 0%, #ffffff 48%, #f4f1ff 100%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 5px 16px rgba(37,99,235,.055);
+    }
+    .mascote-icon.bot-duo {
+      width: 66px;
+      height: 68px;
+      flex: 0 0 66px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: botFlutuar 3.2s ease-in-out infinite;
+      filter: drop-shadow(0 5px 7px rgba(30,64,175,.16));
+    }
+    .mascote-icon.bot-duo svg { display:block; width:100%; height:100%; overflow:visible; }
+    .mascote-icon.bot-girl { animation-delay: .45s; }
+    .bot-eyes { transform-box: fill-box; transform-origin: center; animation: botPiscar 5s infinite; }
+    @keyframes botFlutuar { 0%,100% { transform:translateY(0) } 50% { transform:translateY(-4px) } }
+    @keyframes botPiscar { 0%,93%,100% { transform:scaleY(1) } 96% { transform:scaleY(.12) } }
+    .mascote-balao {
+      position: relative;
+      flex: 1 1 auto;
+      min-width: 0;
+      padding: 11px 14px;
+      border: 1px solid #b9ceff;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #ffffff 0%, #f6f8ff 100%);
+      color: #172554;
+      font-size: .88rem;
+      font-weight: 700;
+      line-height: 1.35;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(37,99,235,.07);
+    }
+    .mascote-balao::before, .mascote-balao::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 10px;
+      height: 10px;
+      background: #fff;
+      transform: translateY(-50%) rotate(45deg);
+    }
+    .mascote-balao::before { left:-6px; border-left:1px solid #b9ceff; border-bottom:1px solid #b9ceff; }
+    .mascote-balao::after { right:-6px; border-right:1px solid #b9ceff; border-top:1px solid #b9ceff; }
+    input, select, textarea {
+      border-color: #c7d7ee;
+      border-radius: 13px;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 4px rgba(59,130,246,.12);
+    }
+    button { border-radius: 13px; }
+    .option {
+      border-color: #d5e2f5;
+      border-radius: 13px;
+      box-shadow: 0 2px 7px rgba(30,64,175,.035);
+    }
+    .option:hover { border-color:#93c5fd; background:#f4f8ff; }
+    /* A data e a hora aparecem somente no cabeçalho, inclusive após o login. */
+    .hero-banner .hero-pill { display: none !important; }
+    @media (max-width: 700px) {
+      .card { padding: 15px; border-radius: 17px; }
+      .mascote-wrap { gap: 6px; min-height: 68px; padding: 7px 6px; margin: 10px 0 13px; }
+      .mascote-icon.bot-duo { width: 48px; height: 54px; flex-basis: 48px; }
+      .mascote-balao { padding: 9px 8px; font-size: .78rem; }
+      .guide-box { padding: 9px; gap: 8px; }
+      .guide-step { padding: 10px; }
+    }
+    @media (max-width: 390px) {
+      .mascote-icon.bot-duo { width: 40px; height: 48px; flex-basis: 40px; }
+      .mascote-balao { font-size: .72rem; padding: 8px 6px; }
+    }
+
   </style>
 </head>
 <body>
@@ -1088,34 +1204,32 @@
         <span class="muted small" id="identPreview">ID: —</span>
       </div>
 
-      <!-- MASCOTE ANIMADO COM FALA ROTATIVA -->
-      <div class="mascote-wrap">
-        <div class="mascote-icon" title="Robô Guia 2029">
-          <svg viewBox="0 0 100 100" width="100%" height="100%">
-            <!-- Corpo e cabeça -->
-            <rect x="20" y="24" width="60" height="52" rx="20" fill="#6366F1"/>
-            <rect x="25" y="29" width="50" height="42" rx="15" fill="#4338CA"/>
-            <!-- Tela rosto -->
-            <rect x="30" y="34" width="40" height="30" rx="10" fill="#1E1B4B"/>
-            <!-- Olhos brilhantes -->
-            <g class="mascote-olhos">
-              <ellipse cx="42" cy="48" rx="5" ry="6" fill="#38BDF8"/>
-              <circle cx="44" cy="46" r="2" fill="#FFFFFF"/>
-              <ellipse cx="58" cy="48" rx="5" ry="6" fill="#38BDF8"/>
-              <circle cx="60" cy="46" r="2" fill="#FFFFFF"/>
-            </g>
-            <!-- Sorriso -->
-            <path d="M 44 57 Q 50 62 56 57" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-            <!-- Antena -->
-            <line x1="50" y1="24" x2="50" y2="12" stroke="#6366F1" stroke-width="4" stroke-linecap="round"/>
-            <circle cx="50" cy="10" r="5" fill="#F59E0B"/>
-            <!-- Fones -->
-            <rect x="14" y="40" width="8" height="20" rx="4" fill="#EC4899"/>
-            <rect x="78" y="40" width="8" height="20" rx="4" fill="#EC4899"/>
+      <!-- DUPLA DE ROBÔS: menino à esquerda e menina à direita -->
+      <div class="mascote-wrap" aria-label="Assistentes do Preparatório 2029">
+        <div class="mascote-icon bot-duo bot-boy" title="Robô menino" aria-label="Robô menino">
+          <svg viewBox="0 0 100 112" role="img" aria-hidden="true">
+            <defs><linearGradient id="boyShell2029" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#38bdf8"/><stop offset="1" stop-color="#4f46e5"/></linearGradient></defs>
+            <path d="M50 17V9" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/><circle cx="50" cy="7" r="5" fill="#fbbf24"/>
+            <rect x="13" y="31" width="74" height="58" rx="19" fill="url(#boyShell2029)"/><rect x="20" y="37" width="60" height="43" rx="13" fill="#172554"/>
+            <rect x="7" y="48" width="9" height="23" rx="4" fill="#22d3ee"/><rect x="84" y="48" width="9" height="23" rx="4" fill="#22d3ee"/>
+            <g class="bot-eyes"><ellipse cx="38" cy="57" rx="6" ry="7" fill="#67e8f9"/><ellipse cx="62" cy="57" rx="6" ry="7" fill="#67e8f9"/><circle cx="40" cy="54" r="2" fill="#fff"/><circle cx="64" cy="54" r="2" fill="#fff"/></g>
+            <path d="M40 69Q50 77 60 69" fill="none" stroke="#67e8f9" stroke-width="3" stroke-linecap="round"/>
+            <path d="M28 88Q50 101 72 88L78 104H22Z" fill="#2563eb"/><circle cx="50" cy="96" r="4" fill="#fff"/>
           </svg>
         </div>
         <div class="mascote-balao" id="mascoteTextoBalao">
-          Sejam bem-vindos! Se cadastre o quanto antes e venha se preparar pra rir das provas em 2029! 😂🚀
+          Sejam bem-vindos! Faça seu cadastro e venha se preparar para as provas de 2029! 😂🚀
+        </div>
+        <div class="mascote-icon bot-duo bot-girl" title="Robô menina" aria-label="Robô menina">
+          <svg viewBox="0 0 100 112" role="img" aria-hidden="true">
+            <defs><linearGradient id="girlShell2029" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fb65b7"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
+            <path d="M50 17V9" stroke="#8b5cf6" stroke-width="4" stroke-linecap="round"/><circle cx="50" cy="7" r="5" fill="#fbbf24"/>
+            <rect x="13" y="31" width="74" height="58" rx="22" fill="url(#girlShell2029)"/><rect x="20" y="37" width="60" height="43" rx="15" fill="#24205c"/>
+            <rect x="7" y="48" width="9" height="23" rx="4" fill="#fb65b7"/><rect x="84" y="48" width="9" height="23" rx="4" fill="#fb65b7"/>
+            <g class="bot-eyes"><ellipse cx="38" cy="57" rx="6" ry="7" fill="#67e8f9"/><ellipse cx="62" cy="57" rx="6" ry="7" fill="#67e8f9"/><circle cx="40" cy="54" r="2" fill="#fff"/><circle cx="64" cy="54" r="2" fill="#fff"/></g>
+            <path d="M40 69Q50 77 60 69" fill="none" stroke="#f9a8d4" stroke-width="3" stroke-linecap="round"/>
+            <path d="M28 88Q50 101 72 88L78 104H22Z" fill="#ec4899"/><circle cx="50" cy="96" r="4" fill="#fff"/>
+          </svg>
         </div>
       </div>
 
